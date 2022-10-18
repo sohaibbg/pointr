@@ -38,6 +38,10 @@ dependencies:
   permission_handler: ^10.0.0
   shared_preferences: ^2.0.15
   sizer: ^2.0.15
+  google_maps_place_picker_mb: ^2.0.0-mb.22
+  label_marker: ^1.0.1
+  sqflite: ^2.1.0+1
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +68,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
