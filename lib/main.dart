@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pointr/classes/my_db.dart';
 import 'package:pointr/my_theme.dart';
-import 'package:pointr/screens/home.dart';
 import 'package:sizer/sizer.dart';
+
+import 'screens/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

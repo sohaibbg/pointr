@@ -12,38 +12,20 @@ class Star {
 
   @override
   String toString() => name;
+  static get nextId =>
+      all.fold<int>(0, (prevId, star) => star.id > prevId ? star.id : prevId) +
+      1;
 
   static Future<void> updateAll() async {
-    all = [
-      Star(
-        0,
-        'Home',
-        const LatLng(0, 0),
+    final List<Map<String, dynamic>> maps = await MyDb.db.query('star');
+    all = List.generate(
+      maps.length,
+      (i) => Star(
+        maps[i]['id'],
+        maps[i]['name'],
+        LatLng(maps[i]['lat'], maps[i]['lng']),
       ),
-      Star(
-        1,
-        'Work',
-        const LatLng(0, 0),
-      ),
-      Star(
-        2,
-        'Uni',
-        const LatLng(0, 0),
-      ),
-      Star(
-        3,
-        'Office',
-        const LatLng(0, 0),
-      ),
-    ];
-    // final List<Map<String, dynamic>> maps = await MyDb.db.query('dogs');
-    // all = List.generate(maps.length, (i) {
-    //   return Star(
-    //     maps[i]['id'],
-    //     maps[i]['name'],
-    //     LatLng(maps[i]['lat'], maps[i]['lng']),
-    //   );
-    // });
+    );
   }
 
   Future<void> insert() async => MyDb.db.insert(

@@ -43,7 +43,7 @@ if (localMapsPropertiesFile.exists()) {
 def mapsApiKey = mapsProperties.getProperty('GMAP_KEY')
 if(mapsApiKey == null){
     mapsApiKey = ""
-    project.logger.error('Google Maps Api Key not configured. Set it in `local_maps.properties` or in the environment variable `MAPS_API_KEY`')
+    project.logger.error('Google Maps Api Key not configured. Set it in `local_maps.properties` or in the environment variable `GMAP_KEY')
 }
 
 android {
