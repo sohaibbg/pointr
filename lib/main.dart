@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pointr/classes/my_db.dart';
 import 'package:pointr/my_theme.dart';
+import 'package:pointr/widgets/bottom_nav_bar.dart';
 import 'package:sizer/sizer.dart';
-
-import 'screens/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
             bodyText1: TextStyle(fontSize: 17),
           ),
         ),
-        home: const Home(),
+        home: const BNavScaffold(index: 0),
       ),
     );
   }

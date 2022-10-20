@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pointr/classes/viable_route.dart';
+import 'package:pointr/my_theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -10,31 +12,23 @@ import '../classes/catalogue.dart';
 class DisplayRoutes extends StatefulWidget {
   const DisplayRoutes({
     Key? key,
-    required this.departure,
-    required this.destination,
+    required this.fromLatLng,
+    required this.fromName,
+    required this.toLatLng,
+    required this.toName,
   }) : super(key: key);
 
-  final LatLng departure;
-  final LatLng destination;
+  final LatLng fromLatLng;
+  final String fromName;
+  final LatLng toLatLng;
+  final String toName;
 
   @override
-  // ignore: no_logic_in_create_state
-  State<DisplayRoutes> createState() => _DisplayRoutesState(
-        departure,
-        destination,
-      );
+  State<DisplayRoutes> createState() => _DisplayRoutesState();
 }
 
 class _DisplayRoutesState extends State<DisplayRoutes> {
-  _DisplayRoutesState(
-    this.departure,
-    this.destination,
-  );
-
-  LatLng departure;
-  LatLng destination;
-  // ignore: prefer_final_fields
-  Completer<GoogleMapController> _controller = Completer();
+  static final Completer<GoogleMapController> _controller = Completer();
   double? selectedScore;
   Map groupedViableRoutes = {};
 
@@ -51,7 +45,8 @@ class _DisplayRoutesState extends State<DisplayRoutes> {
     }
     // calculate viability
     List<ViableRoute> viableRoutes = Catalogue.routes!
-        .map((route) => ViableRoute.between(departure, destination, route))
+        .map((route) =>
+            ViableRoute.between(widget.fromLatLng, widget.toLatLng, route))
         .toList();
     // gather scores
     List<double> scoreOptions = [];
@@ -79,7 +74,90 @@ class _DisplayRoutesState extends State<DisplayRoutes> {
   late Future fu;
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          backgroundColor: MyTheme.colorPrimary,
+          toolbarHeight: 16.h,
+          leadingWidth: 0,
+          titleSpacing: 0,
+          // appbar bg img
+          flexibleSpace: Image.asset(
+            'assets/images/geometric pattern.png',
+            fit: BoxFit.fitWidth,
+            // repeat: ImageRepeat.repeat,
+            color: Colors.white,
+          ),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: Get.back,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          title: Column(
+            children: [
+              // from
+              Padding(
+                padding: const EdgeInsets.only(
+                    right: 16, bottom: 8, left: 48, top: 4),
+                child: TextField(
+                  enabled: false,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    fillColor: MyTheme.colorPrimaryLight,
+                    filled: true,
+                    enabled: false,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(99),
+                      ),
+                    ),
+                    hintText: widget.fromName,
+                    hintStyle: const TextStyle(color: Colors.white),
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(top: 16, left: 20, right: 15),
+                      child: Text(
+                        'FROM',
+                        textScaleFactor: 0.6,
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // to
+              Padding(
+                padding: const EdgeInsets.only(
+                    right: 16, bottom: 8, left: 48, top: 4),
+                child: TextField(
+                  enabled: false,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    fillColor: MyTheme.colorPrimaryLight,
+                    filled: true,
+                    enabled: false,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(99),
+                      ),
+                    ),
+                    hintText: widget.toName,
+                    hintStyle: const TextStyle(color: Colors.white),
+                    prefixIcon: const Padding(
+                      padding: EdgeInsets.only(top: 16, left: 20, right: 15),
+                      child: Text(
+                        'TO',
+                        textScaleFactor: 0.6,
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         body: Stack(
           alignment: AlignmentDirectional.bottomCenter,
           children: [
@@ -95,14 +173,14 @@ class _DisplayRoutesState extends State<DisplayRoutes> {
                       controller.animateCamera(
                         CameraUpdate.newLatLngBounds(
                           LatLngBounds(
-                            southwest:
-                                destination.latitude <= departure.latitude
-                                    ? destination
-                                    : departure,
-                            northeast:
-                                destination.latitude <= departure.latitude
-                                    ? departure
-                                    : destination,
+                            southwest: widget.toLatLng.latitude <=
+                                    widget.fromLatLng.latitude
+                                ? widget.toLatLng
+                                : widget.fromLatLng,
+                            northeast: widget.toLatLng.latitude <=
+                                    widget.fromLatLng.latitude
+                                ? widget.fromLatLng
+                                : widget.toLatLng,
                           ),
                           100,
                         ),
@@ -113,17 +191,17 @@ class _DisplayRoutesState extends State<DisplayRoutes> {
                 markers: {
                   Marker(
                     markerId: const MarkerId('destination'),
-                    position: destination,
+                    position: widget.toLatLng,
                     infoWindow: const InfoWindow(title: '↑'),
                   ),
                   Marker(
                     markerId: const MarkerId('departure'),
-                    position: departure,
+                    position: widget.fromLatLng,
                     infoWindow: const InfoWindow(title: '↓'),
                   ),
                 },
                 initialCameraPosition: CameraPosition(
-                  target: destination,
+                  target: widget.toLatLng,
                   zoom: 15,
                 ),
               ),

@@ -57,6 +57,34 @@ class MyTheme {
       },
     ),
   );
+  // TO-DO implement elevated button style
+  static ButtonStyle elevatedButtonStyle = ButtonStyle(
+      // surfaceTintColor: const MaterialStatePropertyAll(colorSecondaryLight),
+      // shape: const MaterialStatePropertyAll(StadiumBorder()),
+      // shadowColor: const MaterialStatePropertyAll(Colors.black),
+      // overlayColor: const MaterialStatePropertyAll(Colors.black),
+      // foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+      //   (Set<MaterialState> states) {
+      //     if (states.contains(MaterialState.hovered) ||
+      //         states.contains(MaterialState.focused)) {
+      //       return colorSecondaryDarkAccent;
+      //     }
+      //     if (states.contains(MaterialState.selected) ||
+      //         states.contains(MaterialState.pressed)) return colorSecondaryLight;
+      //     return colorSecondary;
+      //   },
+      // ),
+      // backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+      //   (Set<MaterialState> states) {
+      //     if (states.contains(MaterialState.hovered) ||
+      //         states.contains(MaterialState.focused)) return colorSecondaryLight;
+      //     if (states.contains(MaterialState.selected) ||
+      //         states.contains(MaterialState.pressed)) return colorSecondary;
+      //     return Colors.white;
+      //   },
+      // ),
+      );
+
   static InputDecoration addressFieldStyle = InputDecoration(
     contentPadding: EdgeInsets.symmetric(horizontal: 2.w),
     filled: true,
