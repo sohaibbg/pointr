@@ -1,5 +1,7 @@
+import 'package:pointr/providers/from_provider.dart';
+import 'package:pointr/providers/to_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:pointr/classes/my_db.dart';
 import 'package:pointr/my_theme.dart';
 import 'package:pointr/widgets/bottom_nav_bar.dart';
@@ -8,7 +10,7 @@ import 'package:sizer/sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MyDb.db = await MyDb.init();
-  runApp(const GetMaterialApp(home: MyApp()));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -31,10 +33,16 @@ class MyApp extends StatelessWidget {
           colorScheme: theme.colorScheme.copyWith(secondary: Colors.amber),
           fontFamily: 'Inter',
           textTheme: const TextTheme(
-            bodyText1: TextStyle(fontSize: 17),
+            bodyLarge: TextStyle(fontSize: 17),
           ),
         ),
-        home: const BNavScaffold(index: 0),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => FromProvider()),
+            ChangeNotifierProvider(create: (context) => ToProvider()),
+          ],
+          child: const BNavScaffold(index: 0),
+        ),
       ),
     );
   }

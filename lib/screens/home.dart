@@ -1,14 +1,10 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pointr/classes/gmaps_api.dart';
 import 'package:pointr/classes/star.dart';
 import 'package:pointr/my_theme.dart';
-import 'package:pointr/screens/set_from_to.dart';
 import 'package:pointr/widgets/horizontal_chip_scroller.dart';
 import 'package:pointr/widgets/map_results.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -20,11 +16,12 @@ class Home extends StatelessWidget {
   static final FocusNode focusNode = FocusNode();
   Future<Iterable<Map>?> suggestions() async {
     // check permission
-    if (await Permission.location.isDenied) return null;
+    if (await Permission.location.request() == PermissionStatus.denied) {
+      return null;
+    }
     // get location
-    await Geolocator.getCurrentPosition().then(
-      (value) => currentLatLng = LatLng(value.latitude, value.longitude),
-    );
+    Position p = await Geolocator.getCurrentPosition();
+    currentLatLng = LatLng(p.latitude, p.longitude);
     // return results
     return await GMapsApi.nearbyPlaces(currentLatLng!);
   }
@@ -77,9 +74,13 @@ class Home extends StatelessWidget {
                         TextStyle(color: MyTheme.colorSecondaryDarkAccent),
                   ),
                   onTap: () {
-                    Get.to(
-                      () => SetFromTo(initialLatLng: currentLatLng),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => SetFromTo(
+                    //       initialLatLng: currentLatLng,
+                    //     ),
+                    //   ),
+                    // );
                     focusNode.unfocus();
                   },
                 ),

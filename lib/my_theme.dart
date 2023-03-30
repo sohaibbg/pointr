@@ -58,7 +58,7 @@ class MyTheme {
     ),
   );
   // TO-DO implement elevated button style
-  static ButtonStyle elevatedButtonStyle = ButtonStyle(
+  static ButtonStyle elevatedButtonStyle = const ButtonStyle(
       // surfaceTintColor: const MaterialStatePropertyAll(colorSecondaryLight),
       // shape: const MaterialStatePropertyAll(StadiumBorder()),
       // shadowColor: const MaterialStatePropertyAll(Colors.black),

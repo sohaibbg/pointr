@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class GMapsApi {
   static const String hostUrl = 'https://maps.googleapis.com/maps/api';
-  static const String apiKey = '';
+  static const String apiKey = 'AIzaSyB8_Cux99uxPKiE307aBUffTgrzKFRva4w';
   static const String originLatLng = '24.8607,67.0011';
   static const double radius = 200000;
 

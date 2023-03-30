@@ -40,11 +40,11 @@ dependencies:
   sizer: ^2.0.15
   label_marker: ^1.0.1
   sqflite: ^2.1.0+1
-  get: ^4.6.5
   progress_indicators: ^1.0.0
   http: ^0.13.5
   geolocator: ^9.0.2
   flutter_keyboard_visibility: ^5.4.0
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
