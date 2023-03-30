@@ -1,10 +1,12 @@
 import 'package:pointr/providers/from_provider.dart';
+import 'package:pointr/providers/search_suggestion_provider.dart';
+import 'package:pointr/providers/star_provider.dart';
 import 'package:pointr/providers/to_provider.dart';
+import 'package:pointr/widgets/to_from_setter_appbar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:pointr/classes/my_db.dart';
 import 'package:pointr/my_theme.dart';
-import 'package:pointr/widgets/bottom_nav_bar.dart';
 import 'package:sizer/sizer.dart';
 
 void main() async {
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
 
     return Sizer(
       builder: (context, orientation, deviceType) => MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Pointr',
         theme: ThemeData(
           useMaterial3: true,
           textSelectionTheme: const TextSelectionThemeData(
@@ -40,8 +42,14 @@ class MyApp extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(create: (context) => FromProvider()),
             ChangeNotifierProvider(create: (context) => ToProvider()),
+            ChangeNotifierProvider(create: (context) => StarProvider()),
+            ChangeNotifierProvider(
+                create: (context) => SearchSuggestionProvider()),
           ],
-          child: const BNavScaffold(index: 0),
+          // child: const BNavScaffold(index: 0),
+          child: const Scaffold(
+            body: ToFromSetterAppBar(),
+          ),
         ),
       ),
     );

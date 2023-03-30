@@ -4,6 +4,7 @@
 // import 'package:pointr/classes/viable_route.dart';
 // import 'package:pointr/my_theme.dart';
 // import 'package:pointr/providers/from_provider.dart';
+// import 'package:provider/provider.dart';
 // import 'package:sizer/sizer.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -87,7 +88,7 @@
 //                 padding: const EdgeInsets.only(
 //                     right: 16, bottom: 8, left: 48, top: 4),
 //                 child: Consumer<FromProvider>(
-//                   builder: (context) => TextField(
+//                   builder: (context, value, child) => TextField(
 //                     enabled: false,
 //                     textAlignVertical: TextAlignVertical.center,
 //                     decoration: InputDecoration(

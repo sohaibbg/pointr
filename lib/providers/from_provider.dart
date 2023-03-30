@@ -11,6 +11,12 @@ class FromProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String? get name => _name;
+  void clear() {
+    _selected = null;
+    _name = null;
+    notifyListeners();
+  }
+
+  String? get title => _name;
   LatLng? get selected => _selected;
 }

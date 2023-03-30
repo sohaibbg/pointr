@@ -1,48 +1,20 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pointr/classes/my_db.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:pointr/classes/place.dart';
 
-class Star {
+class Star implements Place {
   int id;
-  String name;
+  @override
+  String title;
   LatLng latLng;
 
-  Star(this.id, this.name, this.latLng);
-  static late List<Star> all;
+  Star(this.id, this.title, this.latLng);
 
   @override
-  String toString() => name;
-  static get nextId =>
-      all.fold<int>(0, (prevId, star) => star.id > prevId ? star.id : prevId) +
-      1;
-
-  static Future<void> updateAll() async {
-    final List<Map<String, dynamic>> maps = await MyDb.db.query('star');
-    all = List.generate(
-      maps.length,
-      (i) => Star(
-        maps[i]['id'],
-        maps[i]['name'],
-        LatLng(maps[i]['lat'], maps[i]['lng']),
-      ),
-    );
-  }
-
-  Future<void> insert() async => MyDb.db.insert(
-        'star',
-        toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-
-  Future<void> delete() async => MyDb.db.delete(
-        'star',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+  String toString() => title;
 
   Map<String, Object?> toMap() => {
         'id': id,
-        'name': name,
+        'name': title,
         'lat': latLng.latitude,
         'lng': latLng.longitude,
       };

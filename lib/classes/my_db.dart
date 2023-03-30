@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+// TODO singleton pattern
 class MyDb {
   static late Database db;
   static Future<Database> init() async {

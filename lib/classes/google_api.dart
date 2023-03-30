@@ -1,18 +1,19 @@
 import 'dart:convert';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:pointr/classes/google_place.dart';
+import 'package:pointr/classes/located_google_place.dart';
 
-class GMapsApi {
+class GoogleApi {
   static const String hostUrl = 'https://maps.googleapis.com/maps/api';
   static const String apiKey = 'AIzaSyB8_Cux99uxPKiE307aBUffTgrzKFRva4w';
   static const String originLatLng = '24.8607,67.0011';
   static const double radius = 200000;
 
   /// returns {"description":description, "place_id":placeId} or error String
-  static Future<Object> autocomplete(String searchTerm) async {
-    if (searchTerm.isEmpty) return <Map>[];
+  static Future<List<GooglePlace>> autocomplete(String searchTerm) async {
+    if (searchTerm.isEmpty) return [];
     var headers = {'Accept': 'application/json'};
     var request = http.Request(
       'GET',
@@ -26,16 +27,18 @@ class GMapsApi {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      return jsonDecode(await response.stream.bytesToString())['predictions']
-          .map<Map>(
-            (e) => {
-              "title": e["description"],
-              "place_id": e["place_id"],
-            },
+      var predictions =
+          jsonDecode(await response.stream.bytesToString())['predictions'];
+      return predictions
+          .map<GooglePlace>(
+            (e) => GooglePlace(
+              title: e["description"],
+              placeId: e["place_id"],
+            ),
           )
           .toList();
     } else {
-      return response.reasonPhrase ?? "Error";
+      throw Exception(response.reasonPhrase);
     }
   }
 
@@ -85,7 +88,7 @@ class GMapsApi {
     }
   }
 
-  static Future<Iterable<Map>?> nearbyPlaces(LatLng latLng) async {
+  static Future<List<LocatedGooglePlace>?> nearbyPlaces(LatLng latLng) async {
     var headers = {
       'Accept': 'application/json',
     };
@@ -101,17 +104,22 @@ class GMapsApi {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      return jsonDecode(await response.stream.bytesToString())['results']
-          .map<Map>(
-        (e) => {
-          "title": e['name'],
-          "latLng": LatLng(
-            e['geometry']['location']['lat'],
-            e['geometry']['location']['lng'],
-          ),
-          "subtitle": e["vicinity"]
-        },
-      );
+      var results = jsonDecode(
+        await response.stream.bytesToString(),
+      )['results'];
+      return results
+          .map<LocatedGooglePlace>(
+            (e) => LocatedGooglePlace(
+              placeId: e['placeId'],
+              title: e['name'],
+              latLng: LatLng(
+                e['geometry']['location']['lat'],
+                e['geometry']['location']['lng'],
+              ),
+              subtitle: e["vicinity"],
+            ),
+          )
+          .toList();
     } else {
       throw Exception(response.reasonPhrase);
     }
