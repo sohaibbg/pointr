@@ -21,6 +21,6 @@ extension PolylineExtension on Polyline {
     //   travelDist += sqrt(distance(route.points[i], route.points[i - 1]));
     // }
     double score = departDist + destDist + travelDist;
-    return ViableRoute(score, this, onboard, offload);
+    return ViableRoute(score, this);
   }
 }

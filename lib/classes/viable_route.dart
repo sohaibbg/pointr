@@ -7,9 +7,8 @@ import 'package:pointr/classes/lat_lng_extension.dart';
 class ViableRoute {
   double score;
   Polyline polyline;
-  LatLng onboard, offload;
 
-  ViableRoute(this.score, this.polyline, this.onboard, this.offload);
+  ViableRoute(this.score, this.polyline);
 
   void recolor(Color color) => polyline = polyline.copyWith(colorParam: color);
 
@@ -32,6 +31,6 @@ class ViableRoute {
     double score = departDist + destDist + travelDist;
     score = score * 1000;
     score = score.truncateToDouble();
-    return ViableRoute(score, route, onboard, offload);
+    return ViableRoute(score, route);
   }
 }

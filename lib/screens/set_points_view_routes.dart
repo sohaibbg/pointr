@@ -129,15 +129,23 @@ class _SetPointsViewRoutesState extends State<SetPointsViewRoutes> {
                         ),
                       ),
                       // location pin icon
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 56),
-                        child: Icon(
-                          Icons.location_on,
-                          color: MyTheme.colorPrimary,
-                          size: 56,
-                          shadows: [
-                            Shadow(offset: Offset(0.1, 0.9), blurRadius: 6)
-                          ],
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 56),
+                        child: Consumer2<FromProvider, ToProvider>(
+                          builder: (context, fromProv, toProv, child) =>
+                              fromProv.selected != null &&
+                                      toProv.selected != null
+                                  ? const SizedBox()
+                                  : const Icon(
+                                      Icons.location_on,
+                                      color: MyTheme.colorPrimary,
+                                      size: 56,
+                                      shadows: [
+                                        Shadow(
+                                            offset: Offset(0.1, 0.9),
+                                            blurRadius: 6)
+                                      ],
+                                    ),
                         ),
                       ),
                       // buttons
