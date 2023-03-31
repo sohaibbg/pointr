@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pointr/classes/google_place.dart';
 import 'package:pointr/classes/located_google_place.dart';
-import 'package:pointr/classes/place.dart';
 import 'package:sizer/sizer.dart';
 
 class PlaceListview extends StatelessWidget {
@@ -15,12 +14,11 @@ class PlaceListview extends StatelessWidget {
   final List<GooglePlace> items;
   final EdgeInsets? padding;
   final int? limit;
-  final void Function(Place place) onSelected;
+  final void Function(GooglePlace place) onSelected;
   @override
   Widget build(BuildContext context) => items.isEmpty
       ? const SizedBox()
-      : Column(
-          mainAxisSize: MainAxisSize.min,
+      : ListView(
           children: items
               .sublist(
                 1,

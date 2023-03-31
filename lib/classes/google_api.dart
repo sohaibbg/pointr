@@ -110,7 +110,7 @@ class GoogleApi {
       return results
           .map<LocatedGooglePlace>(
             (e) => LocatedGooglePlace(
-              placeId: e['placeId'],
+              placeId: e['place_id'],
               title: e['name'],
               latLng: LatLng(
                 e['geometry']['location']['lat'],

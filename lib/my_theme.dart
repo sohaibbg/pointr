@@ -14,7 +14,7 @@ class MyTheme {
     fontWeight: FontWeight.w300,
   );
   static const Color colorPrimary = Colors.indigo;
-  static Color colorPrimaryLight = Colors.indigo.shade300;
+  static const Color colorPrimaryLight = Color.fromARGB(255, 121, 134, 203);
   static const Color colorSecondaryLight = Color(0xffFFF7B1);
   static const Color colorSecondary = Colors.amber;
   static const Color colorSecondaryDark = Color(0xff946B02);

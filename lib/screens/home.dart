@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointr/my_theme.dart';
 import 'package:pointr/providers/nearby_provider.dart';
 import 'package:pointr/providers/star_provider.dart';
+import 'package:pointr/screens/set_points_view_routes.dart';
 import 'package:pointr/widgets/horizontal_chip_scroller.dart';
 import 'package:pointr/widgets/map_results.dart';
 import 'package:provider/provider.dart';
@@ -61,13 +62,13 @@ class Home extends StatelessWidget {
                         TextStyle(color: MyTheme.colorSecondaryDarkAccent),
                   ),
                   onTap: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => SetFromTo(
-                    //       initialLatLng: currentLatLng,
-                    //     ),
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SetPointsViewRoutes(
+                          initialLatLng: currentLatLng,
+                        ),
+                      ),
+                    );
                     focusNode.unfocus();
                   },
                 ),

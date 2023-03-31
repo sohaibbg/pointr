@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:pointr/classes/google_api.dart';
-import 'package:pointr/classes/place.dart';
-import 'package:pointr/providers/star_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:pointr/classes/google_place.dart';
 
 class SearchSuggestionProvider with ChangeNotifier {
-  List<Place> _suggestions = [];
-  List<Place> get suggestions => _suggestions;
+  List<GooglePlace> _suggestions = [];
+  List<GooglePlace> get suggestions => _suggestions;
   Future<void> fetchSuggestions(BuildContext? context, String term) async {
+    _suggestions.clear();
     // from g places api
-    List<Place> results = await GoogleApi.autocomplete(term);
-    _suggestions.addAll(results);
-    // from starred places
-    // TODO assert starProvider is provided before this method is ever called
-    if (context != null) {
-      if (context.mounted) {
-        results = Provider.of<StarProvider>(context, listen: false).all;
-        _suggestions.addAll(results);
-      }
+    List<GooglePlace> results;
+    if (term.trim().isEmpty) {
+      results = [];
+    } else {
+      results = await GoogleApi.autocomplete(term.trim());
     }
-    _suggestions.removeWhere(
-      (sugg) => sugg.title.trim().contains(term.trim()),
-    );
+    _suggestions.addAll(results);
     notifyListeners();
   }
 
