@@ -22,8 +22,49 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
+    use_full_hex_values_for_flutter_colors: false
+    prefer_relative_imports: true
+    use_build_context_synchronously: false
+    camel_case_types: true
+    always_declare_return_types: true
+    annotate_overrides: true
+    avoid_empty_else: true
+    avoid_single_cascade_in_expression_statements: true
+    avoid_unnecessary_containers: true
+    await_only_futures: true
+    camel_case_extensions: true
+    empty_catches: true
+    empty_constructor_bodies: true
+    empty_statements: true
+    no_leading_underscores_for_local_identifiers: true
+    no_logic_in_create_state: true
+    non_constant_identifier_names: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_constructors_over_static_methods: true
+    prefer_final_fields: true
+    require_trailing_commas: true
+    sort_child_properties_last: true
+    unnecessary_brace_in_string_interps: true
+    unnecessary_const: true
+    unnecessary_constructor_name: true
+    unnecessary_getters_setters: true
+    unnecessary_this: true
+    unnecessary_string_interpolations: true
+    unnecessary_overrides: true
+    unnecessary_late: true
+    unnecessary_new: true
+    unnecessary_null_aware_assignments: true
+    unnecessary_null_checks: true
+    unnecessary_parenthesis: true
+    unnecessary_statements: true
+    unnecessary_string_escapes: true
+    use_colored_box: true
+    use_decorated_box: true
+    use_is_even_rather_than_modulo: true
+    use_key_in_widget_constructors: true
+    deprecated_member_use_from_same_package: false
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
