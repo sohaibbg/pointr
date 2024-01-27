@@ -25,7 +25,7 @@ class Route {
     final points = map['points'] as List;
     final parsedPoints = points
         .map(
-          (e) => Coordinates.fromJson(e as List<double>),
+          (e) => Coordinates.fromJson(List<double>.from(e)),
         )
         .toIList();
     return Route(name: name, mode: mode, points: parsedPoints);

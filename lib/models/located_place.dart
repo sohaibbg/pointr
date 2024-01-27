@@ -1,17 +1,15 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'coordinates.dart';
 import 'place.dart';
 
-part 'located_place.g.dart';
-
-@JsonSerializable()
 class LocatedPlace implements Place {
   @override
   final String title;
   final Coordinates coordinates;
 
-  const LocatedPlace(this.title, this.coordinates);
+  const LocatedPlace({
+    required this.title,
+    required this.coordinates,
+  });
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -19,9 +17,9 @@ class LocatedPlace implements Place {
       };
 
   factory LocatedPlace.fromJson(Map<String, dynamic> map) => LocatedPlace(
-        map['title'],
-        Coordinates.fromJson(
-          map['coordinates'],
+        title: map['title'],
+        coordinates: Coordinates.fromJson(
+          List<double>.from(map['coordinates']),
         ),
       );
 }

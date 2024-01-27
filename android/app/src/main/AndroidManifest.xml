@@ -9,8 +9,11 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data
+            android:name="com.google.android.gms.version"      
+            android:value="@integer/google_play_services_version" />
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB8_Cux99uxPKiE307aBUffTgrzKFRva4w" />
+            android:value="${GMAP_KEY}"/>
         <service
             android:name="MyNavigationService"
             android:foregroundServiceType="location"></service>

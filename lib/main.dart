@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'misc/my_theme.dart';
-import 'misc/routes.dart';
+import 'config/my_theme.dart';
+import 'config/routes.dart';
 
 void main() => runApp(
       const ProviderScope(

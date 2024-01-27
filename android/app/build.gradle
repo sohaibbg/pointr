@@ -25,25 +25,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def mapsProperties = new Properties()
-def localMapsPropertiesFile = rootProject.file('local_maps.properties')
-if (localMapsPropertiesFile.exists()) {
-    project.logger.info('Load maps properties from local file')
-    localMapsPropertiesFile.withReader('UTF-8') { reader ->
-        mapsProperties.load(reader)
-    }
-} else {
-    project.logger.info('Load maps properties from environment')
-    try {
-        mapsProperties['GMAP_KEY'] = System.getenv('GMAP_KEY')
-    } catch(NullPointerException e) {
-        project.logger.warn('Failed to load GMAP_KEY from environment.', e)
-    }
-}
-def mapsApiKey = mapsProperties.getProperty('GMAP_KEY')
-if(mapsApiKey == null){
-    mapsApiKey = ""
-    project.logger.error('Google Maps Api Key not configured. Set it in `local_maps.properties` or in the environment variable `GMAP_KEY')
+def dartEnvironmentVariables = []
+if (project.hasProperty('dart-defines')) {
+    dartEnvironmentVariables = project.property('dart-defines')
+        .split(',')
+        .collectEntries { entry ->
+            def pair = new String(entry.decodeBase64(), 'UTF-8').split('=')
+            [(pair.first()): pair.last()]
+        }
 }
 
 android {
@@ -71,7 +60,10 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        manifestPlaceholders += [GMAP_KEY: mapsApiKey]
+        // manifestPlaceholders += [GMAP_KEY: mapsApiKey]
+        manifestPlaceholders += [
+            GMAP_KEY: dartEnvironmentVariables.GMAP_KEY
+        ]
     }
 
     buildTypes {

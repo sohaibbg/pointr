@@ -2,18 +2,14 @@ import 'coordinates.dart';
 import 'google_place.dart';
 import 'located_place.dart';
 
-class LocatedGooglePlace implements GooglePlace, LocatedPlace {
-  @override
-  final String googlePlaceId;
-  @override
-  final String title;
+class LocatedGooglePlace extends GooglePlace implements LocatedPlace {
   final String subtitle;
   @override
   final Coordinates coordinates;
 
   const LocatedGooglePlace({
-    required this.googlePlaceId,
-    required this.title,
+    required super.googlePlaceId,
+    required super.title,
     required this.coordinates,
     required this.subtitle,
   });
