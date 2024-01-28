@@ -34,7 +34,7 @@ class Home extends HookConsumerWidget {
     final searchButton = ListTile(
       onTap: hvm.searchOnPressed,
       contentPadding: const EdgeInsets.symmetric(
-        vertical: 24,
+        vertical: 12,
         horizontal: 24,
       ),
       leading: const Icon(
@@ -68,7 +68,7 @@ class Home extends HookConsumerWidget {
           ),
           child: Text(
             "Where are you currently?",
-            style: Theme.of(context).textTheme.displayLarge,
+            style: Theme.of(context).textTheme.displayMedium,
           ),
         ),
       ),
@@ -82,7 +82,7 @@ class Home extends HookConsumerWidget {
             children: [
               title,
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 child: searchButton,
               ),
               const _FavoritesHandler(),
@@ -91,7 +91,7 @@ class Home extends HookConsumerWidget {
         ),
         const _NearbySuggestions(),
         const SliverToBoxAdapter(
-          child: SizedBox(height: 240),
+          child: SizedBox(height: 220),
         ),
       ],
     );

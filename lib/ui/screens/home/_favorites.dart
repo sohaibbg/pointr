@@ -120,8 +120,8 @@ class _FavoritesData extends ConsumerWidget {
     final addNewFavBtn = favs.isEmpty
         ? ElevatedButton.icon(
             onPressed: () => context.go('/new-favorite'),
-            icon: Icon(Icons.favorite),
-            label: Text(
+            icon: const Icon(Icons.favorite),
+            label: const Text(
               "Save a Favorite Place",
             ),
           )

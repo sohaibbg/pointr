@@ -28,10 +28,14 @@ class SearchSuggestions extends ConsumerWidget {
             Icon(
               Icons.manage_search,
               size: 124,
+              color: Colors.black54,
             ),
             Text(
               "Type something for search results to be loaded.",
-              style: TextStyle(fontSize: 24),
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.black54,
+              ),
             ),
           ],
         ),

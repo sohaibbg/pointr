@@ -76,7 +76,7 @@ class LocSearchBar extends HookConsumerWidget {
       animation: animCtl,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 24,
+          vertical: 18,
           horizontal: 12,
         ),
         child: TextField(
@@ -117,7 +117,7 @@ class LocSearchBar extends HookConsumerWidget {
       heightFactor: 0.5,
       widthFactor: 0.9,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 32),
+        padding: const EdgeInsets.only(bottom: 18),
         child: ValueListenableBuilder(
           valueListenable: textEditingController,
           builder: (context, value, child) => SearchSuggestions(

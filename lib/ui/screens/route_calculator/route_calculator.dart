@@ -65,7 +65,7 @@ class RouteCalculator extends HookConsumerWidget {
       polylines: vm.polylines,
       onMapCreated: mapCtlCompleter.complete,
       padding: const EdgeInsets.symmetric(
-        vertical: 360,
+        vertical: 350,
       ),
     );
     return Scaffold(

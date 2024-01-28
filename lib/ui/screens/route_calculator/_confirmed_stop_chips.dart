@@ -19,7 +19,7 @@ class _ConfirmedStopChips extends HookConsumerWidget {
         Expanded(
           child: Row(
             children: [
-              const Text("FROM: "),
+              const Text("From: "),
               Expanded(
                 child: ActionChip(
                   label: Text(
@@ -47,7 +47,7 @@ class _ConfirmedStopChips extends HookConsumerWidget {
         Expanded(
           child: Row(
             children: [
-              const Text("TO: "),
+              const Text("To: "),
               Expanded(
                 child: ActionChip(
                   label: Text(
@@ -76,11 +76,9 @@ class _ConfirmedStopChips extends HookConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
+      margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 8, 24, 8),
         child: Row(children: chips),
       ),
     );

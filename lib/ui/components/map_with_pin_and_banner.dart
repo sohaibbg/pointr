@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,14 +28,30 @@ class MapWithPinAndBanner extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isMoving = useState<bool>(false);
-    final googleMap = GoogleMap(
-      initialCameraPosition: initialCameraPosition,
-      onMapCreated: onMapCreated,
-      padding: padding ?? EdgeInsets.zero,
-      markers: markers ?? {},
-      polylines: polylines ?? {},
-      onCameraMoveStarted: () => isMoving.value = true,
-      onCameraIdle: () => isMoving.value = false,
+    final mapCtlCompleter = useMemoized(
+      () => Completer<GoogleMapController>(),
+      [context],
+    );
+    final googleMap = GestureDetector(
+      onDoubleTap: () async {
+        final mapCtl = await mapCtlCompleter.future;
+        mapCtl.animateCamera(
+          CameraUpdate.zoomIn(),
+        );
+      },
+      child: GoogleMap(
+        initialCameraPosition: initialCameraPosition,
+        onMapCreated: (mapCtl) {
+          if (onMapCreated == null) return;
+          mapCtlCompleter.complete(mapCtl);
+          onMapCreated!(mapCtl);
+        },
+        padding: padding ?? EdgeInsets.zero,
+        markers: markers ?? {},
+        polylines: polylines ?? {},
+        onCameraMoveStarted: () => isMoving.value = true,
+        onCameraIdle: () => isMoving.value = false,
+      ),
     );
     return Stack(
       fit: StackFit.expand,
