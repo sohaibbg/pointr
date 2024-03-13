@@ -54,6 +54,10 @@ dependencies:
   json_serializable: ^6.7.1
   easy_debounce: ^2.0.3
   scroll_snap_list: ^0.9.1
+  dio: ^5.4.1
+  uuid: ^4.3.3
+  get_it: ^7.6.7
+  injectable: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +76,7 @@ dev_dependencies:
   freezed: ^2.4.6
   drift_dev: ^2.14.0
   flutter_launcher_icons: ^0.13.1
+  injectable_generator: ^2.4.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

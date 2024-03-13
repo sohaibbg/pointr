@@ -1,23 +1,23 @@
 import 'package:go_router/go_router.dart';
 
-import '../models/located_place.dart';
-import '../ui/screens/favorites_flow/list_favorites.dart';
-import '../ui/screens/favorites_flow/new_favorite.dart';
-import '../ui/screens/home/home.dart';
-import '../ui/screens/route_calculator/route_calculator.dart';
+import '../domain/entities/address_entity.dart';
+import '../presentation/screens/favorites_flow/list_favorites.dart';
+import '../presentation/screens/favorites_flow/new_favorite.dart';
+import '../presentation/screens/home/home_screen.dart';
+import '../presentation/screens/route_calculator/route_calculator.dart';
 
 final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const Home(),
+      builder: (context, state) => const HomeScreen(),
       routes: [
         GoRoute(
           path: 'route-calculator',
           builder: (context, state) {
             final extra = state.extra as Map?;
             final focusSearch = extra?['focusSearch'] as bool?;
-            final initialPlace = extra?['initialPlace'] as LocatedPlace?;
+            final initialPlace = extra?['initialPlace'] as AddressEntity?;
             return RouteCalculator(
               focusSearch: focusSearch ?? false,
               initialPlace: initialPlace,
