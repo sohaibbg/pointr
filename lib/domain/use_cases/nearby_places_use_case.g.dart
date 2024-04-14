@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'nearby_places.dart';
+part of 'nearby_places_use_case.dart';
 
 // **************************************************************************
 // RiverpodGenerator

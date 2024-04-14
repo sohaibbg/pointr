@@ -7,7 +7,7 @@ import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/named_address_entity.dart';
 import '../../../domain/use_cases/location_use_case.dart';
-import '../../../domain/use_cases/nearby_places.dart';
+import '../../../domain/use_cases/nearby_places_use_case.dart';
 import '../../components/space.dart';
 
 class NearbySuggestionsView extends ConsumerWidget {

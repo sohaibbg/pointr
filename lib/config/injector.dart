@@ -7,15 +7,15 @@ final getIt = GetIt.instance;
 
 @InjectableInit(
   generateForDir: [
-    'lib/domain/use_cases',
+    'lib/domain/repositories',
     'lib/data/interface_adapters',
   ],
 )
 void configureDependencies() => getIt.init(
-      environment: _env,
+      environment: env,
     );
 
-const _env = String.fromEnvironment(
+const env = String.fromEnvironment(
   'env',
   defaultValue: 'prod',
 );

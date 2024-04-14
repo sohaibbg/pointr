@@ -6,7 +6,7 @@ import '../entities/coordinates_entity.dart';
 import '../entities/named_address_entity.dart';
 import '../repositories/i_places_repo.dart';
 
-part 'nearby_places.g.dart';
+part 'nearby_places_use_case.g.dart';
 
 @riverpod
 Future<List<NamedAddressEntity>> nearbyPlacesFromCoordinates(

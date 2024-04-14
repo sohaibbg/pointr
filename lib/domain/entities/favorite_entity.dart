@@ -8,4 +8,12 @@ class FavoriteEntity {
     required this.coordinates,
     required this.name,
   });
+
+  @override
+  bool operator ==(covariant FavoriteEntity other) => identical(this, other)
+      ? true
+      : other.coordinates == coordinates && other.name == name;
+
+  @override
+  int get hashCode => coordinates.hashCode ^ name.hashCode;
 }

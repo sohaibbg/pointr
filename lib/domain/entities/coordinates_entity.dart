@@ -39,4 +39,15 @@ class CoordinatesEntity {
       linePointA.longitude + param * d,
     );
   }
+
+  @override
+  bool operator ==(
+    covariant CoordinatesEntity other,
+  ) =>
+      identical(this, other)
+          ? true
+          : other.latitude == latitude && other.longitude == longitude;
+
+  @override
+  int get hashCode => latitude.hashCode ^ longitude.hashCode;
 }

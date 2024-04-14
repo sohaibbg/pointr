@@ -17,20 +17,6 @@ class RouteEntity {
     required this.points,
   });
 
-  factory RouteEntity.fromMap(Map map) {
-    final name = map['name'] as String;
-    final mode = RouteMode.values.firstWhere(
-      (element) => element.name == map['mode'],
-    );
-    final points = map['points'] as List;
-    final parsedPoints = points
-        .map(
-          (e) => CoordinatesEntity.fromJson(List<double>.from(e)),
-        )
-        .toIList();
-    return RouteEntity(name: name, mode: mode, points: parsedPoints);
-  }
-
   /// higher the score, lesser the distance
   /// to and from the departure and destination
   /// respectively, and the travel distance
