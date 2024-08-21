@@ -1,7 +1,7 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../config/injector.dart';
+import '../../infrastructure/services/packages/iterable.dart';
 import '../entities/coordinates_entity.dart';
 import '../entities/favorite_entity.dart';
 import '../repositories/i_favorites_repo.dart';
@@ -13,9 +13,7 @@ class FavoritesUseCase extends _$FavoritesUseCase {
   final repo = getIt.call<IFavoritesRepo>();
 
   @override
-  Future<IList<FavoriteEntity>> build() => repo.getAll().then(
-        (value) => value.toIList(),
-      );
+  Future<List<FavoriteEntity>> build() => repo.getAll();
 
   Future<void> updateExisting(
     String prevName, {
@@ -23,29 +21,29 @@ class FavoritesUseCase extends _$FavoritesUseCase {
   }) =>
       repo
           .update(
-            prevName,
-            coordinates: coordinates,
-          )
+        prevName,
+        coordinates: coordinates,
+      )
           .then(
-            (value) => state = AsyncData(
-              state.value!.updateById(
-                [
-                  FavoriteEntity(
-                    coordinates: coordinates,
-                    name: prevName,
-                  ),
-                ],
-                (item) => item.name,
-              ),
+        (value) {
+          final newState = state.value!.replaceWhere(
+            (e) => e.name == prevName,
+            (e) => e.copyWith(
+              coordinates: coordinates,
             ),
           );
+          state = AsyncData(newState.toList());
+        },
+      );
 
   Future<void> delete(String name) => repo.delete(name).then(
-        (value) => state = AsyncData(
-          state.value!.removeWhere(
-            (element) => element.name == name,
-          ),
-        ),
+        (value) {
+          final value = state.value!
+            ..removeWhere(
+              (element) => element.name == name,
+            );
+          state = AsyncData(value.toList());
+        },
       );
 
   Future<void> insert(
@@ -53,7 +51,7 @@ class FavoritesUseCase extends _$FavoritesUseCase {
   ) =>
       repo.insert(newFav).then(
             (value) => state = AsyncData(
-              state.value!.add(newFav),
+              state.value!..add(newFav),
             ),
           );
 

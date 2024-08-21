@@ -8,21 +8,20 @@ import '../repositories/i_location_repo.dart';
 part 'location_use_case.g.dart';
 
 @riverpod
-Future<CoordinatesEntity> currentLoc(CurrentLocRef ref) async {
-  final permission = ref.watch(locPermissionProvider).value;
-  // this should throw because the UI
-  // should not leave the possibility
-  // open that location was requested
-  // without first ensuring that the
-  // user had crossed a permission grant flow
-  if (![
-    LocationPermission.always,
-    LocationPermission.whileInUse,
-  ].contains(permission)) throw 'location permission not initialized';
-  // get loc
-  return getIt.call<ILocationRepo>().getLocation();
-}
+Future<CoordinatesEntity> currentLoc(CurrentLocRef ref) =>
+    getIt.call<ILocationRepo>().getLocation();
 
 @riverpod
-Future<LocationPermission> locPermission(LocPermissionRef ref) =>
-    getIt.call<ILocationRepo>().checkPermission();
+class LocPermission extends _$LocPermission {
+  @override
+  Future<LocationPermission> build() =>
+      getIt.call<ILocationRepo>().checkPermission();
+
+  Future<LocationPermission> askAgain() async {
+    final repeated = await getIt.call<ILocationRepo>().checkPermission();
+    state = AsyncData(repeated);
+    return repeated;
+  }
+
+  Future<void> openSettings() => Geolocator.openAppSettings();
+}

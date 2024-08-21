@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../config/my_theme.dart';
+import '../../infrastructure/services/packages/hooks.dart';
 import 'space.dart';
 
 class MapWithPinAndBanner extends HookConsumerWidget {
@@ -14,6 +16,8 @@ class MapWithPinAndBanner extends HookConsumerWidget {
   final Set<Marker>? markers;
   final EdgeInsets? padding;
   final bool hidePin;
+  final Color? primaryColor;
+  final IconData topIconData;
 
   const MapWithPinAndBanner({
     super.key,
@@ -23,6 +27,8 @@ class MapWithPinAndBanner extends HookConsumerWidget {
     this.onMapCreated,
     this.markers,
     this.polylines,
+    this.primaryColor,
+    this.topIconData = Icons.not_listed_location_sharp,
   });
 
   @override
@@ -46,6 +52,8 @@ class MapWithPinAndBanner extends HookConsumerWidget {
           mapCtlCompleter.complete(mapCtl);
           onMapCreated!(mapCtl);
         },
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: false,
         padding: padding ?? EdgeInsets.zero,
         markers: markers ?? {},
         polylines: polylines ?? {},
@@ -69,6 +77,8 @@ class MapWithPinAndBanner extends HookConsumerWidget {
                     child: _Pin(
                       key: const ValueKey('map moving pin'),
                       isStationary: !isMoving.value,
+                      primaryColor: primaryColor ?? MyTheme.primaryColor,
+                      iconData: topIconData,
                     ),
                   ),
                 ),
@@ -82,30 +92,38 @@ class _Pin extends HookConsumerWidget {
   const _Pin({
     super.key,
     required this.isStationary,
+    required this.primaryColor,
+    required this.iconData,
   });
 
   final bool isStationary;
+  final Color primaryColor;
+  final IconData iconData;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const blackDot = SizedBox.square(
+    final isPinExpanded = useBoolWhereTruthyDebounced(
+      isStationary,
+      kThemeAnimationDuration * 2,
+    );
+    final blackDot = SizedBox.square(
       dimension: 8,
       child: CircleAvatar(
-        backgroundColor: Colors.black,
+        backgroundColor: MyTheme.secondaryColor.shade900,
       ),
     );
     final stationaryMarker = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          Icons.not_listed_location_sharp,
-          color: Theme.of(context).primaryColor,
+          iconData,
+          color: primaryColor,
           shadows: const [Shadow()],
           size: 48,
         ),
         DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: primaryColor,
             shape: BoxShape.circle,
           ),
           child: const SizedBox.square(
@@ -115,7 +133,7 @@ class _Pin extends HookConsumerWidget {
         4.verticalSpace,
         DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: primaryColor,
             shape: BoxShape.circle,
           ),
           child: const SizedBox.square(
@@ -125,7 +143,7 @@ class _Pin extends HookConsumerWidget {
         4.verticalSpace,
         DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: primaryColor,
             shape: BoxShape.circle,
           ),
           child: const SizedBox.square(
@@ -139,7 +157,7 @@ class _Pin extends HookConsumerWidget {
       children: [
         blackDot,
         AnimatedScale(
-          scale: isStationary ? 1 : 0,
+          scale: isPinExpanded ? 1 : 0,
           alignment: Alignment.bottomCenter,
           duration: kThemeAnimationDuration,
           child: stationaryMarker,

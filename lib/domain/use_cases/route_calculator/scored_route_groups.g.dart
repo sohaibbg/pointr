@@ -1,0 +1,27 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'scored_route_groups.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$scoredRouteGroupsHash() => r'798749ce971b7d47717e78632207424bcbacf245';
+
+/// See also [ScoredRouteGroups].
+@ProviderFor(ScoredRouteGroups)
+final scoredRouteGroupsProvider = AutoDisposeAsyncNotifierProvider<
+    ScoredRouteGroups, List<Set<pointr.RouteEntity>>>.internal(
+  ScoredRouteGroups.new,
+  name: r'scoredRouteGroupsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scoredRouteGroupsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ScoredRouteGroups
+    = AutoDisposeAsyncNotifier<List<Set<pointr.RouteEntity>>>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

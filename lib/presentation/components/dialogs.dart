@@ -21,18 +21,10 @@ extension Dialogs on BuildContext {
             // at the wrong place
             (_) => loaderContext.pop(),
           );
-          return PopScope(
+          return const PopScope(
             canPop: false,
             child: Dialog(
-              child: Column(
-                children: [
-                  const LinearProgressIndicator(),
-                  ElevatedButton(
-                    onPressed: loaderContext.pop,
-                    child: const Text("POP"),
-                  ),
-                ],
-              ),
+              child: LinearProgressIndicator(),
             ),
           );
         },
@@ -81,6 +73,7 @@ extension Dialogs on BuildContext {
   Future errorDialog({
     String title = 'An error occurred',
     String content = 'Please try again later',
+    Widget? alternativeAction,
   }) =>
       showDialog(
         context: this,
@@ -92,6 +85,7 @@ extension Dialogs on BuildContext {
               onPressed: pop,
               child: const Text("Return"),
             ),
+            if (alternativeAction != null) alternativeAction,
           ],
         ),
       );

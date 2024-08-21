@@ -1,4 +1,4 @@
-part of 'route_calculator.dart';
+part of '../route_calculator.dart';
 
 class _RouteModeFilterBtn extends HookConsumerWidget {
   const _RouteModeFilterBtn();
@@ -22,8 +22,8 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
       },
       icon: const Icon(Icons.filter_alt),
       label: const Text("Filter"),
+      style: MyTheme.primaryElevatedButtonStyle,
     );
-
     return CompositedTransformTarget(
       link: ll,
       child: OverlayPortal(
@@ -66,7 +66,7 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
           final popup = ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 380),
             child: ScaleTransition(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.bottomRight,
               scale: animCtl,
               child: Material(
                 borderRadius: BorderRadius.circular(12),
@@ -87,19 +87,18 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
                             .contains(
                               mode,
                             );
-                        void onSelected(bool isChecked) => ref
-                            .read(
-                              selectedRouteModesProvider.notifier,
-                            )
-                            .update(
-                              (state) => state.toggle(mode),
-                            );
                         return FilterChip(
                           selected: isSelected,
                           label: Text(mode.name),
                           avatar: const SizedBox.shrink(),
                           checkmarkColor: Theme.of(context).cardColor,
-                          onSelected: onSelected,
+                          onSelected: (isChecked) => ref
+                              .read(
+                                selectedRouteModesProvider.notifier,
+                              )
+                              .toggle(
+                                mode,
+                              ),
                         );
                       },
                     ).toList(),
@@ -110,8 +109,8 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
           );
           final positionedPopup = CompositedTransformFollower(
             link: ll,
-            targetAnchor: Alignment.bottomCenter,
-            followerAnchor: Alignment.topCenter,
+            targetAnchor: Alignment.topRight,
+            followerAnchor: Alignment.bottomRight,
             child: popup,
           );
           return Stack(

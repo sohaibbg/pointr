@@ -1,0 +1,7 @@
+{
+  "files.exclude": {
+    "**/*.config.dart": true,
+    "**/*.g.dart": true,
+    "**/*.mapper.dart": true
+  }
+}

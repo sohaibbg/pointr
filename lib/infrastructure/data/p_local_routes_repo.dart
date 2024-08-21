@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../domain/entities/coordinates_entity.dart';
 import '../../domain/entities/route_entity.dart';
 import '../../domain/repositories/i_local_routes_repo.dart';
+import '../services/packages/database.dart';
+import '../services/tables/custom_routes.dart';
 
 @prod
 @Injectable(as: ILocalRoutesRepo)
@@ -18,32 +18,49 @@ class PLocalRoutesRepo implements ILocalRoutesRepo {
     final fileObject = jsonDecode(fileText) as List;
     final routes = fileObject
         .map<RouteEntity>(
-          (e) => _fromMap(e),
+          (e) => RouteEntityMapper.fromMap(e),
         )
         .toList();
     return routes;
   }
 
-  static RouteEntity _fromMap(Map map) {
-    final name = map['name'] as String;
-    final mode = RouteMode.values.firstWhere(
-      (element) => element.name == map['mode'],
-    );
-    final points = map['points'] as List;
-    final parsedPoints = points
-        .map(
-          (e) => CoordinatesEntity.fromJson(List<double>.from(e)),
+  @override
+  Future<List<RouteEntity>> getCustom() async {
+    final records = await AppDatabase.instance
+        .select(
+          AppDatabase.instance.customRoutes,
         )
-        .toIList();
-    return RouteEntity(name: name, mode: mode, points: parsedPoints);
+        .get();
+    return records
+        .map(
+          (e) => RouteEntity(
+            name: e.name,
+            mode: e.routeMode,
+            points: e.points,
+          ),
+        )
+        .toList();
   }
 
   @override
-  Future<List<RouteEntity>> getCustom() => throw UnimplementedError();
+  Future<void> addRoute(
+    RouteEntity route,
+  ) =>
+      AppDatabase.instance
+          .into(
+            AppDatabase.instance.customRoutes,
+          )
+          .insert(
+            route.toCustomRouteCompanion,
+          );
 
   @override
-  Future<void> addRoute(RouteEntity route) => throw UnimplementedError();
-
-  @override
-  Future<void> deleteRoute(String routeName) => throw UnimplementedError();
+  Future<void> deleteRoute(String routeName) async {
+    final stmt = AppDatabase.instance.delete(
+      AppDatabase.instance.customRoutes,
+    )..where(
+        (tbl) => tbl.name.equals(routeName),
+      );
+    await stmt.go();
+  }
 }

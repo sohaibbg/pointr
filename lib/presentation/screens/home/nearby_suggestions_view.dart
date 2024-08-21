@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../config/my_theme.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/named_address_entity.dart';
+import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/location_use_case.dart';
 import '../../../domain/use_cases/nearby_places_use_case.dart';
 import '../../components/space.dart';
@@ -13,98 +16,13 @@ import '../../components/space.dart';
 class NearbySuggestionsView extends ConsumerWidget {
   const NearbySuggestionsView({super.key});
 
-  // read this class bottom-up
-  Widget suggestionsView(List<NamedAddressEntity> places) =>
-      SliverFixedExtentList.builder(
-        itemCount: places.length,
-        itemExtent: 80,
-        itemBuilder: (context, index) {
-          final place = places[index];
-          final btnBody = Row(
-            children: [
-              const Icon(Icons.location_on),
-              24.horizontalSpace,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        place.name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    Text(
-                      place.address,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-          return Column(
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () => context.go(
-                    '/route-calculator',
-                    extra: {
-                      'initialPlace': AddressEntity(
-                        address: place.name,
-                        coordinates: place.coordinates,
-                      ),
-                    },
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 36, right: 48),
-                    child: btnBody,
-                  ),
-                ),
-              ),
-              if (index != places.length - 1) const Divider(height: 0),
-            ],
-          );
-        },
-      );
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final locPermission = ref
-        .watch(
-          locPermissionProvider,
-        )
-        .asData
-        ?.value;
-    if (!{
-      LocationPermission.always,
-      LocationPermission.whileInUse,
-    }.contains(locPermission)) {
-      return const _LocPermissionHandlerViewForNearbySuggestions();
-    }
-    final currentLocation = ref
-        .watch(
-          currentLocProvider,
-        )
-        .asData
-        ?.value;
-    if (currentLocation == null) {
-      return const _CurrentLocHandlerViewForNearbySuggestions();
-    }
-    final searchSuggestions = ref
-        .watch(
-          NearbyPlacesFromCoordinatesProvider(currentLocation),
-        )
-        .asData
-        ?.value;
-    if (searchSuggestions == null) {
-      return _ResultsHandlerViewForNearbySuggestions(currentLocation);
-    }
-    return suggestionsView(searchSuggestions);
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      const _LocPermissionHandledView();
 }
 
-class _LocPermissionHandlerViewForNearbySuggestions extends ConsumerWidget {
-  const _LocPermissionHandlerViewForNearbySuggestions();
+class _LocPermissionHandledView extends ConsumerWidget {
+  const _LocPermissionHandledView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ref
@@ -195,7 +113,8 @@ class _LocPermissionHandlerViewForNearbySuggestions extends ConsumerWidget {
                 child: Column(
                   children: [
                     const Text(
-                      "If you grant location permissions, suggestions of nearby places will be displayed here.",
+                      "With your permission, we can list nearby places here.",
+                      textAlign: TextAlign.center,
                     ),
                     24.verticalSpace,
                     SizedBox(
@@ -215,13 +134,13 @@ class _LocPermissionHandlerViewForNearbySuggestions extends ConsumerWidget {
             ),
           LocationPermission.whileInUse ||
           LocationPermission.always =>
-            const Placeholder(),
+            const _CurrentLocHandledView(),
         },
       );
 }
 
-class _CurrentLocHandlerViewForNearbySuggestions extends ConsumerWidget {
-  const _CurrentLocHandlerViewForNearbySuggestions();
+class _CurrentLocHandledView extends ConsumerWidget {
+  const _CurrentLocHandledView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ref
@@ -284,15 +203,15 @@ class _CurrentLocHandlerViewForNearbySuggestions extends ConsumerWidget {
               alignment: Alignment.center,
               children: [
                 LinearProgressIndicator(
-                  color: Colors.blue,
+                  color: Colors.green,
                 ),
                 ColoredBox(
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.all(12),
                     child: Icon(
-                      Icons.near_me,
-                      color: Colors.blue,
+                      Icons.my_location,
+                      color: Colors.green,
                     ),
                   ),
                 ),
@@ -300,14 +219,17 @@ class _CurrentLocHandlerViewForNearbySuggestions extends ConsumerWidget {
             ),
           ),
         ),
-        data: (_) => const Placeholder(),
+        data: (currentLocation) => _PlacesSearchHandledView(
+          currentLocation,
+        ),
       );
 }
 
-class _ResultsHandlerViewForNearbySuggestions extends ConsumerWidget {
-  const _ResultsHandlerViewForNearbySuggestions(this.coordinates);
+class _PlacesSearchHandledView extends ConsumerWidget {
+  const _PlacesSearchHandledView(this.coordinates);
 
   final CoordinatesEntity coordinates;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) => ref
       .watch(
@@ -360,32 +282,116 @@ class _ResultsHandlerViewForNearbySuggestions extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 24,
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                LinearProgressIndicator(
-                  color: Colors.blue,
-                ),
-                ColoredBox(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Icon(
-                      Icons.near_me,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ],
+        loading: () => Skeletonizer.sliver(
+          child: _SuggestionsView(
+            List.filled(
+              7,
+              NamedAddressEntity(
+                coordinates: karachiLatLng,
+                address: BoneMock.address,
+                name: BoneMock.name,
+              ),
             ),
           ),
         ),
-        data: (_) => const Placeholder(),
+        data: (searchSuggestions) => _SuggestionsView(searchSuggestions),
+      );
+}
+
+class _SuggestionsView extends StatelessWidget {
+  const _SuggestionsView(this.places);
+
+  final List<NamedAddressEntity> places;
+
+  @override
+  Widget build(BuildContext context) => SliverFixedExtentList.builder(
+        itemCount: places.length,
+        itemExtent: 80,
+        itemBuilder: (context, index) {
+          final place = places[index];
+          final widgetStatesController = WidgetStatesController();
+          return ValueListenableBuilder(
+            valueListenable: widgetStatesController,
+            builder: (context, value, child) {
+              final name = Text(
+                place.name,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(
+                      color: value.contains(
+                        WidgetState.pressed,
+                      )
+                          ? Colors.white
+                          : MyTheme.primaryColor.shade800,
+                    ),
+              );
+              final detail = Text(
+                place.address.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: value.contains(
+                    WidgetState.pressed,
+                  )
+                      ? Colors.white
+                      : Colors.grey,
+                  fontSize: 11,
+                ),
+              );
+              final body = Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    color: value.contains(
+                      WidgetState.pressed,
+                    )
+                        ? Colors.white
+                        : MyTheme.primaryColor,
+                  ),
+                  24.horizontalSpace,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: name,
+                        ),
+                        detail,
+                      ],
+                    ),
+                  ),
+                ],
+              );
+              return Column(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      statesController: widgetStatesController,
+                      overlayColor: widgetStatePropertyHelper(
+                        defaultState: Colors.transparent,
+                        hoveredState: MyTheme.primaryColor.shade50,
+                        pressedState: MyTheme.primaryColor.shade100,
+                      ),
+                      onTap: () => context.go(
+                        '/route-calculator',
+                        extra: {
+                          'initialPlace': AddressEntity(
+                            address: place.name,
+                            coordinates: place.coordinates,
+                          ),
+                        },
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 36, right: 48),
+                        child: body,
+                      ),
+                    ),
+                  ),
+                  if (index != places.length - 1) const Divider(height: 0),
+                ],
+              );
+            },
+          );
+        },
       );
 }

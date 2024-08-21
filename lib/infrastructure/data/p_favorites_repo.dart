@@ -21,14 +21,15 @@ extension CompanionConverter on FavoriteEntity {
       );
 }
 
+@dev
 @prod
 @Injectable(as: IFavoritesRepo)
 class PFavoritesRepo implements IFavoritesRepo {
   /// emits when table updates
   @override
-  Future<List<FavoriteEntity>> getAll() => database
+  Future<List<FavoriteEntity>> getAll() => AppDatabase.instance
       .select(
-        database.favorites,
+        AppDatabase.instance.favorites,
       )
       .get()
       .then(
@@ -43,9 +44,9 @@ class PFavoritesRepo implements IFavoritesRepo {
   Future<void> insert(
     FavoriteEntity newFav,
   ) =>
-      database
+      AppDatabase.instance
           .into(
-            database.favorites,
+            AppDatabase.instance.favorites,
           )
           .insert(
             newFav.toFavoritesCompanion,
@@ -53,8 +54,8 @@ class PFavoritesRepo implements IFavoritesRepo {
 
   @override
   Future<void> delete(String name) async {
-    final delStmnt = database.delete(
-      database.favorites,
+    final delStmnt = AppDatabase.instance.delete(
+      AppDatabase.instance.favorites,
     )..where(
         (tbl) => tbl.name.isValue(name),
       );
@@ -66,8 +67,8 @@ class PFavoritesRepo implements IFavoritesRepo {
     String prevName, {
     required CoordinatesEntity coordinates,
   }) async {
-    final delStmnt = database.update(
-      database.favorites,
+    final delStmnt = AppDatabase.instance.update(
+      AppDatabase.instance.favorites,
     )..where(
         (tbl) => tbl.name.isValue(prevName),
       );
@@ -81,7 +82,8 @@ class PFavoritesRepo implements IFavoritesRepo {
 
   @override
   Future<bool> doesTitleAlreadyExist(String name) async {
-    final favs = await database.select(database.favorites).get();
+    final favs =
+        await AppDatabase.instance.select(AppDatabase.instance.favorites).get();
     return favs.any(
       (fav) => fav.name == name,
     );

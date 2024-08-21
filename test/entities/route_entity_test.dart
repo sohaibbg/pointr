@@ -1,4 +1,3 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:pointr/domain/entities/coordinates_entity.dart';
 import 'package:pointr/domain/entities/route_entity.dart';
 import 'package:test/test.dart';
@@ -8,14 +7,14 @@ void main() {
     'total distance is accurately calculated',
     () {
       // init
-      final route = RouteEntity(
+      const route = RouteEntity(
         name: 'test',
         mode: RouteMode.acBus,
         points: [
-          const CoordinatesEntity(0, 0),
-          const CoordinatesEntity(3, 4),
-          const CoordinatesEntity(3, 10),
-        ].toIList(),
+          CoordinatesEntity(0, 0),
+          CoordinatesEntity(3, 4),
+          CoordinatesEntity(3, 10),
+        ],
       );
       // execute
       final distance = route.totalDistance;
@@ -27,16 +26,16 @@ void main() {
     'distance score compares effectively',
     () {
       // init
-      final route = RouteEntity(
+      const route = RouteEntity(
         name: 'test',
         mode: RouteMode.acBus,
         points: [
-          const CoordinatesEntity(-15, -15),
-          const CoordinatesEntity(-5, -5),
-          const CoordinatesEntity(-5, 5),
-          const CoordinatesEntity(10, 5),
-          const CoordinatesEntity(20, 15),
-        ].toIList(),
+          CoordinatesEntity(-15, -15),
+          CoordinatesEntity(-5, -5),
+          CoordinatesEntity(-5, 5),
+          CoordinatesEntity(10, 5),
+          CoordinatesEntity(20, 15),
+        ],
       );
       const depNearest = CoordinatesEntity(-10, -5);
       const destNearest = CoordinatesEntity(20, 5);

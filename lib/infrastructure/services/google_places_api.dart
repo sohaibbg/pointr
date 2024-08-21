@@ -39,6 +39,8 @@ abstract class GooglePlacesApi {
     required CoordinatesEntity coordinates,
     required String sessionToken,
   }) async {
+    // api policy
+    assert(radius <= 50000);
     final body = {
       "input": input,
       'sessionToken': sessionToken,

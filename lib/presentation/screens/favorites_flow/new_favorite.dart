@@ -6,16 +6,17 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../config/injector.dart';
+import '../../../config/my_theme.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/favorite_entity.dart';
-import '../../../domain/repositories/i_favorites_repo.dart';
 import '../../../domain/repositories/i_location_repo.dart';
-import '../../../infrastructure/services/packages/focus_node.dart';
+import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/dialogs.dart';
-import '../../components/loc_search_bar.dart';
+import '../../components/gmap_buttons.dart';
+import '../../components/header_footer.dart';
+import '../../components/loc_search_bar_with_overlay.dart';
 import '../../components/map_with_pin_and_banner.dart';
 import '../../components/space.dart';
 
@@ -24,14 +25,13 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
     super.context,
     super.ref, {
     required this.mapCtlCompleter,
-    required this.searchBarFocusNode,
   });
 
   final Completer<GoogleMapController> mapCtlCompleter;
-  final FocusNode searchBarFocusNode;
 
   void onPopInvoked(bool didPop) {
-    if (searchBarFocusNode.hasFocus) return searchBarFocusNode.unfocus();
+    if (LocSearchBarWithOverlay.searchFocusNode.hasFocus)
+      return LocSearchBarWithOverlay.searchFocusNode.unfocus();
     context.pop();
   }
 
@@ -74,20 +74,15 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
     final mapCtl = await mapCtlCompleter.future;
     final latLng = await mapCtl.centerLatLng;
     final name = await _fetchName();
-    if (name is! String) return;
-    final lp = FavoriteEntity(
-      name: name,
-      coordinates: latLng,
-    );
-    final doesTitleConflict =
-        await getIt.call<IFavoritesRepo>().doesTitleAlreadyExist(name);
+    if (name == null) return;
+    final doesTitleConflict = await ref
+        .read(favoritesUseCaseProvider.notifier)
+        .doesTitleAlreadyExist(name);
     if (doesTitleConflict) {
       return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text(
-            'Conflict',
-          ),
+          title: const Text('Conflict'),
           content: Text(
             '"$name" already exists. Do you want to update it?',
           ),
@@ -100,10 +95,9 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 await context.loaderWithErrorDialog(
-                  () => getIt.call<IFavoritesRepo>().update(
-                        name,
-                        coordinates: latLng,
-                      ),
+                  () => ref
+                      .read(favoritesUseCaseProvider.notifier)
+                      .updateExisting(name, coordinates: latLng),
                 );
                 context.go('/');
               },
@@ -113,8 +107,16 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
         ),
       );
     }
+    final lp = FavoriteEntity(
+      name: name,
+      coordinates: latLng,
+    );
     await context.loaderWithErrorDialog(
-      () => getIt.call<IFavoritesRepo>().insert(lp),
+      () => ref
+          .read(
+            favoritesUseCaseProvider.notifier,
+          )
+          .insert(lp),
     );
     context.go('/');
   }
@@ -142,112 +144,94 @@ class NewFavorite extends HookConsumerWidget {
       () => Completer<GoogleMapController>(),
       [context],
     );
-    final searchBarFocusNode = useFocusNode();
     final vm = _NewFavoriteViewModel(
       context,
       ref,
       mapCtlCompleter: mapCtlCompleter,
-      searchBarFocusNode: searchBarFocusNode,
     );
-    final selectLocBtn = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: ElevatedButton.icon(
-        onPressed: vm.confirmLocation,
-        style: const ButtonStyle(
-          padding: MaterialStatePropertyAll(
-            EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-          ),
-          textStyle: MaterialStatePropertyAll(
-            TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          ),
-          iconSize: MaterialStatePropertyAll(48),
+    final selectLocBtn = ElevatedButton.icon(
+      onPressed: vm.confirmLocation,
+      style: MyTheme.primaryElevatedButtonStyle,
+      label: const Text("Select favorite"),
+      icon: const Icon(Icons.chevron_right_sharp),
+    );
+    final map = MapWithPinAndBanner(
+      primaryColor: Colors.pink,
+      topIconData: Icons.favorite,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          karachiLatLng.latitude,
+          karachiLatLng.longitude,
         ),
-        label: const Text("Confirm location"),
-        icon: const Icon(Icons.done),
+        zoom: 15,
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 148,
+        horizontal: 36,
+      ),
+      onMapCreated: mapCtlCompleter.complete,
+    );
+    final backBtn = ElevatedButton(
+      onPressed: context.pop,
+      style: MyTheme.secondaryButtonStyle,
+      child: const Icon(
+        Icons.arrow_back_ios_new_outlined,
       ),
     );
-    final returnBtn = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: TextButton.icon(
-        onPressed: () => context.go('/'),
-        style: const ButtonStyle(
-          padding: MaterialStatePropertyAll(
-            EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-          ),
-          textStyle: MaterialStatePropertyAll(
-            TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          ),
-          iconSize: MaterialStatePropertyAll(48),
-        ),
-        label: const Text("Cancel and Return"),
-        icon: const Icon(Icons.arrow_back),
+    final bottomPanelBody = Padding(
+      padding: const EdgeInsets.only(
+        left: 24,
+        right: 24,
+        bottom: 24,
+      ),
+      child: Row(
+        children: [
+          backBtn,
+          12.horizontalSpace,
+          Expanded(child: selectLocBtn),
+        ],
       ),
     );
-    final mapWithSearchBar = Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        MapWithPinAndBanner(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(
-              karachiLatLng.latitude,
-              karachiLatLng.longitude,
-            ),
-            zoom: 15,
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 148,
-            horizontal: 36,
-          ),
-          onMapCreated: mapCtlCompleter.complete,
-        ),
-        LocSearchBar(
-          focusNode: searchBarFocusNode,
-          onPlaceSelected: vm.onPlaceSelected,
-          prefixIconWhenNotFocused: const Icon(Icons.favorite),
-        ),
-      ],
-    );
-    final bottomPanel = Column(
-      children: [
-        Align(
-          alignment: Alignment.topRight,
-          child: selectLocBtn,
-        ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: returnBtn,
-        ),
-      ],
-    );
-    final bottomPanelWithShrinkAnimationOnSearchBarFocus = AnimatedSize(
+    final animatingBottomPanel = AnimatedSize(
       duration: kThemeAnimationDuration,
-      alignment: Alignment.topCenter,
-      child: useIsFocused(
-        searchBarFocusNode,
-      )
-          ? double.infinity.horizontalSpace
-          : bottomPanel,
+      child: AnimatedBuilder(
+        animation: LocSearchBarWithOverlay.searchFocusNode,
+        builder: (context, child) =>
+            LocSearchBarWithOverlay.searchFocusNode.hasFocus
+                ? double.infinity.horizontalSpace
+                : bottomPanelBody,
+      ),
     );
-    return PopScope(
-      onPopInvoked: vm.onPopInvoked,
-      canPop: false,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
+    final footer = HeaderFooter(
+      child: Column(
+        children: [
+          LocSearchBarWithOverlay(
+            onPlaceSelected: vm.onPlaceSelected,
+          ),
+          animatingBottomPanel,
+        ],
+      ),
+    );
+    return Scaffold(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          map,
+          Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: mapWithSearchBar,
+              Padding(
+                padding: const EdgeInsetsDirectional.only(end: 12),
+                child: Align(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  child: GmapButtons(mapCtlCompleter),
+                ),
               ),
-              bottomPanelWithShrinkAnimationOnSearchBarFocus,
+              24.verticalSpace,
+              footer,
             ],
           ),
-        ),
+        ],
       ),
     );
   }

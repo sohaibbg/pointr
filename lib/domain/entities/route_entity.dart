@@ -1,13 +1,27 @@
 import 'dart:math';
 
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:dart_mappable/dart_mappable.dart';
 
 import 'coordinates_entity.dart';
 
-enum RouteMode { bus, acBus, pinkBus, chinchi, greenLine }
+part 'route_entity.mapper.dart';
 
-class RouteEntity {
-  final IList<CoordinatesEntity> points;
+@MappableEnum()
+enum RouteMode {
+  bus("Bus"),
+  acBus("AC Bus"),
+  pinkBus("Pink Bus"),
+  chinchi("Chinchi"),
+  greenLine("Green Line");
+
+  final String name;
+
+  const RouteMode(this.name);
+}
+
+@MappableClass()
+class RouteEntity with RouteEntityMappable {
+  final List<CoordinatesEntity> points;
   final String name;
   final RouteMode mode;
 

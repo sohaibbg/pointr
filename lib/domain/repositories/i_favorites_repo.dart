@@ -8,7 +8,7 @@ import '../entities/favorite_entity.dart';
 @test
 @injectable
 class IFavoritesRepo {
-  final List<FavoriteEntity> _state = [];
+  static final List<FavoriteEntity> _state = [];
 
   Future<List<FavoriteEntity>> getAll() async => _state;
 

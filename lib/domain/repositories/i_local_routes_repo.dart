@@ -1,4 +1,3 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:injectable/injectable.dart';
 
 import '../entities/route_entity.dart';
@@ -9,23 +8,23 @@ import 'i_location_repo.dart';
 class ILocalRoutesRepo {
   Future<List<RouteEntity>> getHardcoded() => Future(
         () => [
-          RouteEntity(
+          const RouteEntity(
             name: 'name',
             mode: RouteMode.acBus,
             points: [
               karachiLatLng,
-            ].toIList(),
+            ],
           ),
         ],
       );
 
   final _customState = [
-    RouteEntity(
+    const RouteEntity(
       name: 'name',
       mode: RouteMode.bus,
       points: [
         karachiLatLng,
-      ].toIList(),
+      ],
     ),
   ];
 

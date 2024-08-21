@@ -8,7 +8,7 @@ final getIt = GetIt.instance;
 @InjectableInit(
   generateForDir: [
     'lib/domain/repositories',
-    'lib/data/interface_adapters',
+    'lib/infrastructure/data',
   ],
 )
 void configureDependencies() => getIt.init(

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
 import '../entities/autocomplete_suggestion_entity.dart';
@@ -6,19 +7,23 @@ import '../entities/named_address_entity.dart';
 import 'i_location_repo.dart';
 
 @test
+// TODO
+@dev
 @injectable
 class IPlacesRepo {
   Future<String> getNameFrom(
     CoordinatesEntity coordinatesEntity,
   ) =>
-      Future(
+      Future.delayed(
+        kThemeAnimationDuration,
         () => 'the name the name the name the name the name the name the name ',
       );
 
   Future<List<NamedAddressEntity>> getNearbyPlaces(
     CoordinatesEntity coordinatesEntity,
   ) =>
-      Future(
+      Future.delayed(
+        kThemeAnimationDuration,
         () => [
           const NamedAddressEntity(
             coordinates: karachiLatLng,
@@ -87,6 +92,11 @@ class IPlacesRepo {
         ],
       );
 
-  Future<CoordinatesEntity> getCoordinatesFor(String placeId) =>
-      Future(() => karachiLatLng);
+  Future<CoordinatesEntity> getCoordinatesFor(
+    String placeId,
+  ) =>
+      Future.delayed(
+        kThemeAnimationDuration,
+        () => karachiLatLng,
+      );
 }

@@ -1,11 +1,8 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../config/injector.dart';
 import '../../../domain/entities/favorite_entity.dart';
-import '../../../domain/repositories/i_favorites_repo.dart';
 import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../components/dialogs.dart';
 
@@ -14,7 +11,7 @@ class ListFavorites extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget favDataView(IList<FavoriteEntity> data) => ListView.separated(
+    Widget favDataView(List<FavoriteEntity> data) => ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 12),
           itemCount: data.length,
           itemBuilder: (context, index) {
@@ -53,7 +50,11 @@ class ListFavorites extends ConsumerWidget {
                   if (didConsent is! bool) return;
                   if (!didConsent) return;
                   context.loaderWithErrorDialog(
-                    () => getIt.call<IFavoritesRepo>().delete(
+                    () => ref
+                        .read(
+                          favoritesUseCaseProvider.notifier,
+                        )
+                        .delete(
                           fav.name,
                         ),
                   );

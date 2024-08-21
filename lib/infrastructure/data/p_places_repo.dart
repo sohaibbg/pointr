@@ -35,7 +35,7 @@ class PPlacesRepo implements IPlacesRepo {
     );
     return GooglePlacesApi.autocomplete(
       searchTerm,
-      radius: 200000,
+      radius: 50000,
       coordinates: _originCoordinates,
       sessionToken: _sessionToken!,
     ).then(

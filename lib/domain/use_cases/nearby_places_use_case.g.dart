@@ -7,7 +7,7 @@ part of 'nearby_places_use_case.dart';
 // **************************************************************************
 
 String _$nearbyPlacesFromCoordinatesHash() =>
-    r'599b4c07a168201e103473897c2f3b38a094282f';
+    r'90f41843a6468fcd2a6ba11043ac07f2dd33022f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -165,7 +165,7 @@ class _NearbyPlacesFromCoordinatesProviderElement
 }
 
 String _$nearbyPlacesBySearchTermHash() =>
-    r'17f9bfffd463270c667bd3eeab8632fe61fe8e47';
+    r'7f08e84e52046f6c0a5d585b12b074ab263fde77';
 
 /// See also [nearbyPlacesBySearchTerm].
 @ProviderFor(nearbyPlacesBySearchTerm)

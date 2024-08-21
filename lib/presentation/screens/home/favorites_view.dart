@@ -1,8 +1,8 @@
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../config/my_theme.dart';
 import '../../../domain/entities/favorite_entity.dart';
 import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../components/space.dart';
@@ -95,7 +95,7 @@ class FavoritesView extends ConsumerWidget {
 class _FavoritesDataView extends ConsumerWidget {
   const _FavoritesDataView(this.favs);
 
-  final IList<FavoriteEntity> favs;
+  final List<FavoriteEntity> favs;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -106,6 +106,13 @@ class _FavoritesDataView extends ConsumerWidget {
           '/route-calculator',
           extra: {'initialPlace': fav},
         ),
+        style: MyTheme.primaryOutlinedButtonStyle.copyWith(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
         icon: const Icon(Icons.star),
         label: Text(
           fav.name,
@@ -115,17 +122,19 @@ class _FavoritesDataView extends ConsumerWidget {
     );
     buttons.addAll(favBtns);
     if (favs.isNotEmpty) {
-      final editFavsBtn = ElevatedButton.icon(
+      final editFavsBtn = OutlinedButton.icon(
         onPressed: () => context.go('/favorites'),
         icon: const Icon(Icons.edit),
         label: const Text(
           "Edit favorites",
         ),
+        style: MyTheme.secondaryOutlinedButtonStyle,
       );
       buttons.add(editFavsBtn);
     }
     final addNewFavBtn = favs.isEmpty
         ? ElevatedButton.icon(
+            style: MyTheme.secondaryOutlinedButtonStyle,
             onPressed: () => context.go('/new-favorite'),
             icon: const Icon(Icons.favorite),
             label: const Text(
@@ -134,6 +143,7 @@ class _FavoritesDataView extends ConsumerWidget {
           )
         : IconButton.filledTonal(
             onPressed: () => context.go('/new-favorite'),
+            style: MyTheme.secondaryOutlinedButtonStyle,
             icon: Icon(favs.isEmpty ? Icons.favorite : Icons.add),
           );
     buttons.add(addNewFavBtn);

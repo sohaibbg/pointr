@@ -1,15 +1,15 @@
 import 'dart:math';
 
-class CoordinatesEntity {
+import 'package:dart_mappable/dart_mappable.dart';
+
+part 'coordinates_entity.mapper.dart';
+
+@MappableClass(hook: _E())
+class CoordinatesEntity with CoordinatesEntityMappable {
   final double latitude;
   final double longitude;
 
   const CoordinatesEntity(this.latitude, this.longitude);
-
-  List<double> toJson() => [latitude, longitude];
-
-  factory CoordinatesEntity.fromJson(List<double> list) =>
-      CoordinatesEntity(list.first, list.last);
 
   double euclideanDistanceFrom(CoordinatesEntity latLng) {
     final dy = latitude - latLng.latitude;
@@ -39,15 +39,20 @@ class CoordinatesEntity {
       linePointA.longitude + param * d,
     );
   }
+}
+
+class _E extends MappingHook {
+  const _E();
 
   @override
-  bool operator ==(
-    covariant CoordinatesEntity other,
-  ) =>
-      identical(this, other)
-          ? true
-          : other.latitude == latitude && other.longitude == longitude;
+  Object? afterEncode(Object? value) => [
+        (value as Map)['latitude'],
+        value['longitude'],
+      ];
 
   @override
-  int get hashCode => latitude.hashCode ^ longitude.hashCode;
+  Object? beforeDecode(Object? value) => {
+        'latitude': (value as Iterable).first,
+        'longitude': value.last,
+      };
 }

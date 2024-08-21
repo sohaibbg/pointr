@@ -1,19 +1,16 @@
+import 'package:dart_mappable/dart_mappable.dart';
+
+import 'address_entity.dart';
 import 'coordinates_entity.dart';
 
-class FavoriteEntity {
-  final CoordinatesEntity coordinates;
+part 'favorite_entity.mapper.dart';
+
+@MappableClass()
+class FavoriteEntity extends AddressEntity with FavoriteEntityMappable {
   final String name;
 
   const FavoriteEntity({
-    required this.coordinates,
+    required super.coordinates,
     required this.name,
-  });
-
-  @override
-  bool operator ==(covariant FavoriteEntity other) => identical(this, other)
-      ? true
-      : other.coordinates == coordinates && other.name == name;
-
-  @override
-  int get hashCode => coordinates.hashCode ^ name.hashCode;
+  }) : super(address: name);
 }

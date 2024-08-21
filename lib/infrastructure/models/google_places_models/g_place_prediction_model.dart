@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../../../domain/entities/autocomplete_suggestion_entity.dart';
 
 class GPlacePredictionModel {
@@ -30,7 +28,7 @@ class GPlacePredictionModel {
     final address = (text['text'] as String).replaceFirst('$name, ', '');
     return AutocompleteSuggestionEntity(
       id: placeId,
-      name: AutofillHints.telephoneNumberLocalPrefix,
+      name: name,
       address: address,
     );
   }

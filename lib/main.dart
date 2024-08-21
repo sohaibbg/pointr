@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'config/injector.dart';
+import 'config/logger.dart';
 import 'config/my_theme.dart';
 import 'config/routes.dart';
 
@@ -9,8 +10,11 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      observers: [
+        LoggerObserver(),
+      ],
+      child: const MyApp(),
     ),
   );
 }

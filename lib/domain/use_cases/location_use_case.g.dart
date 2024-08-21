@@ -6,7 +6,7 @@ part of 'location_use_case.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentLocHash() => r'98d4d299bfcf9e8581a43f95c222c91365858dbc';
+String _$currentLocHash() => r'61ac31a37816a413ddfc294109f0541a643b8bfd';
 
 /// See also [currentLoc].
 @ProviderFor(currentLoc)
@@ -21,13 +21,13 @@ final currentLocProvider =
 );
 
 typedef CurrentLocRef = AutoDisposeFutureProviderRef<CoordinatesEntity>;
-String _$locPermissionHash() => r'289a05ae325e69dc58776c9c91dc2e94810be4df';
+String _$locPermissionHash() => r'2f2e1274d04562b4bc912229b79f0c558f44897f';
 
-/// See also [locPermission].
-@ProviderFor(locPermission)
-final locPermissionProvider =
-    AutoDisposeFutureProvider<LocationPermission>.internal(
-  locPermission,
+/// See also [LocPermission].
+@ProviderFor(LocPermission)
+final locPermissionProvider = AutoDisposeAsyncNotifierProvider<LocPermission,
+    LocationPermission>.internal(
+  LocPermission.new,
   name: r'locPermissionProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
@@ -36,6 +36,6 @@ final locPermissionProvider =
   allTransitiveDependencies: null,
 );
 
-typedef LocPermissionRef = AutoDisposeFutureProviderRef<LocationPermission>;
+typedef _$LocPermission = AutoDisposeAsyncNotifier<LocationPermission>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
