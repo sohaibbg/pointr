@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'space.dart';
-
 enum Position { top, bottom }
 
 class HeaderFooter extends StatelessWidget {
@@ -32,44 +30,34 @@ class HeaderFooter extends StatelessWidget {
       begin: const Alignment(0, 0),
       end: Alignment.topCenter,
     );
-    final viewInsets = MediaQuery.of(context).viewInsets;
+    final imgBg = DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: gradient,
+      ),
+      child: FractionallySizedBox(
+        heightFactor: 0.78,
+        alignment: Alignment.bottomCenter,
+        child: ShaderMask(
+          shaderCallback: (bounds) => gradient.createShader(bounds),
+          child: RotatedBox(
+            quarterTurns: 2,
+            child: image,
+          ),
+        ),
+      ),
+    );
     final bodyContent = Stack(
       children: [
         Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: gradient,
-            ),
-            child: FractionallySizedBox(
-              heightFactor: 0.78,
-              alignment: Alignment.bottomCenter,
-              child: RotatedBox(
-                quarterTurns: 0,
-                child: ShaderMask(
-                  shaderCallback: (bounds) => gradient.createShader(bounds),
-                  child: image,
-                ),
-              ),
-            ),
-          ),
+          child: imgBg,
         ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            child,
-            24.verticalSpace,
-            switch (position) {
-              Position.top => viewInsets.top.verticalSpace,
-              Position.bottom => viewInsets.bottom.verticalSpace,
-            },
-          ],
+        SafeArea(
+          top: position == Position.top,
+          bottom: position == Position.bottom,
+          child: child,
         ),
       ],
     );
-    return SafeArea(
-      top: position != Position.top,
-      bottom: position != Position.bottom,
-      child: bodyContent,
-    );
+    return bodyContent;
   }
 }

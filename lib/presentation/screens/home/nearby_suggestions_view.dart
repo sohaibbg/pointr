@@ -10,7 +10,7 @@ import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/named_address_entity.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/location_use_case.dart';
-import '../../../domain/use_cases/nearby_places_use_case.dart';
+import '../../../domain/use_cases/places_use_case.dart';
 import '../../components/space.dart';
 
 class NearbySuggestionsView extends ConsumerWidget {

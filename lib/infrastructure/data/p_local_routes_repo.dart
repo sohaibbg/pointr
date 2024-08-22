@@ -8,6 +8,7 @@ import '../../domain/repositories/i_local_routes_repo.dart';
 import '../services/packages/database.dart';
 import '../services/tables/custom_routes.dart';
 
+@dev
 @prod
 @Injectable(as: ILocalRoutesRepo)
 class PLocalRoutesRepo implements ILocalRoutesRepo {

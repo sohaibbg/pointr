@@ -41,6 +41,8 @@ class RouteCalculatorViewModel extends ViewModel<RouteCalculator> {
           .where((e) => e)
           .length;
 
+  bool get areBothStopsSet => numberOfStopsConfirmed == 2;
+
   Future<void> onPlaceSelected(AddressEntity place) async {
     final mapCtl = await gmapCtlCompleter.future;
     mapCtl.animateCamera(

@@ -17,9 +17,6 @@ class _StopSelectorPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchBar = LocSearchBarWithOverlay(
-      onPlaceSelected: vm.onPlaceSelected,
-    );
     final confirmLocBtn = ElevatedButton.icon(
       icon: const Icon(Icons.navigate_next_sharp),
       label: Text(vm.selectLocBtnLabel),
@@ -56,32 +53,22 @@ class _StopSelectorPanel extends ConsumerWidget {
             Expanded(child: confirmLocBtn),
           ],
         ),
-        AnimatedSize(
-          duration: kThemeAnimationDuration,
-          child: (vm.numberOfStopsConfirmed != 0 ? 12 : 0).verticalSpace,
-        ),
         const _ConfirmedStopChips(),
       ],
     );
     final panel = Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
       child: panelContent,
     );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        searchBar,
-        ListenableBuilder(
-          listenable: LocSearchBarWithOverlay.searchFocusNode,
-          builder: (context, child) => AnimatedSize(
-            duration: kThemeAnimationDuration,
-            alignment: Alignment.topCenter,
-            child: LocSearchBarWithOverlay.searchFocusNode.hasFocus
-                ? double.infinity.horizontalSpace
-                : panel,
-          ),
-        ),
-      ],
+    return ListenableBuilder(
+      listenable: LocSearchBarWithOverlay.searchFocusNode,
+      builder: (context, child) => AnimatedSize(
+        duration: kThemeAnimationDuration,
+        alignment: Alignment.topCenter,
+        child: LocSearchBarWithOverlay.searchFocusNode.hasFocus
+            ? double.infinity.horizontalSpace
+            : panel,
+      ),
     );
   }
 }

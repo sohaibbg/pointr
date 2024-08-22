@@ -30,8 +30,9 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
   final Completer<GoogleMapController> mapCtlCompleter;
 
   void onPopInvoked(bool didPop) {
-    if (LocSearchBarWithOverlay.searchFocusNode.hasFocus)
+    if (LocSearchBarWithOverlay.searchFocusNode.hasFocus) {
       return LocSearchBarWithOverlay.searchFocusNode.unfocus();
+    }
     context.pop();
   }
 
@@ -179,10 +180,8 @@ class NewFavorite extends HookConsumerWidget {
       ),
     );
     final bottomPanelBody = Padding(
-      padding: const EdgeInsets.only(
-        left: 24,
-        right: 24,
-        bottom: 24,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
       ),
       child: Row(
         children: [
@@ -208,29 +207,31 @@ class NewFavorite extends HookConsumerWidget {
           LocSearchBarWithOverlay(
             onPlaceSelected: vm.onPlaceSelected,
           ),
+          24.verticalSpace,
           animatingBottomPanel,
         ],
       ),
+    );
+    final overlay = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+          alignment: AlignmentDirectional.bottomEnd,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(end: 12),
+            child: GmapButtons(mapCtlCompleter),
+          ),
+        ),
+        24.verticalSpace,
+        footer,
+      ],
     );
     return Scaffold(
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           map,
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 12),
-                child: Align(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child: GmapButtons(mapCtlCompleter),
-                ),
-              ),
-              24.verticalSpace,
-              footer,
-            ],
-          ),
+          overlay,
         ],
       ),
     );

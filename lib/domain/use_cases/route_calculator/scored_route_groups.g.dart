@@ -6,7 +6,7 @@ part of 'scored_route_groups.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$scoredRouteGroupsHash() => r'798749ce971b7d47717e78632207424bcbacf245';
+String _$scoredRouteGroupsHash() => r'5de7c604a4daa09a6d8da56e52a8cca2eed5f7c6';
 
 /// See also [ScoredRouteGroups].
 @ProviderFor(ScoredRouteGroups)

@@ -34,8 +34,8 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
-    gh.factory<_i788.ILocationRepo>(
-      () => _i489.PLocationRepo(),
+    gh.factory<_i846.ILocalRoutesRepo>(
+      () => _i621.PLocalRoutesRepo(),
       registerFor: {
         _dev,
         _prod,
@@ -56,10 +56,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i185.IFavoritesRepo(),
       registerFor: {_test},
     );
-    gh.factory<_i788.ILocationRepo>(
-      () => _i788.ILocationRepo(),
-      registerFor: {_test},
-    );
     gh.factory<_i482.IPlacesRepo>(
       () => _i482.IPlacesRepo(),
       registerFor: {
@@ -67,8 +63,15 @@ extension GetItInjectableX on _i174.GetIt {
         _dev,
       },
     );
-    gh.factory<_i846.ILocalRoutesRepo>(
-      () => _i621.PLocalRoutesRepo(),
+    gh.factory<_i788.ILocationRepo>(
+      () => _i788.ILocationRepo(),
+      registerFor: {
+        _test,
+        _dev,
+      },
+    );
+    gh.factory<_i788.ILocationRepo>(
+      () => _i489.PLocationRepo(),
       registerFor: {_prod},
     );
     gh.factory<_i482.IPlacesRepo>(

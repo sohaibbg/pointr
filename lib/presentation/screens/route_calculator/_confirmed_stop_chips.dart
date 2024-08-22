@@ -32,16 +32,16 @@ class _ConfirmedStopChips extends HookConsumerWidget {
       (previous, next) {
         if (previous != null) prevStops.value = previous;
         latestStops.value = next;
-        print('here');
+        // print('here');
         final e = E(prevStops.value, latestStops.value);
         final fromScale = e.getScale(FromTo.from);
         final toScale = e.getScale(FromTo.to);
-        print('fromScale $fromScale, toScale $toScale');
+        // print('fromScale $fromScale, toScale $toScale');
         fromAnimCtl.animateTo(fromScale);
         toAnimCtl.animateTo(toScale);
       },
     );
-    print('fromAnim ${fromAnimCtl.value}, toAnim ${toAnimCtl.value}');
+    // print('fromAnim ${fromAnimCtl.value}, toAnim ${toAnimCtl.value}');
     final animatingContent = Row(
       children: [
         Expanded(
@@ -64,23 +64,14 @@ class _ConfirmedStopChips extends HookConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25),
       ),
-      margin: EdgeInsets.zero,
+      margin: const EdgeInsets.only(top: 12),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 24, 8),
         child: animatingContent,
       ),
     );
-    final animCtl = useAnimationController(
-      duration: kThemeAnimationDuration,
-      initialValue: nStops > 0 ? 1 : 0,
-    );
-    if (nStops > 0) {
-      animCtl.forward();
-    } else {
-      animCtl.reverse();
-    }
-    final animatedCard = SizeTransition(
-      sizeFactor: animCtl.view,
+    final animatedCard = SlideTransitionHelper(
+      doShow: nStops > 0,
       axis: Axis.vertical,
       axisAlignment: -1,
       child: card,

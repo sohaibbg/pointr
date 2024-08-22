@@ -180,7 +180,7 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
           child: Padding(
             padding: EdgeInsetsDirectional.lerp(
               EdgeInsetsDirectional.zero,
-              const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+              const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 0),
               1 - value,
             )!,
             child: textFieldWithKeyboardListenerForPoppingAndOverlayPortal,

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'nearby_places_use_case.dart';
+part of 'places_use_case.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
 String _$nearbyPlacesFromCoordinatesHash() =>
-    r'90f41843a6468fcd2a6ba11043ac07f2dd33022f';
+    r'599b4c07a168201e103473897c2f3b38a094282f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -165,7 +165,7 @@ class _NearbyPlacesFromCoordinatesProviderElement
 }
 
 String _$nearbyPlacesBySearchTermHash() =>
-    r'7f08e84e52046f6c0a5d585b12b074ab263fde77';
+    r'c7f6faa36ce344a240698ead588b680118eb85ab';
 
 /// See also [nearbyPlacesBySearchTerm].
 @ProviderFor(nearbyPlacesBySearchTerm)
@@ -298,6 +298,138 @@ class _NearbyPlacesBySearchTermProviderElement
 
   @override
   String get term => (origin as NearbyPlacesBySearchTermProvider).term;
+}
+
+String _$nameFromCoordinatesHash() =>
+    r'026e664f5dbc6d4fdc74d91f0cc8ce751b6a5f4a';
+
+/// See also [nameFromCoordinates].
+@ProviderFor(nameFromCoordinates)
+const nameFromCoordinatesProvider = NameFromCoordinatesFamily();
+
+/// See also [nameFromCoordinates].
+class NameFromCoordinatesFamily extends Family<AsyncValue<String>> {
+  /// See also [nameFromCoordinates].
+  const NameFromCoordinatesFamily();
+
+  /// See also [nameFromCoordinates].
+  NameFromCoordinatesProvider call(
+    CoordinatesEntity coordinatesEntity,
+  ) {
+    return NameFromCoordinatesProvider(
+      coordinatesEntity,
+    );
+  }
+
+  @override
+  NameFromCoordinatesProvider getProviderOverride(
+    covariant NameFromCoordinatesProvider provider,
+  ) {
+    return call(
+      provider.coordinatesEntity,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'nameFromCoordinatesProvider';
+}
+
+/// See also [nameFromCoordinates].
+class NameFromCoordinatesProvider extends AutoDisposeFutureProvider<String> {
+  /// See also [nameFromCoordinates].
+  NameFromCoordinatesProvider(
+    CoordinatesEntity coordinatesEntity,
+  ) : this._internal(
+          (ref) => nameFromCoordinates(
+            ref as NameFromCoordinatesRef,
+            coordinatesEntity,
+          ),
+          from: nameFromCoordinatesProvider,
+          name: r'nameFromCoordinatesProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$nameFromCoordinatesHash,
+          dependencies: NameFromCoordinatesFamily._dependencies,
+          allTransitiveDependencies:
+              NameFromCoordinatesFamily._allTransitiveDependencies,
+          coordinatesEntity: coordinatesEntity,
+        );
+
+  NameFromCoordinatesProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.coordinatesEntity,
+  }) : super.internal();
+
+  final CoordinatesEntity coordinatesEntity;
+
+  @override
+  Override overrideWith(
+    FutureOr<String> Function(NameFromCoordinatesRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: NameFromCoordinatesProvider._internal(
+        (ref) => create(ref as NameFromCoordinatesRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        coordinatesEntity: coordinatesEntity,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<String> createElement() {
+    return _NameFromCoordinatesProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is NameFromCoordinatesProvider &&
+        other.coordinatesEntity == coordinatesEntity;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, coordinatesEntity.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin NameFromCoordinatesRef on AutoDisposeFutureProviderRef<String> {
+  /// The parameter `coordinatesEntity` of this provider.
+  CoordinatesEntity get coordinatesEntity;
+}
+
+class _NameFromCoordinatesProviderElement
+    extends AutoDisposeFutureProviderElement<String>
+    with NameFromCoordinatesRef {
+  _NameFromCoordinatesProviderElement(super.provider);
+
+  @override
+  CoordinatesEntity get coordinatesEntity =>
+      (origin as NameFromCoordinatesProvider).coordinatesEntity;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

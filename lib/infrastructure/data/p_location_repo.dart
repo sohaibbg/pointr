@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import '../../domain/entities/coordinates_entity.dart';
 import '../../domain/repositories/i_location_repo.dart';
 
-@dev
 @prod
 @Injectable(as: ILocationRepo)
 class PLocationRepo implements ILocationRepo {

@@ -1,10 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../config/injector.dart';
 import '../../entities/address_entity.dart';
 import '../../entities/coordinates_entity.dart';
-import '../../repositories/i_places_repo.dart';
+import '../places_use_case.dart';
 
 part 'from_to_stops.g.dart';
 
@@ -45,9 +44,9 @@ Future<void> updateStopProvider(
     address: '',
   );
   ref.read(stopProvider.notifier).state = temporaryAddress;
-  final address = await getIt.call<IPlacesRepo>().getNameFrom(
-        mapLatLng,
-      );
+  final address = await ref.read(
+    NameFromCoordinatesProvider(mapLatLng).future,
+  );
   final newStop = AddressEntity(
     address: address,
     coordinates: mapLatLng,

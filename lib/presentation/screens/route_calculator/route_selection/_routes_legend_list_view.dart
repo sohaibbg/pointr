@@ -12,96 +12,109 @@ class _RoutesLegendListView extends ConsumerWidget {
 
   static const height = 165.0;
   static const _tileWidth = 300.0;
+  // for animation
+  static List<Set<RouteEntity>>? _cachedLastValidState;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref
-        .watch(
-          scoredRouteGroupsProvider,
-        )
-        .when(
-          error: (_, __) => const Padding(
-            padding: EdgeInsets.all(25),
-            child: Text("Error loading routes"),
-          ),
-          loading: () => const Padding(
-            padding: EdgeInsets.all(25),
-            child: LinearProgressIndicator(),
-          ),
-          data: (segments) => SizedBox(
-            height: height,
-            child: ScrollSnapList(
-              focusOnItemTap: true,
-              margin: EdgeInsets.zero,
-              itemCount: segments.length,
-              onItemFocus: (newIndex) => ref
-                  .read(
-                    selectedRouteGroupIndexProvider.notifier,
-                  )
-                  .state = newIndex,
-              clipBehavior: Clip.none,
-              padding: EdgeInsets.zero,
-              itemSize: _tileWidth,
-              scrollDirection: Axis.horizontal,
-              duration: kThemeAnimationDuration.inMilliseconds,
-              dynamicItemSize: true,
-              dynamicSizeEquation: (distance) =>
-                  1 - min(distance.abs() / 500, 0.2),
-              itemBuilder: (context, index) {
-                final tiles = <Widget>[];
-                final segment = segments[index];
-                for (int i = 0; i < segment.length; i += 2) {
-                  final leftRoute = segment.elementAt(i);
-                  final leftTile = _tileBuilder(
-                    i,
-                    leftRoute,
-                  );
-                  final hasNextElement = i + 1 < segment.length;
-                  final rightTile = hasNextElement
-                      ? _tileBuilder(
-                          i + 1,
-                          segment.elementAt(i + 1),
-                        )
-                      : null;
-                  tiles.add(
-                    Flexible(
-                      child: Row(
-                        children: [
-                          Expanded(child: leftTile),
-                          Expanded(
-                            child: rightTile ?? const SizedBox.shrink(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+  Widget build(BuildContext context, WidgetRef ref) => SizedBox(
+        height: height,
+        child: ref
+            .watch(
+              scoredRouteGroupsProvider,
+            )
+            .when(
+              error: (_, __) => const Padding(
+                padding: EdgeInsets.all(25),
+                child: Text("Error loading routes"),
+              ),
+              loading: () => const Padding(
+                padding: EdgeInsets.all(25),
+                child: LinearProgressIndicator(),
+              ),
+              data: (segments) {
+                if (segments.isNotEmpty) _cachedLastValidState = segments;
+                if (segments.isEmpty && _cachedLastValidState != null) {
+                  return _onData(_cachedLastValidState!, ref);
                 }
-                return SizedBox(
-                  width: _tileWidth,
-                  height: height,
-                  child: Card(
-                    color: Colors.indigo.shade50,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: tiles.intersperseDivider(
-                        Divider(
-                          height: 0,
-                          color: MyTheme.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                return _onData(segments, ref);
               },
             ),
-          ),
-        );
-  }
+      );
 
+  Widget _onData(
+    List<Set<RouteEntity>> segments,
+    WidgetRef ref,
+  ) =>
+      ScrollSnapList(
+        focusOnItemTap: true,
+        scrollPhysics: const BouncingScrollPhysics(
+          decelerationRate: ScrollDecelerationRate.fast,
+        ),
+        margin: EdgeInsets.zero,
+        itemCount: segments.length,
+        onItemFocus: (newIndex) => ref
+            .read(
+              selectedRouteGroupIndexProvider.notifier,
+            )
+            .state = newIndex,
+        clipBehavior: Clip.none,
+        padding: EdgeInsets.zero,
+        itemSize: _tileWidth,
+        scrollDirection: Axis.horizontal,
+        duration: kThemeAnimationDuration.inMilliseconds,
+        dynamicItemSize: true,
+        dynamicSizeEquation: (distance) => 1 - min(distance.abs() / 500, 0.2),
+        itemBuilder: (context, index) {
+          final tiles = <Widget>[];
+          final segment = segments[index];
+          for (int i = 0; i < segment.length; i += 2) {
+            final leftRoute = segment.elementAt(i);
+            final leftTile = _tileBuilder(
+              i,
+              leftRoute,
+            );
+            final hasNextElement = i + 1 < segment.length;
+            final rightTile = hasNextElement
+                ? _tileBuilder(
+                    i + 1,
+                    segment.elementAt(i + 1),
+                  )
+                : null;
+            tiles.add(
+              Flexible(
+                child: Row(
+                  children: [
+                    Expanded(child: leftTile),
+                    Expanded(
+                      child: rightTile ?? const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return SizedBox(
+            width: _tileWidth,
+            height: height,
+            child: Card(
+              clipBehavior: Clip.hardEdge,
+              color: Colors.indigo.shade50,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: tiles.intersperseDivider(
+                  Divider(
+                    height: 0,
+                    color: MyTheme.primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
   Widget _tileBuilder(
     int index,
     pointr.RouteEntity route,

@@ -6,16 +6,14 @@ import '../entities/coordinates_entity.dart';
 import '../entities/named_address_entity.dart';
 import '../repositories/i_places_repo.dart';
 
-part 'nearby_places_use_case.g.dart';
-
-final _repo = getIt.call<IPlacesRepo>();
+part 'places_use_case.g.dart';
 
 @riverpod
 Future<List<NamedAddressEntity>> nearbyPlacesFromCoordinates(
   NearbyPlacesFromCoordinatesRef ref,
   CoordinatesEntity coordinates,
 ) =>
-    _repo.getNearbyPlaces(coordinates);
+    getIt.call<IPlacesRepo>().getNearbyPlaces(coordinates);
 
 @riverpod
 Future<List<AutocompleteSuggestionEntity>> nearbyPlacesBySearchTerm(
@@ -34,5 +32,12 @@ Future<List<AutocompleteSuggestionEntity>> nearbyPlacesBySearchTerm(
   // It is safe to use an exception here, as it will be caught by Riverpod.
   if (didDispose) throw Exception('Cancelled');
 
-  return _repo.getAutocompleteSuggestions(term.trim());
+  return getIt.call<IPlacesRepo>().getAutocompleteSuggestions(term.trim());
 }
+
+@riverpod
+Future<String> nameFromCoordinates(
+  NameFromCoordinatesRef ref,
+  CoordinatesEntity coordinatesEntity,
+) =>
+    getIt.call<IPlacesRepo>().getNameFrom(coordinatesEntity);

@@ -7,7 +7,7 @@ import '../../domain/entities/coordinates_entity.dart';
 import '../../domain/entities/favorite_entity.dart';
 import '../../domain/repositories/i_places_repo.dart';
 import '../../domain/use_cases/favorites_use_case.dart';
-import '../../domain/use_cases/nearby_places_use_case.dart';
+import '../../domain/use_cases/places_use_case.dart';
 
 class SearchSuggestions extends ConsumerWidget {
   final String searchTerm;

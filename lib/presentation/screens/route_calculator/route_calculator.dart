@@ -12,6 +12,7 @@ import '../../../config/my_theme.dart';
 import '../../../domain/entities/address_entity.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/route_entity.dart' as pointr;
+import '../../../domain/entities/route_entity.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/location_use_case.dart';
 import '../../../domain/use_cases/route_calculator/filter.dart';
@@ -26,6 +27,7 @@ import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
 import '../../components/loc_search_bar_with_overlay.dart';
 import '../../components/map_with_pin_and_banner.dart';
+import '../../components/slide_transition_helper.dart';
 import '../../components/space.dart';
 
 part './stop_selection/_stop_selector_panel.dart';
@@ -58,16 +60,62 @@ class RouteCalculator extends HookConsumerWidget {
       ref,
       gmapCtlCompleter: mapCtlCompleter,
     );
-    final overlay = HeaderFooter(
-      child: AnimatedSize(
-        duration: kThemeAnimationDuration,
-        alignment: Alignment.bottomCenter,
-        child: switch (vm.numberOfStopsConfirmed) {
-          0 || 1 => _StopSelectorPanel(vm),
-          2 => _RouteSelectorPanel(vm: vm),
-          _ => throw vm,
-        },
+    final locSearchBarOrRouteLegend = Stack(
+      clipBehavior: Clip.hardEdge,
+      alignment: Alignment.bottomCenter,
+      children: [
+        SlideTransitionHelper(
+          doShow: !vm.areBothStopsSet,
+          axis: Axis.vertical,
+          axisAlignment: -1,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: LocSearchBarWithOverlay(
+              onPlaceSelected: vm.onPlaceSelected,
+            ),
+          ),
+        ),
+        SlideTransitionHelper(
+          doShow: vm.areBothStopsSet,
+          axis: Axis.vertical,
+          axisAlignment: -1,
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: _RoutesLegendListView(),
+          ),
+        ),
+      ],
+    );
+    final actionsBodyContent = AnimatedSize(
+      duration: kThemeAnimationDuration,
+      alignment: Alignment.bottomCenter,
+      child: HeaderFooter(
+        child: Column(
+          children: [
+            locSearchBarOrRouteLegend,
+            24.verticalSpace,
+            switch (vm.numberOfStopsConfirmed) {
+              0 || 1 => _StopSelectorPanel(vm),
+              2 => _RouteSelectorPanel(vm: vm),
+              _ => throw vm,
+            },
+          ],
+        ),
       ),
+    );
+    final overlay = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.only(end: 12),
+          child: Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: GmapButtons(vm.gmapCtlCompleter),
+          ),
+        ),
+        24.verticalSpace,
+        actionsBodyContent,
+      ],
     );
     return Scaffold(
       body: Stack(
@@ -77,20 +125,7 @@ class RouteCalculator extends HookConsumerWidget {
             initialPlace: initialPlace,
             mapCtlCompleter: mapCtlCompleter,
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 12),
-                child: Align(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child: GmapButtons(vm.gmapCtlCompleter),
-                ),
-              ),
-              24.verticalSpace,
-              overlay,
-            ],
-          ),
+          overlay,
         ],
       ),
     );

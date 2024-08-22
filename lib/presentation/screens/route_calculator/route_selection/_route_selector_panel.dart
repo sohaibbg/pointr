@@ -42,19 +42,11 @@ class _RouteSelectorPanel extends HookConsumerWidget {
         const _ConfirmedStopChips(),
       ],
     );
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const _RoutesLegendListView(),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 24,
-          ),
-          child: body,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+      ),
+      child: body,
     );
   }
 }

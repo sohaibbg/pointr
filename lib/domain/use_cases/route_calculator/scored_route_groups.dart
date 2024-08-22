@@ -32,11 +32,12 @@ class ScoredRouteGroups extends _$ScoredRouteGroups {
 
   Future<List<pointr.RouteEntity>> _calculateScoredRoutes() async {
     final from = ref.watch(
-      fromStopProvider.select((e) => e!.coordinates),
+      fromStopProvider.select((e) => e?.coordinates),
     );
     final to = ref.watch(
-      toStopProvider.select((e) => e!.coordinates),
+      toStopProvider.select((e) => e?.coordinates),
     );
+    if (from == null || to == null) return [];
     final routes = await ref.watch(routesUseCaseProvider.future);
     return routes
       ..sort(
