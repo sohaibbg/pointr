@@ -1,4 +1,4 @@
-part of 'route_calculator.dart';
+part of '../route_calculator.dart';
 
 class _RouteCalculatorMap extends ConsumerWidget {
   const _RouteCalculatorMap({

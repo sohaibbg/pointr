@@ -27,21 +27,24 @@ class RouteCalculatorViewModel extends ViewModel<RouteCalculator> {
     required this.gmapCtlCompleter,
   });
 
-  int get numberOfStopsConfirmed => [
-        fromStopProvider,
-        toStopProvider,
-      ]
-          .map(
-            (provider) => ref.watch(
-              provider.select(
-                (value) => value != null,
-              ),
-            ),
-          )
-          .where((e) => e)
-          .length;
+  bool get areBothStopsSet => ref.watch(
+        bothStopsProvider.select(
+          (e) => e.from & e.to,
+        ),
+      );
 
-  bool get areBothStopsSet => numberOfStopsConfirmed == 2;
+  void onBackBtnPressed() {
+    if (ref.watch(toStopProvider) != null) {
+      return ref.read(toStopProvider.notifier).state = null;
+    }
+    if (ref.watch(fromStopProvider) != null) {
+      return ref.read(fromStopProvider.notifier).state = null;
+    }
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pop();
+  }
 
   Future<void> onPlaceSelected(AddressEntity place) async {
     final mapCtl = await gmapCtlCompleter.future;

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -22,6 +23,7 @@ import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/hooks.dart';
 import '../../../infrastructure/services/packages/iterable.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
+import '../../components/aligned_dialog_pusher_box.dart';
 import '../../components/dialogs.dart';
 import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
@@ -30,14 +32,22 @@ import '../../components/map_with_pin_and_banner.dart';
 import '../../components/slide_transition_helper.dart';
 import '../../components/space.dart';
 
-part './stop_selection/_stop_selector_panel.dart';
-part '_confirmed_stop_chips.dart';
-part '_route_calculator_map.dart';
+part 'components/_confirmed_stops_card.dart';
+part 'components/_route_calculator_map.dart';
+part 'components/_route_mode_filter_btn.dart';
+part 'components/_routes_legend_list_view.dart';
 part 'route_calculator.g.dart';
 part 'route_calculator_view_model.dart';
-part 'route_selection/_route_mode_filter_btn.dart';
-part 'route_selection/_route_selector_panel.dart';
-part 'route_selection/_routes_legend_list_view.dart';
+
+@riverpod
+({bool from, bool to}) bothStops(BothStopsRef ref) => (
+      from: ref.watch(
+        fromStopProvider.select((e) => e != null),
+      ),
+      to: ref.watch(
+        toStopProvider.select((e) => e != null),
+      ),
+    );
 
 class RouteCalculator extends HookConsumerWidget {
   final bool focusSearch;
@@ -59,6 +69,14 @@ class RouteCalculator extends HookConsumerWidget {
       context,
       ref,
       gmapCtlCompleter: mapCtlCompleter,
+    );
+    final backBtn = ElevatedButton(
+      onPressed: context.pop,
+      // onPressed: vm.onBackBtnPressed,
+      style: MyTheme.secondaryButtonStyle,
+      child: const Icon(
+        Icons.arrow_back_ios_new_outlined,
+      ),
     );
     final locSearchBarOrRouteLegend = Stack(
       clipBehavior: Clip.hardEdge,
@@ -86,21 +104,50 @@ class RouteCalculator extends HookConsumerWidget {
         ),
       ],
     );
-    final actionsBodyContent = AnimatedSize(
-      duration: kThemeAnimationDuration,
-      alignment: Alignment.bottomCenter,
-      child: HeaderFooter(
-        child: Column(
-          children: [
-            locSearchBarOrRouteLegend,
-            24.verticalSpace,
-            switch (vm.numberOfStopsConfirmed) {
-              0 || 1 => _StopSelectorPanel(vm),
-              2 => _RouteSelectorPanel(vm: vm),
-              _ => throw vm,
-            },
-          ],
-        ),
+    final confirmLocBtn = ElevatedButton.icon(
+      icon: const Icon(Icons.navigate_next_sharp),
+      label: Text(vm.selectLocBtnLabel),
+      onPressed: () => context.loaderWithErrorDialog(
+        vm.onPlaceConfirmed,
+      ),
+      style: MyTheme.primaryElevatedButtonStyle,
+    );
+    final actionsPanel = ListenableBuilder(
+      listenable: LocSearchBarWithOverlay.searchFocusNode,
+      child: Column(
+        children: [
+          24.verticalSpace,
+          Row(
+            children: [
+              backBtn,
+              12.horizontalSpace,
+              Expanded(
+                child: vm.areBothStopsSet
+                    ? const _RouteModeFilterBtn()
+                    : confirmLocBtn,
+              ),
+            ],
+          ),
+          12.verticalSpace,
+          const _ConfirmedStopsCard(),
+        ],
+      ),
+      builder: (context, child) => SlideTransitionHelper(
+        doShow: !LocSearchBarWithOverlay.searchFocusNode.hasFocus,
+        axis: Axis.vertical,
+        axisAlignment: -1,
+        child: child!,
+      ),
+    );
+    final inFooterContent = HeaderFooter(
+      child: Column(
+        children: [
+          locSearchBarOrRouteLegend,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: actionsPanel,
+          ),
+        ],
       ),
     );
     final overlay = Column(
@@ -114,7 +161,7 @@ class RouteCalculator extends HookConsumerWidget {
           ),
         ),
         24.verticalSpace,
-        actionsBodyContent,
+        inFooterContent,
       ],
     );
     return Scaffold(

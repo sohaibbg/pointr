@@ -1,12 +1,10 @@
-part of 'route_calculator.dart';
+part of '../route_calculator.dart';
 
-class _ConfirmedStopChips extends HookConsumerWidget {
-  const _ConfirmedStopChips();
+class _ConfirmedStopsCard extends HookConsumerWidget {
+  const _ConfirmedStopsCard();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFocused = useIsFocused(LocSearchBarWithOverlay.searchFocusNode);
-    if (isFocused) return const SizedBox();
     final nStops = ref.watch(
       bothStopsProvider.select(
         (e) => [e.from, e.to].where((e) => e).length,
@@ -138,10 +136,10 @@ class _AnimatedChip extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final address = ref.watch(provider);
-    final debouncedAddress = useDebouncedWhenNulled(
-      address,
+    final debouncedAddress = useLatestWhereAndDelayWhereNot(
+      ref.watch(provider),
       kThemeAnimationDuration * 5,
+      test: (e) => e != null,
     );
     if (debouncedAddress == null) return const SizedBox();
     final chip = chipBuilder(

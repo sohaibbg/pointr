@@ -169,7 +169,6 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
           builder: (context, isKeyboardVisible) => PopScope(
             canPop: !searchFocusNode.hasFocus && !isKeyboardVisible,
             onPopInvokedWithResult: (didPop, result) {
-              if (didPop) return;
               if (searchFocusNode.hasFocus) searchFocusNode.unfocus();
             },
             child: textFieldConnectedToOverlayPortal,
