@@ -7,55 +7,114 @@ class _ConfirmedStopsCard extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nStops = ref.watch(
       bothStopsProvider.select(
-        (e) => [e.from, e.to].where((e) => e).length,
+        (e) => [e.hasFrom, e.hasTo].where((e) => e).length,
       ),
     );
-    final prevStops = useState(
-      ref.read(bothStopsProvider),
-    );
-    final latestStops = useState(
-      ref.read(bothStopsProvider),
-    );
-    final initialE = E(prevStops.value, latestStops.value);
+    // controls chip width shrink/expand
+    // 0 represents halfWidth, 1 represents fullWidth
     final fromAnimCtl = useAnimationController(
       duration: kThemeAnimationDuration,
-      initialValue: initialE.getScale(FromTo.from),
+      initialValue: ref.read(
+        toStopProvider.select(
+          (e) => e != null,
+        ),
+      )
+          ? 0
+          : 1,
     );
     final toAnimCtl = useAnimationController(
       duration: kThemeAnimationDuration,
-      initialValue: initialE.getScale(FromTo.to),
+      initialValue: ref.read(
+        fromStopProvider.select(
+          (e) => e != null,
+        ),
+      )
+          ? 0
+          : 1,
+    );
+    // controls chip slide in/out
+    final doShowFrom = useState(
+      nStops == 0 || ref.read(fromStopProvider) != null,
+    );
+    final doShowTo = useState(
+      nStops == 0 || ref.read(toStopProvider) != null,
     );
     ref.listen(
       bothStopsProvider,
       (previous, next) {
-        if (previous != null) prevStops.value = previous;
-        latestStops.value = next;
-        // print('here');
-        final e = E(prevStops.value, latestStops.value);
-        final fromScale = e.getScale(FromTo.from);
-        final toScale = e.getScale(FromTo.to);
-        // print('fromScale $fromScale, toScale $toScale');
-        fromAnimCtl.animateTo(fromScale);
-        toAnimCtl.animateTo(toScale);
+        // if both are removed, chips are frozen as card itself animates down
+        if (!next.hasFrom && !next.hasTo) {
+          Future.delayed(
+            kThemeAnimationDuration,
+            () {
+              if (!context.mounted) return;
+              doShowFrom.value = true;
+              doShowTo.value = true;
+              fromAnimCtl.value = 1;
+              toAnimCtl.value = 1;
+            },
+          );
+          return;
+        }
+        doShowFrom.value = next.hasFrom;
+        doShowTo.value = next.hasTo;
+        fromAnimCtl.animateTo(next.hasTo ? 0 : 1);
+        toAnimCtl.animateTo(next.hasFrom ? 0 : 1);
       },
     );
-    // print('fromAnim ${fromAnimCtl.value}, toAnim ${toAnimCtl.value}');
-    final animatingContent = Row(
-      children: [
-        Expanded(
-          child: _AnimatedChip(
-            label: 'From: ',
-            provider: fromStopProvider,
-          ),
-        ),
-        12.horizontalSpace,
-        Expanded(
-          child: _AnimatedChip(
-            label: 'To: ',
-            provider: toStopProvider,
-          ),
-        ),
-      ],
+    final animatingContent = LayoutBuilder(
+      builder: (context, constraints) {
+        final fullWidth = constraints.maxWidth;
+        final halfWidth = (fullWidth - 12) / 2;
+        return Row(
+          children: [
+            SlideTransitionHelper(
+              doShow: doShowFrom.value,
+              axis: Axis.horizontal,
+              axisAlignment: 1,
+              child: AnimatedBuilder(
+                animation: fromAnimCtl,
+                child: _AnimatedChip(
+                  label: 'From: ',
+                  provider: fromStopProvider,
+                ),
+                builder: (context, child) => SizedBox(
+                  width: Tween(
+                    begin: halfWidth,
+                    end: fullWidth,
+                  ).animate(fromAnimCtl).value,
+                  child: child,
+                ),
+              ),
+            ),
+            SlideTransitionHelper(
+              doShow: nStops == 2,
+              axis: Axis.horizontal,
+              axisAlignment: 0,
+              child: 12.horizontalSpace,
+            ),
+            SlideTransitionHelper(
+              doShow: doShowTo.value,
+              axis: Axis.horizontal,
+              axisAlignment: -1,
+              child: AnimatedBuilder(
+                animation: toAnimCtl,
+                child: _AnimatedChip(
+                  label: 'To: ',
+                  provider: toStopProvider,
+                ),
+                builder: (context, child) => SizedBox(
+                  width: Tween(
+                    begin: halfWidth,
+                    end: fullWidth,
+                  ).animate(toAnimCtl).value,
+                  child: child,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
     final card = Card(
       color: MyTheme.primaryColor.shade50,
@@ -69,7 +128,7 @@ class _ConfirmedStopsCard extends HookConsumerWidget {
       ),
     );
     final animatedCard = SlideTransitionHelper(
-      doShow: nStops > 0,
+      doShow: nStops != 0,
       axis: Axis.vertical,
       axisAlignment: -1,
       child: card,
@@ -119,6 +178,7 @@ class _AnimatedChip extends HookConsumerWidget {
         child: Text(
           address.address,
           overflow: TextOverflow.fade,
+          maxLines: 3,
         ),
       ),
       avatar: const Icon(Icons.location_on),
@@ -153,48 +213,4 @@ class _AnimatedChip extends HookConsumerWidget {
     );
     return chip;
   }
-}
-
-enum FromTo {
-  from,
-  to;
-
-  FromTo get other => switch (this) {
-        FromTo.from => FromTo.to,
-        FromTo.to => FromTo.from,
-      };
-
-  bool isIn(({bool from, bool to}) set) => switch (this) {
-        FromTo.from => set.from,
-        FromTo.to => set.to,
-      };
-}
-
-class E {
-  final ({bool from, bool to}) prev;
-  final ({bool from, bool to}) latest;
-
-  const E(this.prev, this.latest);
-
-  double _prevScale(FromTo e) => e.isIn(prev)
-      ? 0
-      : e.other.isIn(prev)
-          ? 0.5
-          : 1;
-  bool _didLeave(FromTo e) => e.isIn(prev) && !e.isIn(latest);
-
-  double getScale(FromTo e) {
-    if (!e.isIn(prev) && !e.isIn(latest)) return 0;
-    if (_didLeave(e)) return _prevScale(e);
-    if (e.other.isIn(latest)) return 0.5;
-    return 1;
-  }
-
-  double getWidth(FromTo e, double fullWidth, double halfWidth) =>
-      switch (getScale(e)) {
-        0 => 0,
-        1 => fullWidth,
-        0.5 => halfWidth,
-        _ => throw getScale(e),
-      };
 }

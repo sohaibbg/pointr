@@ -81,7 +81,8 @@ class _RoutesLegendListView extends ConsumerWidget {
                   )
                 : null;
             tiles.add(
-              Flexible(
+              SizedBox(
+                height: height / 2,
                 child: Row(
                   children: [
                     Expanded(child: leftTile),
@@ -93,6 +94,16 @@ class _RoutesLegendListView extends ConsumerWidget {
               ),
             );
           }
+          final cardContent = Column(
+            children: tiles
+              ..insert(
+                1,
+                Divider(
+                  height: 0,
+                  color: MyTheme.primaryColor,
+                ),
+              ),
+          );
           return SizedBox(
             width: _tileWidth,
             height: height,
@@ -103,14 +114,7 @@ class _RoutesLegendListView extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(25),
               ),
               margin: EdgeInsets.zero,
-              child: Column(
-                children: tiles.intersperseDivider(
-                  Divider(
-                    height: 0,
-                    color: MyTheme.primaryColor,
-                  ),
-                ),
-              ),
+              child: cardContent,
             ),
           );
         },

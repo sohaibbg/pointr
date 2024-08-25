@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,11 +39,11 @@ part 'route_calculator.g.dart';
 part 'route_calculator_view_model.dart';
 
 @riverpod
-({bool from, bool to}) bothStops(BothStopsRef ref) => (
-      from: ref.watch(
+({bool hasFrom, bool hasTo}) bothStops(BothStopsRef ref) => (
+      hasFrom: ref.watch(
         fromStopProvider.select((e) => e != null),
       ),
-      to: ref.watch(
+      hasTo: ref.watch(
         toStopProvider.select((e) => e != null),
       ),
     );
@@ -71,8 +70,7 @@ class RouteCalculator extends HookConsumerWidget {
       gmapCtlCompleter: mapCtlCompleter,
     );
     final backBtn = ElevatedButton(
-      onPressed: context.pop,
-      // onPressed: vm.onBackBtnPressed,
+      onPressed: vm.onBackBtnPressed,
       style: MyTheme.secondaryButtonStyle,
       child: const Icon(
         Icons.arrow_back_ios_new_outlined,
@@ -83,6 +81,15 @@ class RouteCalculator extends HookConsumerWidget {
       alignment: Alignment.bottomCenter,
       children: [
         SlideTransitionHelper(
+          doShow: vm.areBothStopsSet,
+          axis: Axis.vertical,
+          axisAlignment: -1,
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: _RoutesLegendListView(),
+          ),
+        ),
+        SlideTransitionHelper(
           doShow: !vm.areBothStopsSet,
           axis: Axis.vertical,
           axisAlignment: -1,
@@ -91,15 +98,6 @@ class RouteCalculator extends HookConsumerWidget {
             child: LocSearchBarWithOverlay(
               onPlaceSelected: vm.onPlaceSelected,
             ),
-          ),
-        ),
-        SlideTransitionHelper(
-          doShow: vm.areBothStopsSet,
-          axis: Axis.vertical,
-          axisAlignment: -1,
-          child: const Padding(
-            padding: EdgeInsets.only(bottom: 4),
-            child: _RoutesLegendListView(),
           ),
         ),
       ],
@@ -116,7 +114,7 @@ class RouteCalculator extends HookConsumerWidget {
       listenable: LocSearchBarWithOverlay.searchFocusNode,
       child: Column(
         children: [
-          24.verticalSpace,
+          10.verticalSpace,
           Row(
             children: [
               backBtn,
@@ -128,8 +126,8 @@ class RouteCalculator extends HookConsumerWidget {
               ),
             ],
           ),
-          12.verticalSpace,
           const _ConfirmedStopsCard(),
+          kBottomNavigationBarHeight.verticalSpace,
         ],
       ),
       builder: (context, child) => SlideTransitionHelper(

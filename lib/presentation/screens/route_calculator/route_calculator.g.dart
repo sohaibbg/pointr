@@ -6,11 +6,12 @@ part of 'route_calculator.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bothStopsHash() => r'26372723f9807c86075006697ab34f0ff32e3084';
+String _$bothStopsHash() => r'3575a4fdfc94ccc1c634052ab12ba77c693cdf10';
 
 /// See also [bothStops].
 @ProviderFor(bothStops)
-final bothStopsProvider = AutoDisposeProvider<({bool from, bool to})>.internal(
+final bothStopsProvider =
+    AutoDisposeProvider<({bool hasFrom, bool hasTo})>.internal(
   bothStops,
   name: r'bothStopsProvider',
   debugGetCreateSourceHash:
@@ -19,6 +20,6 @@ final bothStopsProvider = AutoDisposeProvider<({bool from, bool to})>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef BothStopsRef = AutoDisposeProviderRef<({bool from, bool to})>;
+typedef BothStopsRef = AutoDisposeProviderRef<({bool hasFrom, bool hasTo})>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

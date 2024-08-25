@@ -1,6 +1,6 @@
 # User defined
 *.env
-api_keys.json
+api_keys*.json
 
 # Miscellaneous
 *.class

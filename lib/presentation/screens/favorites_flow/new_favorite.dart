@@ -183,11 +183,16 @@ class NewFavorite extends HookConsumerWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: 24,
       ),
-      child: Row(
+      child: Column(
         children: [
-          backBtn,
-          12.horizontalSpace,
-          Expanded(child: selectLocBtn),
+          Row(
+            children: [
+              backBtn,
+              12.horizontalSpace,
+              Expanded(child: selectLocBtn),
+            ],
+          ),
+          kBottomNavigationBarHeight.verticalSpace,
         ],
       ),
     );

@@ -51,11 +51,7 @@ class HeaderFooter extends StatelessWidget {
         Positioned.fill(
           child: imgBg,
         ),
-        SafeArea(
-          top: position == Position.top,
-          bottom: position == Position.bottom,
-          child: child,
-        ),
+        child,
       ],
     );
     return bodyContent;

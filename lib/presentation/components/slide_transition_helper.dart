@@ -28,7 +28,7 @@ class SlideTransitionHelper extends HookConsumerWidget {
       animCtl.reverse();
     }
     return SizeTransition(
-      sizeFactor: animCtl.view,
+      sizeFactor: animCtl,
       axis: axis,
       axisAlignment: axisAlignment,
       child: child,

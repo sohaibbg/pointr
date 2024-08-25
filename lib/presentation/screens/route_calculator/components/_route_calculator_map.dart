@@ -56,7 +56,7 @@ class _RouteCalculatorViewModel extends ViewModel<_RouteCalculatorMap> {
     final from = ref.watch(fromStopProvider);
     if (from != null) {
       final fromMarker = Marker(
-        markerId: MarkerId(from.address),
+        markerId: const MarkerId('from'),
         icon: BitmapDescriptor.defaultMarkerWithHue(
           BitmapDescriptor.hueBlue,
         ),
@@ -70,7 +70,7 @@ class _RouteCalculatorViewModel extends ViewModel<_RouteCalculatorMap> {
     final to = ref.watch(toStopProvider);
     if (to != null) {
       final toMarker = Marker(
-        markerId: MarkerId(to.address),
+        markerId: const MarkerId('to'),
         icon: BitmapDescriptor.defaultMarkerWithHue(
           BitmapDescriptor.hueRed,
         ),

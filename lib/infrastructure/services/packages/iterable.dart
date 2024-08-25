@@ -56,11 +56,15 @@ extension IterableHelperMethods<T> on Iterable<T> {
     return result;
   }
 
-  List<T> intersperseDivider(T divider) {
+  List<T> intersperseDivider(
+    T divider, {
+    bool insertAfterLast = false,
+  }) {
     final list = toList();
     for (int i = 1; i < list.length; i += 2) {
       list.insert(i, divider);
     }
+    if (insertAfterLast) return list..add(divider);
     return list;
   }
 }

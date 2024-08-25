@@ -29,7 +29,7 @@ class RouteCalculatorViewModel extends ViewModel<RouteCalculator> {
 
   bool get areBothStopsSet => ref.watch(
         bothStopsProvider.select(
-          (e) => e.from & e.to,
+          (e) => e.hasFrom & e.hasTo,
         ),
       );
 

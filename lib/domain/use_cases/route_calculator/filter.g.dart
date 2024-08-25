@@ -7,7 +7,7 @@ part of 'filter.dart';
 // **************************************************************************
 
 String _$selectedRouteModesHash() =>
-    r'3b47ac19d133cf02fa07633b41b53a7a227b2852';
+    r'91b006c22e521ab5d43bb513d62288aad3aa1051';
 
 /// shows which [pointr.RouteMode]s have been selected,
 /// such as [pinkBus, chinchi, greenLine] for

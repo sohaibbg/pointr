@@ -19,5 +19,9 @@ class SelectedRouteModes extends _$SelectedRouteModes {
     return true;
   }
 
-  void toggle(pointr.RouteMode e) => state = state.toggle(e).toSet();
+  void toggle(pointr.RouteMode e) {
+    // should have at least one route mode in set
+    if (state.length == 1 && state.contains(e)) return;
+    state = state.toggle(e).toSet();
+  }
 }
