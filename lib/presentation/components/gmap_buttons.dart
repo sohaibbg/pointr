@@ -21,11 +21,12 @@ class GmapButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final zoomOutBtn = ElevatedButton(
-      onPressed: () => mapCtlCompleter.future.then(
-        (e) => e.animateCamera(
+      onPressed: () async {
+        final ctl = await mapCtlCompleter.future;
+        ctl.animateCamera(
           CameraUpdate.zoomOut(),
-        ),
-      ),
+        );
+      },
       style: MyTheme.secondaryButtonStyle,
       child: const Icon(
         Icons.zoom_out,
@@ -67,9 +68,12 @@ class GmapButtons extends ConsumerWidget {
         }
         final currentLoc = await ref.read(currentLocProvider.future);
         final ctl = await mapCtlCompleter.future;
-        ctl.animateCamera(
+        await ctl.animateCamera(
           CameraUpdate.newLatLng(
-            LatLng.fromJson(currentLoc.toJson())!,
+            LatLng(
+              currentLoc.latitude,
+              currentLoc.longitude,
+            ),
           ),
         );
       },

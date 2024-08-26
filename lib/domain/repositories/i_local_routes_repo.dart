@@ -10,7 +10,7 @@ class ILocalRoutesRepo {
         () => [
           const RouteEntity(
             name: 'name',
-            mode: RouteMode.acBus,
+            mode: RouteMode.redBus,
             points: [
               karachiLatLng,
             ],
@@ -21,7 +21,7 @@ class ILocalRoutesRepo {
   final _customState = [
     const RouteEntity(
       name: 'name',
-      mode: RouteMode.bus,
+      mode: RouteMode.minibus,
       points: [
         karachiLatLng,
       ],

@@ -2,25 +2,31 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../config/my_theme.dart';
-import '../../components/loc_search_bar_with_overlay.dart';
-import '../../components/space.dart';
-import 'favorites_view.dart';
-import 'nearby_suggestions_view.dart';
+import '../../../../domain/entities/address_entity.dart';
+import '../../../../domain/entities/coordinates_entity.dart';
+import '../../../../domain/entities/favorite_entity.dart';
+import '../../../../domain/entities/named_address_entity.dart';
+import '../../../../domain/repositories/i_location_repo.dart';
+import '../../../../domain/use_cases/favorites_use_case.dart';
+import '../../../../domain/use_cases/location_use_case.dart';
+import '../../../../domain/use_cases/places_use_case.dart';
+import '../../../components/loc_search_bar_with_overlay.dart';
+import '../../../components/space.dart';
 
-class HomeScreen extends HookConsumerWidget {
-  const HomeScreen({super.key});
+part '_favorites_view.dart';
+part '_nearby_suggestions_view.dart';
+
+class GoScreen extends HookConsumerWidget {
+  const GoScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final backdrop = Image.asset(
-      'assets/images/geometric pattern.png',
-      fit: BoxFit.fitWidth,
-      alignment: Alignment.topCenter,
-    );
     useEffect(
       () {
         void listener() {
@@ -211,36 +217,28 @@ class HomeScreen extends HookConsumerWidget {
       },
       child: searchField,
     );
-    final title = ConstrainedBox(
-      constraints: const BoxConstraints(
-        minHeight: 400,
+    final title = Padding(
+      padding: const EdgeInsets.only(
+        left: 24,
+        right: 30,
+        bottom: 24,
       ),
-      child: Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 48,
-            left: 24,
-            right: 30,
-            bottom: 24,
-          ),
-          child: Text(
-            "Where are you currently?",
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium
-                ?.copyWith(color: Colors.grey.shade800),
-          ),
-        ),
+      child: Text(
+        "Where are you currently?",
+        style: Theme.of(context)
+            .textTheme
+            .displayMedium
+            ?.copyWith(color: Colors.grey.shade800),
       ),
     );
     final scrollController = useScrollController();
-    final foregroundBody = CustomScrollView(
+    return CustomScrollView(
       controller: scrollController,
       slivers: [
         SliverToBoxAdapter(
           child: Column(
             children: [
+              280.verticalSpace,
               title,
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -253,66 +251,6 @@ class HomeScreen extends HookConsumerWidget {
         const NearbySuggestionsView(),
         SliverToBoxAdapter(child: 150.verticalSpace),
       ],
-    );
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.topCenter,
-        fit: StackFit.expand,
-        children: [
-          backdrop,
-          foregroundBody,
-        ],
-      ),
-    );
-  }
-}
-
-class NewWidget extends StatelessWidget {
-  const NewWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final body = Column(
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxHeight: 100,
-            maxWidth: 100,
-          ),
-          child: const ElevatedButton(
-            onPressed: null,
-            style: ButtonStyle(
-              minimumSize: WidgetStatePropertyAll(
-                Size.fromHeight(200),
-              ),
-            ),
-            child: Text("E"),
-          ),
-        ),
-      ],
-    );
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 200,
-            width: 400,
-            child: ColoredBox(
-              color: Colors.pink.shade50,
-            ),
-          ),
-          body,
-          SizedBox(
-            height: 200,
-            width: 400,
-            child: ColoredBox(
-              color: Colors.blue.shade50,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

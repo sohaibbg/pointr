@@ -1,17 +1,27 @@
 import 'package:go_router/go_router.dart';
 
 import '../domain/entities/address_entity.dart';
+import '../domain/entities/route_entity.dart';
 import '../presentation/screens/favorites_flow/list_favorites.dart';
 import '../presentation/screens/favorites_flow/new_favorite.dart';
-import '../presentation/screens/home/home_screen.dart';
+import '../presentation/screens/home/home.dart';
+import '../presentation/screens/home/routes/display_route_screen.dart';
 import '../presentation/screens/route_calculator/route_calculator.dart';
 
 final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const Home(
+        homeScreenOptions: HomeScreenOptions.go,
+      ),
       routes: [
+        GoRoute(
+          path: 'display-routes',
+          builder: (context, state) => DisplayRouteScreen(
+            state.extra as Set<RouteEntity>,
+          ),
+        ),
         GoRoute(
           path: 'route-calculator',
           builder: (context, state) {

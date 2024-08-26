@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 import '../../../config/my_theme.dart';
 import '../../../domain/entities/address_entity.dart';
@@ -28,6 +26,7 @@ import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
 import '../../components/loc_search_bar_with_overlay.dart';
 import '../../components/map_with_pin_and_banner.dart';
+import '../../components/routes_legend_list_view.dart';
 import '../../components/slide_transition_helper.dart';
 import '../../components/space.dart';
 

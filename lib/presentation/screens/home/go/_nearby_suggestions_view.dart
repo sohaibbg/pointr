@@ -1,17 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-
-import '../../../config/my_theme.dart';
-import '../../../domain/entities/address_entity.dart';
-import '../../../domain/entities/coordinates_entity.dart';
-import '../../../domain/entities/named_address_entity.dart';
-import '../../../domain/repositories/i_location_repo.dart';
-import '../../../domain/use_cases/location_use_case.dart';
-import '../../../domain/use_cases/places_use_case.dart';
-import '../../components/space.dart';
+part of 'go_screen.dart';
 
 class NearbySuggestionsView extends ConsumerWidget {
   const NearbySuggestionsView({super.key});

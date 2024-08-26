@@ -25,10 +25,10 @@ class RouteModeMapper extends EnumMapper<RouteMode> {
   @override
   RouteMode decode(dynamic value) {
     switch (value) {
-      case 'bus':
-        return RouteMode.bus;
-      case 'acBus':
-        return RouteMode.acBus;
+      case 'minibus':
+        return RouteMode.minibus;
+      case 'redBus':
+        return RouteMode.redBus;
       case 'pinkBus':
         return RouteMode.pinkBus;
       case 'chinchi':
@@ -43,10 +43,10 @@ class RouteModeMapper extends EnumMapper<RouteMode> {
   @override
   dynamic encode(RouteMode self) {
     switch (self) {
-      case RouteMode.bus:
-        return 'bus';
-      case RouteMode.acBus:
-        return 'acBus';
+      case RouteMode.minibus:
+        return 'minibus';
+      case RouteMode.redBus:
+        return 'redBus';
       case RouteMode.pinkBus:
         return 'pinkBus';
       case RouteMode.chinchi:

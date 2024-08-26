@@ -109,7 +109,7 @@ class _RouteCalculatorViewModel extends ViewModel<_RouteCalculatorMap> {
                       ),
                     )
                     .toList(),
-                color: _RoutesLegendListView.colorLegend[i].withOpacity(0.6),
+                color: RoutesLegendListView.colorLegend[i].withOpacity(0.6),
               );
               polylines.add(polyine);
             }

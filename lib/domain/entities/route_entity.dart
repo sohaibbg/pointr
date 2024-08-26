@@ -8,8 +8,8 @@ part 'route_entity.mapper.dart';
 
 @MappableEnum()
 enum RouteMode {
-  bus("Bus"),
-  acBus("AC Bus"),
+  minibus("Minibus"),
+  redBus("Red Bus"),
   pinkBus("Pink Bus"),
   chinchi("Chinchi"),
   greenLine("Green Line");
@@ -90,5 +90,33 @@ class RouteEntity with RouteEntityMappable {
       nearest = pointOfClosestApproachForThisLineSegment;
     }
     return nearest;
+  }
+
+  ({
+    CoordinatesEntity northEast,
+    CoordinatesEntity southWest,
+  }) getBounds() {
+    double north = double.negativeInfinity;
+    double east = double.negativeInfinity;
+    double south = double.infinity;
+    double west = double.infinity;
+    for (final c in points) {
+      if (c.latitude > north) north = c.latitude;
+      if (c.longitude > east) east = c.longitude;
+      if (c.latitude < south) south = c.latitude;
+      if (c.longitude < west) west = c.longitude;
+    }
+    return (
+      northEast: CoordinatesEntity(north, east),
+      southWest: CoordinatesEntity(south, west),
+    );
+  }
+
+  /// does not use standard area units, just latitude diff * longitude diff
+  double getAreaCoveredByBounds() {
+    final bounds = getBounds();
+    final height = bounds.northEast.latitude - bounds.southWest.latitude;
+    final width = bounds.northEast.longitude - bounds.southWest.longitude;
+    return height * width;
   }
 }

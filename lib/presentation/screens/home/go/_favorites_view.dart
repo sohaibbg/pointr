@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import '../../../config/my_theme.dart';
-import '../../../domain/entities/favorite_entity.dart';
-import '../../../domain/use_cases/favorites_use_case.dart';
-import '../../components/space.dart';
+part of 'go_screen.dart';
 
 class FavoritesView extends ConsumerWidget {
   const FavoritesView({super.key});

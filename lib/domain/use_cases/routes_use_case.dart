@@ -6,7 +6,7 @@ import '../repositories/i_local_routes_repo.dart';
 
 part 'routes_use_case.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class RoutesUseCase extends _$RoutesUseCase {
   final repo = getIt.call<ILocalRoutesRepo>();
 

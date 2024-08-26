@@ -11,6 +11,15 @@ class CoordinatesEntity with CoordinatesEntityMappable {
 
   const CoordinatesEntity(this.latitude, this.longitude);
 
+  factory CoordinatesEntity.centerOf(
+    CoordinatesEntity first,
+    CoordinatesEntity second,
+  ) =>
+      CoordinatesEntity(
+        (first.latitude + second.latitude) / 2,
+        (first.longitude + second.longitude) / 2,
+      );
+
   double euclideanDistanceFrom(CoordinatesEntity latLng) {
     final dy = latitude - latLng.latitude;
     final dx = longitude - latLng.longitude;
