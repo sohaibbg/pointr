@@ -20,8 +20,8 @@ import '../../components/loc_search_bar_with_overlay.dart';
 import '../../components/map_with_pin_and_banner.dart';
 import '../../components/space.dart';
 
-class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
-  const _NewFavoriteViewModel(
+class _CreateFavoriteViewModel extends ViewModel<CreateFavorite> {
+  const _CreateFavoriteViewModel(
     super.context,
     super.ref, {
     required this.mapCtlCompleter,
@@ -136,8 +136,8 @@ class _NewFavoriteViewModel extends ViewModel<NewFavorite> {
   }
 }
 
-class NewFavorite extends HookConsumerWidget {
-  const NewFavorite({super.key});
+class CreateFavorite extends HookConsumerWidget {
+  const CreateFavorite({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -145,7 +145,7 @@ class NewFavorite extends HookConsumerWidget {
       () => Completer<GoogleMapController>(),
       [context],
     );
-    final vm = _NewFavoriteViewModel(
+    final vm = _CreateFavoriteViewModel(
       context,
       ref,
       mapCtlCompleter: mapCtlCompleter,

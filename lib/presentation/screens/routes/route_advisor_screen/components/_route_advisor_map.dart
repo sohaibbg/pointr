@@ -1,7 +1,7 @@
-part of '../route_calculator.dart';
+part of '../route_advisor_screen.dart';
 
-class _RouteCalculatorMap extends ConsumerWidget {
-  const _RouteCalculatorMap({
+class _RouteAdvisorMap extends ConsumerWidget {
+  const _RouteAdvisorMap({
     required this.initialPlace,
     required this.mapCtlCompleter,
   });
@@ -11,7 +11,7 @@ class _RouteCalculatorMap extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = _RouteCalculatorViewModel(context, ref);
+    final vm = _RouteAdvisorMapViewModel(context, ref);
     return MapWithPinAndBanner(
       initialCameraPosition: CameraPosition(
         target: vm.initialLatLng,
@@ -32,8 +32,8 @@ class _RouteCalculatorMap extends ConsumerWidget {
   }
 }
 
-class _RouteCalculatorViewModel extends ViewModel<_RouteCalculatorMap> {
-  const _RouteCalculatorViewModel(super.context, super.ref);
+class _RouteAdvisorMapViewModel extends ViewModel<_RouteAdvisorMap> {
+  const _RouteAdvisorMapViewModel(super.context, super.ref);
 
   LatLng get initialLatLng {
     final coordinates = widget.initialPlace?.coordinates ??

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,7 +15,7 @@ import '../../../components/aligned_dialog_pusher_box.dart';
 import '../../../components/slide_transition_helper.dart';
 import '../../../components/space.dart';
 
-part 'list_routes_view_model.dart';
+part '_view_model.dart';
 
 class ListRoutesScreen extends HookConsumerWidget {
   const ListRoutesScreen({super.key});
@@ -46,7 +47,7 @@ class ListRoutesScreen extends HookConsumerWidget {
       ),
     );
     final createRoutebtn = ElevatedButton.icon(
-      onPressed: () {},
+      onPressed: () => context.go('/route/create'),
       label: const Text("Create new Route"),
       icon: const Icon(Icons.add),
       style: MyTheme.secondaryOutlinedButtonStyle,
@@ -96,7 +97,7 @@ class ListRoutesScreen extends HookConsumerWidget {
         routeList,
       ],
     );
-    return Column(
+    final overlay = Column(
       children: [
         Expanded(child: customScrollView),
         watchRoutes.when(
@@ -107,6 +108,20 @@ class ListRoutesScreen extends HookConsumerWidget {
           ),
         ),
       ],
+    );
+    final body = Stack(
+      children: [
+        Image.asset(
+          'assets/images/geometric pattern.png',
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.topCenter,
+        ),
+        overlay,
+      ],
+    );
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: body,
     );
   }
 }
@@ -299,7 +314,7 @@ class _ListRoutesFooterView extends HookConsumerWidget {
     );
     final viewOnMapBtn = ElevatedButton.icon(
       onPressed: () => context.go(
-        '/display-routes',
+        '/route/display',
         extra: ref.read(_selectedRoutesProvider),
       ),
       style: MyTheme.primaryElevatedButtonStyle.copyWith(
@@ -337,6 +352,17 @@ class _ListRoutesFooterView extends HookConsumerWidget {
           children: [
             viewOnMapBtn,
             clearSelectionBtn,
+            ElevatedButton.icon(
+              onPressed: () async {
+                await Clipboard.setData(
+                  ClipboardData(
+                    text: vm.selectedRoutesConstructor(),
+                  ),
+                );
+              },
+              label: const Text("Copy to Clipboard"),
+              icon: const Icon(Icons.copy),
+            ),
           ],
         ),
       ),

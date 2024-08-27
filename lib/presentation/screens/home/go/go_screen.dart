@@ -32,7 +32,7 @@ class GoScreen extends HookConsumerWidget {
         void listener() {
           if (LocSearchBarWithOverlay.searchFocusNode.hasFocus) {
             context.go(
-              '/route-calculator',
+              '/route/advisor',
               extra: {'focusSearch': true},
             );
           }
@@ -64,7 +64,7 @@ class GoScreen extends HookConsumerWidget {
         onTap: () {
           LocSearchBarWithOverlay.searchFocusNode.unfocus();
           context.go(
-            '/route-calculator',
+            '/route/advisor',
             extra: {'focusSearch': false},
           );
         },
@@ -232,7 +232,7 @@ class GoScreen extends HookConsumerWidget {
       ),
     );
     final scrollController = useScrollController();
-    return CustomScrollView(
+    final foreground = CustomScrollView(
       controller: scrollController,
       slivers: [
         SliverToBoxAdapter(
@@ -251,6 +251,18 @@ class GoScreen extends HookConsumerWidget {
         const NearbySuggestionsView(),
         SliverToBoxAdapter(child: 150.verticalSpace),
       ],
+    );
+    return Scaffold(
+      body: Stack(
+        children: [
+          Image.asset(
+            'assets/images/geometric pattern.png',
+            fit: BoxFit.fitWidth,
+            alignment: Alignment.topCenter,
+          ),
+          foreground,
+        ],
+      ),
     );
   }
 }

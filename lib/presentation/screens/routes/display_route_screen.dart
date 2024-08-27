@@ -5,16 +5,16 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../../config/my_theme.dart';
-import '../../../../domain/entities/coordinates_entity.dart';
-import '../../../../domain/entities/route_entity.dart';
-import '../../../../domain/repositories/i_location_repo.dart';
-import '../../../../infrastructure/services/packages/iterable.dart';
-import '../../../components/dialogs.dart';
-import '../../../components/gmap_buttons.dart';
-import '../../../components/header_footer.dart';
-import '../../../components/routes_legend_list_view.dart';
-import '../../../components/space.dart';
+import '../../../config/my_theme.dart';
+import '../../../domain/entities/coordinates_entity.dart';
+import '../../../domain/entities/route_entity.dart';
+import '../../../domain/repositories/i_location_repo.dart';
+import '../../../infrastructure/services/packages/iterable.dart';
+import '../../components/dialogs.dart';
+import '../../components/gmap_buttons.dart';
+import '../../components/header_footer.dart';
+import '../../components/routes_legend_list_view.dart';
+import '../../components/space.dart';
 
 class DisplayRouteScreen extends HookWidget {
   const DisplayRouteScreen(this.routes, {super.key});

@@ -1,27 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../config/my_theme.dart';
-import 'go/go_screen.dart';
-import 'routes/list_routes_screen.dart';
+import '../../../infrastructure/services/packages/iterable.dart';
 
-enum HomeScreenOptions { go, routes }
+enum HomeOptions {
+  go(
+    iconData: Icons.directions_walk_rounded,
+    label: 'Go',
+    path: '/go',
+  ),
+  routes(
+    iconData: Icons.route,
+    label: 'Routes',
+    path: '/route',
+  );
 
-class Home extends HookWidget {
-  const Home({
+  final String label;
+  final IconData iconData;
+  final String path;
+
+  const HomeOptions({
+    required this.label,
+    required this.iconData,
+    required this.path,
+  });
+}
+
+class HomeShell extends HookWidget {
+  const HomeShell({
     super.key,
-    required this.homeScreenOptions,
+    required this.child,
   });
 
-  final HomeScreenOptions homeScreenOptions;
+  final Widget child;
+
   @override
   Widget build(BuildContext context) {
-    final selectedOptionIndex = useState(homeScreenOptions.index);
-    final selectedOption = switch (selectedOptionIndex.value) {
-      0 => HomeScreenOptions.go,
-      1 => HomeScreenOptions.routes,
-      _ => throw UnimplementedError(),
-    };
+    final selectedOption = HomeOptions.values.firstWhereOrNull(
+      (o) => o.path == GoRouterState.of(context).fullPath,
+    );
+    final previousOption = useValueChanged<HomeOptions?, HomeOptions>(
+      selectedOption,
+      (oldValue, oldResult) {
+        if (selectedOption != null) return selectedOption;
+        return oldResult;
+      },
+    );
     final bottomNavigationBar = Material(
       elevation: 8,
       child: BottomNavigationBar(
@@ -30,18 +56,27 @@ class Home extends HookWidget {
           Colors.white,
           0.5,
         ),
-        currentIndex: selectedOptionIndex.value,
-        onTap: (value) => selectedOptionIndex.value = value,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_walk_rounded),
-            label: "Go",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.route),
-            label: "Routes",
-          ),
-        ],
+        currentIndex: switch (selectedOption ?? previousOption) {
+          HomeOptions.go => 0,
+          HomeOptions.routes => 1,
+          null => 0,
+        },
+        onTap: (value) {
+          final path = switch (value) {
+            0 => '/go',
+            1 => '/route',
+            _ => throw UnimplementedError()
+          };
+          context.go(path);
+        },
+        items: HomeOptions.values
+            .map(
+              (o) => BottomNavigationBarItem(
+                icon: Icon(o.iconData),
+                label: o.label,
+              ),
+            )
+            .toList(),
       ),
     );
     final backdrop = Image.asset(
@@ -52,13 +87,7 @@ class Home extends HookWidget {
     final body = Stack(
       alignment: Alignment.topCenter,
       fit: StackFit.expand,
-      children: [
-        backdrop,
-        switch (selectedOption) {
-          HomeScreenOptions.go => const GoScreen(),
-          HomeScreenOptions.routes => const ListRoutesScreen(),
-        },
-      ],
+      children: [backdrop, child],
     );
     return Scaffold(
       bottomNavigationBar: bottomNavigationBar,

@@ -34,10 +34,7 @@ class MapWithPinAndBanner extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isMoving = useState<bool>(false);
-    final mapCtlCompleter = useMemoized(
-      () => Completer<GoogleMapController>(),
-      [context],
-    );
+    final mapCtlCompleter = Completer<GoogleMapController>();
     final googleMap = GestureDetector(
       onDoubleTap: () async {
         final mapCtl = await mapCtlCompleter.future;

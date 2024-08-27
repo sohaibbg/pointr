@@ -96,7 +96,7 @@ class _FavoritesDataView extends ConsumerWidget {
     final favBtns = favs.map(
       (fav) => OutlinedButton.icon(
         onPressed: () => context.go(
-          '/route-calculator',
+          '/route/advisor',
           extra: {'initialPlace': fav},
         ),
         style: MyTheme.primaryOutlinedButtonStyle.copyWith(
@@ -116,7 +116,7 @@ class _FavoritesDataView extends ConsumerWidget {
     buttons.addAll(favBtns);
     if (favs.isNotEmpty) {
       final editFavsBtn = OutlinedButton.icon(
-        onPressed: () => context.go('/favorites'),
+        onPressed: () => context.go('/favorite'),
         icon: const Icon(Icons.edit),
         label: const Text(
           "Edit favorites",
@@ -128,14 +128,14 @@ class _FavoritesDataView extends ConsumerWidget {
     final addNewFavBtn = favs.isEmpty
         ? ElevatedButton.icon(
             style: MyTheme.secondaryOutlinedButtonStyle,
-            onPressed: () => context.go('/new-favorite'),
+            onPressed: () => context.go('/favorite/create'),
             icon: const Icon(Icons.favorite),
             label: const Text(
               "Save a Favorite Place",
             ),
           )
         : IconButton.filledTonal(
-            onPressed: () => context.go('/new-favorite'),
+            onPressed: () => context.go('/favorite/create'),
             style: MyTheme.secondaryOutlinedButtonStyle,
             icon: Icon(favs.isEmpty ? Icons.favorite : Icons.add),
           );

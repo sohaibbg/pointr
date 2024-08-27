@@ -40,4 +40,22 @@ class _ListRoutesViewModel extends ViewModel<ListRoutesScreen> {
         )
         .state = filter.toggle(mode).toSet();
   }
+
+  String selectedRoutesConstructor() => ref
+      .read(
+        _selectedRoutesProvider,
+      )
+      .map(
+        (e) {
+          final pointsConstructor = e.points
+              .map(
+                (point) =>
+                    'CoordinatesEntity(${point.latitude}, ${point.longitude})',
+              )
+              .toList();
+          return 'RouteEntity(mode: ${e.mode}, name: "${e.name}", points: $pointsConstructor)';
+        },
+      )
+      .toList()
+      .toString();
 }

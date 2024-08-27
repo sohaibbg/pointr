@@ -1,4 +1,4 @@
-part of '../route_calculator.dart';
+part of '../route_advisor_screen.dart';
 
 class _RouteModeFilterBtn extends HookConsumerWidget {
   const _RouteModeFilterBtn();
@@ -13,12 +13,11 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 12,
+              vertical: 4,
+              horizontal: 9,
             ),
             child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
+              spacing: 9,
               children: pointr.RouteMode.values.map(
                 (mode) {
                   final isSelected = ref.watch(

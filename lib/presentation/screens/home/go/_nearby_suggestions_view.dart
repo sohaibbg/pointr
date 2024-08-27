@@ -360,7 +360,7 @@ class _SuggestionsView extends StatelessWidget {
                         pressedState: MyTheme.primaryColor.shade100,
                       ),
                       onTap: () => context.go(
-                        '/route-calculator',
+                        '/route/advisor',
                         extra: {
                           'initialPlace': AddressEntity(
                             address: place.name,

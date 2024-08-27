@@ -2,40 +2,41 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../config/my_theme.dart';
-import '../../../domain/entities/address_entity.dart';
-import '../../../domain/entities/coordinates_entity.dart';
-import '../../../domain/entities/route_entity.dart' as pointr;
-import '../../../domain/entities/route_entity.dart';
-import '../../../domain/repositories/i_location_repo.dart';
-import '../../../domain/use_cases/location_use_case.dart';
-import '../../../domain/use_cases/route_calculator/filter.dart';
-import '../../../domain/use_cases/route_calculator/from_to_stops.dart';
-import '../../../domain/use_cases/route_calculator/scored_route_groups.dart';
-import '../../../infrastructure/services/packages/google_map_controller.dart';
-import '../../../infrastructure/services/packages/hooks.dart';
-import '../../../infrastructure/services/packages/iterable.dart';
-import '../../../infrastructure/services/packages/view_model.dart';
-import '../../components/aligned_dialog_pusher_box.dart';
-import '../../components/dialogs.dart';
-import '../../components/gmap_buttons.dart';
-import '../../components/header_footer.dart';
-import '../../components/loc_search_bar_with_overlay.dart';
-import '../../components/map_with_pin_and_banner.dart';
-import '../../components/routes_legend_list_view.dart';
-import '../../components/slide_transition_helper.dart';
-import '../../components/space.dart';
+import '../../../../config/my_theme.dart';
+import '../../../../domain/entities/address_entity.dart';
+import '../../../../domain/entities/coordinates_entity.dart';
+import '../../../../domain/entities/route_entity.dart' as pointr;
+import '../../../../domain/entities/route_entity.dart';
+import '../../../../domain/repositories/i_location_repo.dart';
+import '../../../../domain/use_cases/location_use_case.dart';
+import '../../../../domain/use_cases/route_calculator/filter.dart';
+import '../../../../domain/use_cases/route_calculator/from_to_stops.dart';
+import '../../../../domain/use_cases/route_calculator/scored_route_groups.dart';
+import '../../../../infrastructure/services/packages/google_map_controller.dart';
+import '../../../../infrastructure/services/packages/hooks.dart';
+import '../../../../infrastructure/services/packages/iterable.dart';
+import '../../../../infrastructure/services/packages/view_model.dart';
+import '../../../components/aligned_dialog_pusher_box.dart';
+import '../../../components/dialogs.dart';
+import '../../../components/gmap_buttons.dart';
+import '../../../components/header_footer.dart';
+import '../../../components/loc_search_bar_with_overlay.dart';
+import '../../../components/map_with_pin_and_banner.dart';
+import '../../../components/routes_legend_list_view.dart';
+import '../../../components/slide_transition_helper.dart';
+import '../../../components/space.dart';
 
+part '_view_model.dart';
 part 'components/_confirmed_stops_card.dart';
-part 'components/_route_calculator_map.dart';
+part 'components/_route_advisor_map.dart';
 part 'components/_route_mode_filter_btn.dart';
 part 'components/_routes_legend_list_view.dart';
-part 'route_calculator.g.dart';
-part 'route_calculator_view_model.dart';
+part 'route_advisor_screen.g.dart';
 
 @riverpod
 ({bool hasFrom, bool hasTo}) bothStops(BothStopsRef ref) => (
@@ -47,11 +48,11 @@ part 'route_calculator_view_model.dart';
       ),
     );
 
-class RouteCalculator extends HookConsumerWidget {
+class RouteAdvisorScreen extends HookConsumerWidget {
   final bool focusSearch;
   final AddressEntity? initialPlace;
 
-  const RouteCalculator({
+  const RouteAdvisorScreen({
     super.key,
     required this.focusSearch,
     required this.initialPlace,
@@ -63,7 +64,7 @@ class RouteCalculator extends HookConsumerWidget {
       () => Completer<GoogleMapController>(),
       [context],
     );
-    final vm = RouteCalculatorViewModel(
+    final vm = _RouteAdvisorViewModel(
       context,
       ref,
       gmapCtlCompleter: mapCtlCompleter,
@@ -165,7 +166,7 @@ class RouteCalculator extends HookConsumerWidget {
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          _RouteCalculatorMap(
+          _RouteAdvisorMap(
             initialPlace: initialPlace,
             mapCtlCompleter: mapCtlCompleter,
           ),

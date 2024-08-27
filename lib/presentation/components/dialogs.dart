@@ -89,4 +89,41 @@ extension Dialogs on BuildContext {
           ],
         ),
       );
+
+  Future<String?> textFieldDialog({
+    required String title,
+    required String hintText,
+    required String confirmText,
+  }) async {
+    final textCtl = TextEditingController();
+    final text = await showDialog(
+      context: this,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: textCtl,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: hintText,
+          ),
+          onSubmitted: context.pop,
+        ),
+        actions: [
+          TextButton(
+            onPressed: context.pop,
+            child: const Text("Return"),
+          ),
+          ElevatedButton(
+            autofocus: true,
+            onPressed: () => context.pop(
+              textCtl.text,
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
+    );
+    textCtl.dispose();
+    return text;
+  }
 }

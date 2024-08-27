@@ -24,7 +24,7 @@ class RoutesLegendListView extends StatelessWidget {
     Colors.green,
   ];
 
-  static const _height = 165.0;
+  static const _height = 135.0;
   static const _tileWidth = 300.0;
 
   Widget _tileBuilder(
@@ -45,6 +45,8 @@ class RoutesLegendListView extends StatelessWidget {
         Text(
           route.name,
           style: MyTheme.body,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         Text(
           route.mode.name.toUpperCase(),

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'route_calculator.dart';
+part of 'route_advisor_screen.dart';
 
 // **************************************************************************
 // RiverpodGenerator

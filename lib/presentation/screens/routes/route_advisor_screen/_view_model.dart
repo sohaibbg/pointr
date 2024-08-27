@@ -1,4 +1,4 @@
-part of 'route_calculator.dart';
+part of 'route_advisor_screen.dart';
 
 LatLngBounds _latLngBoundsFromCoordinatesEntities(
   Iterable<CoordinatesEntity> list,
@@ -18,10 +18,10 @@ LatLngBounds _latLngBoundsFromCoordinatesEntities(
   return latLngBounds;
 }
 
-class RouteCalculatorViewModel extends ViewModel<RouteCalculator> {
+class _RouteAdvisorViewModel extends ViewModel<RouteAdvisorScreen> {
   final Completer<GoogleMapController> gmapCtlCompleter;
 
-  const RouteCalculatorViewModel(
+  const _RouteAdvisorViewModel(
     super.context,
     super.ref, {
     required this.gmapCtlCompleter,
@@ -40,10 +40,7 @@ class RouteCalculatorViewModel extends ViewModel<RouteCalculator> {
     if (ref.watch(fromStopProvider) != null) {
       return ref.read(fromStopProvider.notifier).state = null;
     }
-    return Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pop();
+    return context.pop();
   }
 
   Future<void> onPlaceSelected(AddressEntity place) async {

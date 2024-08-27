@@ -1,4 +1,4 @@
-part of '../route_calculator.dart';
+part of '../route_advisor_screen.dart';
 
 class _ConfirmedStopsCard extends HookConsumerWidget {
   const _ConfirmedStopsCard();

@@ -11,12 +11,16 @@ class CoordinatesListConverter
   const CoordinatesListConverter();
 
   @override
-  List<CoordinatesEntity> fromSql(String fromDb) =>
-      List<CoordinatesEntity>.from(
-        jsonDecode(fromDb).map(
-          CoordinatesEntityMapper.fromJson,
+  List<CoordinatesEntity> fromSql(String fromDb) {
+    final list = jsonDecode(fromDb) as List;
+    return List<CoordinatesEntity>.from(
+      list.map(
+        (elementJson) => CoordinatesEntityMapper.fromJson(
+          elementJson,
         ),
-      );
+      ),
+    );
+  }
 
   @override
   String toSql(List<CoordinatesEntity> value) => jsonEncode(value);

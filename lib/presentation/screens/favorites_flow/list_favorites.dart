@@ -5,14 +5,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/entities/favorite_entity.dart';
 import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../components/dialogs.dart';
+import '../../components/space.dart';
 
 class ListFavorites extends ConsumerWidget {
   const ListFavorites({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget favDataView(List<FavoriteEntity> data) => ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+    final mqPadding = MediaQuery.of(context).padding;
+    Widget favDataView(List<FavoriteEntity> data) => SliverList.separated(
           itemCount: data.length,
           itemBuilder: (context, index) {
             final fav = data[index];
@@ -20,10 +21,7 @@ class ListFavorites extends ConsumerWidget {
               title: Text(fav.name),
               contentPadding: const EdgeInsets.symmetric(
                 vertical: 12,
-                horizontal: 18,
-              ),
-              onTap: () => context.go(
-                '/favorites/${fav.name}',
+                horizontal: 24,
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete),
@@ -67,25 +65,72 @@ class ListFavorites extends ConsumerWidget {
             height: 0,
           ),
         );
-    final favHandler = ref.watch(favoritesUseCaseProvider).when(
+
+    final favHandler = ref
+        .watch(
+          favoritesUseCaseProvider,
+        )
+        .when(
           data: favDataView,
-          error: (error, s) => Center(
-            child: Text(
-              error.toString(),
+          error: (error, s) => SliverToBoxAdapter(
+            child: Center(
+              child: Text(
+                error.toString(),
+              ),
             ),
           ),
-          loading: () => const CircularProgressIndicator(),
+          loading: () => const SliverToBoxAdapter(
+            child: CircularProgressIndicator(),
+          ),
         );
+    final header = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        mqPadding.top.verticalSpace,
+        230.verticalSpace,
+        Padding(
+          padding: const EdgeInsetsDirectional.only(
+            start: 24,
+            end: 30,
+          ),
+          child: Text(
+            "Edit Favorites",
+            style: Theme.of(context)
+                .textTheme
+                .displayMedium
+                ?.copyWith(color: Colors.grey.shade800),
+          ),
+        ),
+        70.verticalSpace,
+      ],
+    );
+    final overlay = CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: header,
+        ),
+        favHandler,
+      ],
+    );
+    final addNewBtn = FloatingActionButton.extended(
+      label: const Text("Add new"),
+      icon: const Icon(Icons.add),
+      onPressed: () => context.go('/favorite/create'),
+    );
+    final body = Stack(
+      children: [
+        Image.asset(
+          'assets/images/geometric pattern.png',
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.topCenter,
+        ),
+        overlay,
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Favorites"),
-      ),
-      body: favHandler,
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text("Add new"),
-        icon: const Icon(Icons.add),
-        onPressed: () => context.go('/new-favorite'),
-      ),
+      backgroundColor: Colors.white,
+      body: body,
+      floatingActionButton: addNewBtn,
     );
   }
 }

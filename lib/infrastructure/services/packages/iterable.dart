@@ -1,4 +1,12 @@
 extension IterableHelperMethods<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T e) test) {
+    try {
+      return firstWhere(test);
+    } catch (_) {
+      return null;
+    }
+  }
+
   List<T> replaceAtIndex(
     int index,
     T newElement,

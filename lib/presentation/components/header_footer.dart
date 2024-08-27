@@ -19,16 +19,19 @@ class HeaderFooter extends StatelessWidget {
       fit: BoxFit.fitWidth,
     );
     final gradient = LinearGradient(
-      stops: const [
-        0,
-        1,
-      ],
+      stops: switch (position) {
+        Position.top => const [1, 0],
+        Position.bottom => const [0, 1],
+      },
       colors: [
         Colors.white,
         Colors.white.withOpacity(0),
       ],
-      begin: const Alignment(0, 0),
-      end: Alignment.topCenter,
+      begin: Alignment.center,
+      end: switch (position) {
+        Position.top => Alignment.bottomCenter,
+        Position.bottom => Alignment.topCenter,
+      },
     );
     final imgBg = DecoratedBox(
       decoration: BoxDecoration(
@@ -36,11 +39,17 @@ class HeaderFooter extends StatelessWidget {
       ),
       child: FractionallySizedBox(
         heightFactor: 0.78,
-        alignment: Alignment.bottomCenter,
+        alignment: switch (position) {
+          Position.top => Alignment.topCenter,
+          Position.bottom => Alignment.bottomCenter,
+        },
         child: ShaderMask(
           shaderCallback: (bounds) => gradient.createShader(bounds),
           child: RotatedBox(
-            quarterTurns: 2,
+            quarterTurns: switch (position) {
+              Position.top => 0,
+              Position.bottom => 2,
+            },
             child: image,
           ),
         ),
