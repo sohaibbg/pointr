@@ -75,6 +75,7 @@ abstract class GooglePlacesApi {
   static Future<List<GPlaceModel>> searchNearby(
     CoordinatesEntity coordinates, {
     required int radius,
+    int length = 5,
   }) async {
     final headers = {
       'X-Goog-Api-Key': _apiKey,
@@ -86,7 +87,7 @@ abstract class GooglePlacesApi {
       'Content-Type': 'application/json',
     };
     final body = {
-      "maxResultCount": 10,
+      "maxResultCount": length,
       "locationRestriction": {
         "circle": {
           "center": {

@@ -11,9 +11,9 @@ import '../../../domain/entities/route_entity.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../infrastructure/services/packages/iterable.dart';
 import '../../components/dialogs.dart';
-import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
-import '../../components/routes_legend_list_view.dart';
+import '../../components/map/gmap_buttons.dart';
+import '../../components/map/routes_legend_list_view.dart';
 import '../../components/space.dart';
 
 class DisplayRouteScreen extends HookWidget {
@@ -58,7 +58,7 @@ class DisplayRouteScreen extends HookWidget {
     final polylines = _segmentToPolylines(
       routeSegments[selectedSegmentIndex.value],
     );
-    final mapCtlCompleter = Completer<GoogleMapController>();
+    final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
     mapCtlCompleter.future.then(
       (ctl) {
         final allRoutesBounds = routes.map(
@@ -124,7 +124,7 @@ class DisplayRouteScreen extends HookWidget {
         Icons.arrow_back_ios_new_outlined,
       ),
     );
-    final footer = HeaderFooter(
+    final footer = Footer(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(

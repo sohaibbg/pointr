@@ -1,4 +1,4 @@
-part of '../route_advisor_screen.dart';
+part of '../go_screen.dart';
 
 class _RouteModeFilterBtn extends HookConsumerWidget {
   const _RouteModeFilterBtn();
@@ -57,7 +57,13 @@ class _RouteModeFilterBtn extends HookConsumerWidget {
         onPressed: push,
         icon: const Icon(Icons.filter_alt),
         label: const Text("Filter"),
-        style: MyTheme.primaryElevatedButtonStyle,
+        style: MyTheme.primaryElevatedButtonStyle.copyWith(
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -39,13 +41,16 @@ class ScoredRouteGroups extends _$ScoredRouteGroups {
     );
     if (from == null || to == null) return [];
     final routes = await ref.watch(routesUseCaseProvider.future);
-    return routes
-      ..sort(
-        (a, b) {
-          final bScore = b.distanceScore(from, to);
-          final aScore = a.distanceScore(from, to);
-          return aScore.compareTo(bScore);
-        },
-      );
+    final result = await Isolate.run(
+      () => routes
+        ..sort(
+          (a, b) {
+            final bScore = b.distanceScore(from, to);
+            final aScore = a.distanceScore(from, to);
+            return aScore.compareTo(bScore);
+          },
+        ),
+    );
+    return result;
   }
 }

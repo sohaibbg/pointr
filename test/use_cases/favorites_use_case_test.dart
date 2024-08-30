@@ -1,6 +1,6 @@
 import 'package:pointr/config/injector.dart';
 import 'package:pointr/domain/entities/coordinates_entity.dart';
-import 'package:pointr/domain/entities/favorite_entity.dart';
+import 'package:pointr/domain/entities/searchable_place.dart';
 import 'package:pointr/domain/use_cases/favorites_use_case.dart';
 import 'package:test/test.dart';
 

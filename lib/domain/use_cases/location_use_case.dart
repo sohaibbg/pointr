@@ -18,7 +18,7 @@ class LocPermission extends _$LocPermission {
       getIt.call<ILocationRepo>().checkPermission();
 
   Future<LocationPermission> askAgain() async {
-    final repeated = await getIt.call<ILocationRepo>().checkPermission();
+    final repeated = await getIt.call<ILocationRepo>().requestPermission();
     state = AsyncData(repeated);
     return repeated;
   }

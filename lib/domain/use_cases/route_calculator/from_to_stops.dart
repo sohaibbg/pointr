@@ -1,8 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../entities/address_entity.dart';
 import '../../entities/coordinates_entity.dart';
+import '../../entities/searchable_place.dart';
 import '../places_use_case.dart';
 
 part 'from_to_stops.g.dart';

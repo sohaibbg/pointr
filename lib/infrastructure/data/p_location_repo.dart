@@ -5,6 +5,7 @@ import '../../domain/entities/coordinates_entity.dart';
 import '../../domain/repositories/i_location_repo.dart';
 
 @prod
+@dev
 @Injectable(as: ILocationRepo)
 class PLocationRepo implements ILocationRepo {
   @override

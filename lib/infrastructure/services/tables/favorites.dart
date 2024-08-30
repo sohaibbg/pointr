@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-import '../../../domain/entities/address_entity.dart';
+import '../../../domain/entities/searchable_place.dart';
 import '../packages/database.dart';
 
 class Favorites extends Table {

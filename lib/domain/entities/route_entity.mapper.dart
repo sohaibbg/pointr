@@ -25,16 +25,12 @@ class RouteModeMapper extends EnumMapper<RouteMode> {
   @override
   RouteMode decode(dynamic value) {
     switch (value) {
-      case 'minibus':
-        return RouteMode.minibus;
-      case 'redBus':
-        return RouteMode.redBus;
-      case 'pinkBus':
-        return RouteMode.pinkBus;
+      case 'acBus':
+        return RouteMode.acBus;
       case 'chinchi':
         return RouteMode.chinchi;
-      case 'greenLine':
-        return RouteMode.greenLine;
+      case 'minibus':
+        return RouteMode.minibus;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -43,16 +39,12 @@ class RouteModeMapper extends EnumMapper<RouteMode> {
   @override
   dynamic encode(RouteMode self) {
     switch (self) {
-      case RouteMode.minibus:
-        return 'minibus';
-      case RouteMode.redBus:
-        return 'redBus';
-      case RouteMode.pinkBus:
-        return 'pinkBus';
+      case RouteMode.acBus:
+        return 'acBus';
       case RouteMode.chinchi:
         return 'chinchi';
-      case RouteMode.greenLine:
-        return 'greenLine';
+      case RouteMode.minibus:
+        return 'minibus';
     }
   }
 }
@@ -87,19 +79,24 @@ class RouteEntityMapper extends ClassMapperBase<RouteEntity> {
   static List<CoordinatesEntity> _$points(RouteEntity v) => v.points;
   static const Field<RouteEntity, List<CoordinatesEntity>> _f$points =
       Field('points', _$points);
+  static bool _$isHardcoded(RouteEntity v) => v.isHardcoded;
+  static const Field<RouteEntity, bool> _f$isHardcoded =
+      Field('isHardcoded', _$isHardcoded, opt: true, def: false);
 
   @override
   final MappableFields<RouteEntity> fields = const {
     #name: _f$name,
     #mode: _f$mode,
     #points: _f$points,
+    #isHardcoded: _f$isHardcoded,
   };
 
   static RouteEntity _instantiate(DecodingData data) {
     return RouteEntity(
         name: data.dec(_f$name),
         mode: data.dec(_f$mode),
-        points: data.dec(_f$points));
+        points: data.dec(_f$points),
+        isHardcoded: data.dec(_f$isHardcoded));
   }
 
   @override
@@ -156,7 +153,11 @@ abstract class RouteEntityCopyWith<$R, $In extends RouteEntity, $Out>
   ListCopyWith<$R, CoordinatesEntity,
           CoordinatesEntityCopyWith<$R, CoordinatesEntity, CoordinatesEntity>>
       get points;
-  $R call({String? name, RouteMode? mode, List<CoordinatesEntity>? points});
+  $R call(
+      {String? name,
+      RouteMode? mode,
+      List<CoordinatesEntity>? points,
+      bool? isHardcoded});
   RouteEntityCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -174,17 +175,23 @@ class _RouteEntityCopyWithImpl<$R, $Out>
       get points => ListCopyWith($value.points, (v, t) => v.copyWith.$chain(t),
           (v) => call(points: v));
   @override
-  $R call({String? name, RouteMode? mode, List<CoordinatesEntity>? points}) =>
+  $R call(
+          {String? name,
+          RouteMode? mode,
+          List<CoordinatesEntity>? points,
+          bool? isHardcoded}) =>
       $apply(FieldCopyWithData({
         if (name != null) #name: name,
         if (mode != null) #mode: mode,
-        if (points != null) #points: points
+        if (points != null) #points: points,
+        if (isHardcoded != null) #isHardcoded: isHardcoded
       }));
   @override
   RouteEntity $make(CopyWithData data) => RouteEntity(
       name: data.get(#name, or: $value.name),
       mode: data.get(#mode, or: $value.mode),
-      points: data.get(#points, or: $value.points));
+      points: data.get(#points, or: $value.points),
+      isHardcoded: data.get(#isHardcoded, or: $value.isHardcoded));
 
   @override
   RouteEntityCopyWith<$R2, RouteEntity, $Out2> $chain<$R2, $Out2>(

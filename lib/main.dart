@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'config/injector.dart';
@@ -40,9 +41,11 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        title: 'Pointr',
-        theme: MyTheme.themeData,
-        routerConfig: router,
+  Widget build(BuildContext context) => Portal(
+        child: MaterialApp.router(
+          title: 'Pointr',
+          theme: MyTheme.themeData,
+          routerConfig: router,
+        ),
       );
 }

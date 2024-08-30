@@ -1,17 +1,15 @@
-part of '../route_advisor_screen.dart';
+part of '../go_screen.dart';
 
-class _RouteAdvisorMap extends ConsumerWidget {
-  const _RouteAdvisorMap({
-    required this.initialPlace,
+class _GoMap extends ConsumerWidget {
+  const _GoMap({
     required this.mapCtlCompleter,
   });
 
-  final AddressEntity? initialPlace;
   final Completer<GoogleMapController> mapCtlCompleter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = _RouteAdvisorMapViewModel(context, ref);
+    final vm = _GoMapViewModel(context, ref);
     return MapWithPinAndBanner(
       initialCameraPosition: CameraPosition(
         target: vm.initialLatLng,
@@ -32,13 +30,22 @@ class _RouteAdvisorMap extends ConsumerWidget {
   }
 }
 
-class _RouteAdvisorMapViewModel extends ViewModel<_RouteAdvisorMap> {
-  const _RouteAdvisorMapViewModel(super.context, super.ref);
+class _GoMapViewModel extends ViewModel<_GoMap> {
+  const _GoMapViewModel(super.context, super.ref);
 
   LatLng get initialLatLng {
-    final coordinates = widget.initialPlace?.coordinates ??
-        ref.read(currentLocProvider).valueOrNull ??
-        karachiLatLng;
+    final permission = ref.read(locPermissionProvider).valueOrNull;
+    if (![
+      LocationPermission.always,
+      LocationPermission.whileInUse,
+    ].contains(permission)) {
+      return LatLng(
+        karachiLatLng.latitude,
+        karachiLatLng.longitude,
+      );
+    }
+    final coordinates =
+        ref.read(currentLocProvider).valueOrNull ?? karachiLatLng;
     return LatLng(
       coordinates.latitude,
       coordinates.longitude,

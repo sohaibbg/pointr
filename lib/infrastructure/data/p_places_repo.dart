@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../domain/entities/autocomplete_suggestion_entity.dart';
 import '../../domain/entities/coordinates_entity.dart';
-import '../../domain/entities/named_address_entity.dart';
+import '../../domain/entities/searchable_place.dart';
 import '../../domain/repositories/i_places_repo.dart';
 import '../services/google_maps_api.dart';
 import '../services/google_places_api.dart';
 
 @prod
+@dev
 @Injectable(as: IPlacesRepo)
 class PPlacesRepo implements IPlacesRepo {
   // config for searching places

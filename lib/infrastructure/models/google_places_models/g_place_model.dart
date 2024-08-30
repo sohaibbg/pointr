@@ -1,5 +1,5 @@
 import '../../../domain/entities/coordinates_entity.dart';
-import '../../../domain/entities/named_address_entity.dart';
+import '../../../domain/entities/searchable_place.dart';
 
 class GPlaceModel {
   final Map displayName;

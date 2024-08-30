@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dart_mappable/dart_mappable.dart';
 
 import 'coordinates_entity.dart';
@@ -8,11 +6,9 @@ part 'route_entity.mapper.dart';
 
 @MappableEnum()
 enum RouteMode {
-  minibus("Minibus"),
-  redBus("Red Bus"),
-  pinkBus("Pink Bus"),
+  acBus("AC Bus"),
   chinchi("Chinchi"),
-  greenLine("Green Line");
+  minibus("Minibus");
 
   final String name;
 
@@ -24,25 +20,113 @@ class RouteEntity with RouteEntityMappable {
   final List<CoordinatesEntity> points;
   final String name;
   final RouteMode mode;
+  final bool isHardcoded;
 
   const RouteEntity({
     required this.name,
     required this.mode,
     required this.points,
+    this.isHardcoded = false,
   });
+
+  /// [point1] and [point2] are considered to
+  /// be located on this route
+  List<CoordinatesEntity> subRoutePoints(
+    CoordinatesEntity point1,
+    CoordinatesEntity point2,
+  ) {
+    if (point1 == point2) throw 'points 1 and 2 are the same';
+    final result = <CoordinatesEntity>[];
+    double point1MinDist = double.infinity;
+    double point2MinDist = double.infinity;
+    int iWhere1Min = -1;
+    int iWhere2Min = -1;
+    for (int i = 0; i < points.length - 1; i++) {
+      final segment = RouteEntity(
+        name: '',
+        mode: RouteMode.acBus,
+        points: [points[i], points[i + 1]],
+      );
+      final point1Dist = segment
+          .pointOfClosestApproachFrom(point1)
+          .euclideanDistanceFrom(point1);
+      if (point1Dist < point1MinDist) {
+        point1MinDist = point1Dist;
+        iWhere1Min = i;
+      }
+      final point2Dist = segment
+          .pointOfClosestApproachFrom(point2)
+          .euclideanDistanceFrom(point2);
+      if (point2Dist < point2MinDist) {
+        point2MinDist = point2Dist;
+        iWhere2Min = i;
+      }
+    }
+    if (iWhere1Min == iWhere2Min) {
+      final first = points[iWhere1Min];
+      final is1Closer = first.euclideanDistanceFrom(point1) <
+          first.euclideanDistanceFrom(point2);
+      if (is1Closer) return [point1, point2];
+      return [point2, point1];
+    }
+    late final int iStart;
+    late final int iEnd;
+    late final CoordinatesEntity startPoint;
+    late final CoordinatesEntity endPoint;
+    if (iWhere1Min < iWhere2Min) {
+      iStart = iWhere1Min + 1;
+      iEnd = iWhere2Min;
+      startPoint = point1;
+      endPoint = point2;
+    }
+    if (iWhere1Min > iWhere2Min) {
+      iStart = iWhere2Min + 1;
+      iEnd = iWhere1Min;
+      startPoint = point2;
+      endPoint = point1;
+    }
+    final midPoints = points.sublist(iStart, iEnd + 1);
+    // for debugging, this should be unreachable code
+    if (midPoints.isEmpty) {
+      throw {
+        'iWhere1Min': iWhere1Min,
+        'iWhere2Min': iWhere2Min,
+        'iStart': iStart,
+        'iEnd': iEnd,
+        'startPoint': startPoint,
+        'endPoint': endPoint,
+      };
+    }
+    result.addAll(midPoints);
+    if (startPoint != midPoints.first) result.insert(0, startPoint);
+    if (endPoint != midPoints.last) result.insert(result.length, endPoint);
+    return result;
+  }
+
+  bool isCoordinateOnRoute(CoordinatesEntity c) {
+    if (points.contains(c)) return true;
+    final distanceFromRoute =
+        pointOfClosestApproachFrom(c).euclideanDistanceFrom(c);
+    return distanceFromRoute == 0;
+  }
 
   /// higher the score, lesser the distance
   /// to and from the departure and destination
   /// respectively, and the travel distance
   double distanceScore(
-    CoordinatesEntity departure,
-    CoordinatesEntity destination,
+    CoordinatesEntity point1,
+    CoordinatesEntity point2,
   ) {
-    final onboard = pointOfClosestApproachFrom(departure);
-    final offload = pointOfClosestApproachFrom(destination);
-    final departDist = departure.euclideanDistanceFrom(onboard);
-    final destDist = destination.euclideanDistanceFrom(offload);
-    final sum = departDist + destDist + sqrt(totalDistance);
+    final point1POCA = pointOfClosestApproachFrom(point1);
+    final point2POCA = pointOfClosestApproachFrom(point2);
+    final point1Walk = point1.euclideanDistanceFrom(point1POCA);
+    final point2Walk = point2.euclideanDistanceFrom(point2POCA);
+    final subRoute = RouteEntity(
+      name: '',
+      mode: RouteMode.acBus,
+      points: subRoutePoints(point1, point2),
+    );
+    final sum = -point1Walk - point2Walk - (0.1 * subRoute.totalDistance);
     return 1 / sum;
   }
 

@@ -6,8 +6,6 @@ import '../entities/coordinates_entity.dart';
 const karachiLatLng = CoordinatesEntity(24.874694, 67.033639);
 
 @test
-// TODO
-@dev
 @injectable
 class ILocationRepo {
   Future<LocationPermission> checkPermission() async =>

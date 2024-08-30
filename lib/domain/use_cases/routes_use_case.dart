@@ -12,7 +12,7 @@ class RoutesUseCase extends _$RoutesUseCase {
 
   @override
   Future<List<RouteEntity>> build() async {
-    final hc = await repo.getHardcoded();
+    final hc = repo.getHardcoded();
     final custom = await repo.getCustom();
     return [...hc, ...custom];
   }

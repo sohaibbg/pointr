@@ -57,7 +57,7 @@ extension Dialogs on BuildContext {
         Future showParameterOrDefaultErrorDialog() async {
           final didPEBSucceed = await attemptParameterErrorBuilder();
           if (didPEBSucceed) return;
-          await errorDialog(
+          await simpleDialog(
             title: error.toString(),
             content: stackTrace.toString(),
           );
@@ -70,13 +70,14 @@ extension Dialogs on BuildContext {
     );
   }
 
-  Future errorDialog({
+  Future simpleDialog({
     String title = 'An error occurred',
     String content = 'Please try again later',
     Widget? alternativeAction,
   }) =>
       showDialog(
         context: this,
+        useRootNavigator: false,
         builder: (context) => AlertDialog(
           title: Text(title),
           content: Text(content),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/favorite_entity.dart';
+import '../../../domain/entities/searchable_place.dart';
 import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../components/dialogs.dart';
 import '../../components/space.dart';

@@ -7,7 +7,7 @@ part of 'places_use_case.dart';
 // **************************************************************************
 
 String _$nearbyPlacesFromCoordinatesHash() =>
-    r'599b4c07a168201e103473897c2f3b38a094282f';
+    r'5a9d3bf74a10a717428d4bbe14663548acdd0127';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -75,7 +75,7 @@ class NearbyPlacesFromCoordinatesFamily
 
 /// See also [nearbyPlacesFromCoordinates].
 class NearbyPlacesFromCoordinatesProvider
-    extends AutoDisposeFutureProvider<List<NamedAddressEntity>> {
+    extends FutureProvider<List<NamedAddressEntity>> {
   /// See also [nearbyPlacesFromCoordinates].
   NearbyPlacesFromCoordinatesProvider(
     CoordinatesEntity coordinates,
@@ -129,7 +129,7 @@ class NearbyPlacesFromCoordinatesProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<NamedAddressEntity>> createElement() {
+  FutureProviderElement<List<NamedAddressEntity>> createElement() {
     return _NearbyPlacesFromCoordinatesProviderElement(this);
   }
 
@@ -149,155 +149,19 @@ class NearbyPlacesFromCoordinatesProvider
 }
 
 mixin NearbyPlacesFromCoordinatesRef
-    on AutoDisposeFutureProviderRef<List<NamedAddressEntity>> {
+    on FutureProviderRef<List<NamedAddressEntity>> {
   /// The parameter `coordinates` of this provider.
   CoordinatesEntity get coordinates;
 }
 
 class _NearbyPlacesFromCoordinatesProviderElement
-    extends AutoDisposeFutureProviderElement<List<NamedAddressEntity>>
+    extends FutureProviderElement<List<NamedAddressEntity>>
     with NearbyPlacesFromCoordinatesRef {
   _NearbyPlacesFromCoordinatesProviderElement(super.provider);
 
   @override
   CoordinatesEntity get coordinates =>
       (origin as NearbyPlacesFromCoordinatesProvider).coordinates;
-}
-
-String _$nearbyPlacesBySearchTermHash() =>
-    r'c7f6faa36ce344a240698ead588b680118eb85ab';
-
-/// See also [nearbyPlacesBySearchTerm].
-@ProviderFor(nearbyPlacesBySearchTerm)
-const nearbyPlacesBySearchTermProvider = NearbyPlacesBySearchTermFamily();
-
-/// See also [nearbyPlacesBySearchTerm].
-class NearbyPlacesBySearchTermFamily
-    extends Family<AsyncValue<List<AutocompleteSuggestionEntity>>> {
-  /// See also [nearbyPlacesBySearchTerm].
-  const NearbyPlacesBySearchTermFamily();
-
-  /// See also [nearbyPlacesBySearchTerm].
-  NearbyPlacesBySearchTermProvider call(
-    String term,
-  ) {
-    return NearbyPlacesBySearchTermProvider(
-      term,
-    );
-  }
-
-  @override
-  NearbyPlacesBySearchTermProvider getProviderOverride(
-    covariant NearbyPlacesBySearchTermProvider provider,
-  ) {
-    return call(
-      provider.term,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'nearbyPlacesBySearchTermProvider';
-}
-
-/// See also [nearbyPlacesBySearchTerm].
-class NearbyPlacesBySearchTermProvider
-    extends AutoDisposeFutureProvider<List<AutocompleteSuggestionEntity>> {
-  /// See also [nearbyPlacesBySearchTerm].
-  NearbyPlacesBySearchTermProvider(
-    String term,
-  ) : this._internal(
-          (ref) => nearbyPlacesBySearchTerm(
-            ref as NearbyPlacesBySearchTermRef,
-            term,
-          ),
-          from: nearbyPlacesBySearchTermProvider,
-          name: r'nearbyPlacesBySearchTermProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$nearbyPlacesBySearchTermHash,
-          dependencies: NearbyPlacesBySearchTermFamily._dependencies,
-          allTransitiveDependencies:
-              NearbyPlacesBySearchTermFamily._allTransitiveDependencies,
-          term: term,
-        );
-
-  NearbyPlacesBySearchTermProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.term,
-  }) : super.internal();
-
-  final String term;
-
-  @override
-  Override overrideWith(
-    FutureOr<List<AutocompleteSuggestionEntity>> Function(
-            NearbyPlacesBySearchTermRef provider)
-        create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: NearbyPlacesBySearchTermProvider._internal(
-        (ref) => create(ref as NearbyPlacesBySearchTermRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        term: term,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<AutocompleteSuggestionEntity>>
-      createElement() {
-    return _NearbyPlacesBySearchTermProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is NearbyPlacesBySearchTermProvider && other.term == term;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, term.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin NearbyPlacesBySearchTermRef
-    on AutoDisposeFutureProviderRef<List<AutocompleteSuggestionEntity>> {
-  /// The parameter `term` of this provider.
-  String get term;
-}
-
-class _NearbyPlacesBySearchTermProviderElement
-    extends AutoDisposeFutureProviderElement<List<AutocompleteSuggestionEntity>>
-    with NearbyPlacesBySearchTermRef {
-  _NearbyPlacesBySearchTermProviderElement(super.provider);
-
-  @override
-  String get term => (origin as NearbyPlacesBySearchTermProvider).term;
 }
 
 String _$nameFromCoordinatesHash() =>

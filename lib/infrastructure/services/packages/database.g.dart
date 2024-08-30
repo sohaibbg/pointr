@@ -532,16 +532,310 @@ class CustomRoutesCompanion extends UpdateCompanion<CustomRoute> {
   }
 }
 
+class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      check: () => name.isNotValue(''),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _latMeta = const VerificationMeta('lat');
+  @override
+  late final GeneratedColumn<double> lat = GeneratedColumn<double>(
+      'lat', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _lngMeta = const VerificationMeta('lng');
+  @override
+  late final GeneratedColumn<double> lng = GeneratedColumn<double>(
+      'lng', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _counterMeta =
+      const VerificationMeta('counter');
+  @override
+  late final GeneratedColumn<int> counter = GeneratedColumn<int>(
+      'counter', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  @override
+  List<GeneratedColumn> get $columns => [id, name, lat, lng, counter];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recents';
+  @override
+  VerificationContext validateIntegrity(Insertable<Recent> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('lat')) {
+      context.handle(
+          _latMeta, lat.isAcceptableOrUnknown(data['lat']!, _latMeta));
+    } else if (isInserting) {
+      context.missing(_latMeta);
+    }
+    if (data.containsKey('lng')) {
+      context.handle(
+          _lngMeta, lng.isAcceptableOrUnknown(data['lng']!, _lngMeta));
+    } else if (isInserting) {
+      context.missing(_lngMeta);
+    }
+    if (data.containsKey('counter')) {
+      context.handle(_counterMeta,
+          counter.isAcceptableOrUnknown(data['counter']!, _counterMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Recent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Recent(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      lat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}lat'])!,
+      lng: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}lng'])!,
+      counter: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}counter'])!,
+    );
+  }
+
+  @override
+  $RecentsTable createAlias(String alias) {
+    return $RecentsTable(attachedDatabase, alias);
+  }
+}
+
+class Recent extends DataClass implements Insertable<Recent> {
+  final int id;
+  final String name;
+  final double lat;
+  final double lng;
+  final int counter;
+  const Recent(
+      {required this.id,
+      required this.name,
+      required this.lat,
+      required this.lng,
+      required this.counter});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['lat'] = Variable<double>(lat);
+    map['lng'] = Variable<double>(lng);
+    map['counter'] = Variable<int>(counter);
+    return map;
+  }
+
+  RecentsCompanion toCompanion(bool nullToAbsent) {
+    return RecentsCompanion(
+      id: Value(id),
+      name: Value(name),
+      lat: Value(lat),
+      lng: Value(lng),
+      counter: Value(counter),
+    );
+  }
+
+  factory Recent.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Recent(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      lat: serializer.fromJson<double>(json['lat']),
+      lng: serializer.fromJson<double>(json['lng']),
+      counter: serializer.fromJson<int>(json['counter']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'lat': serializer.toJson<double>(lat),
+      'lng': serializer.toJson<double>(lng),
+      'counter': serializer.toJson<int>(counter),
+    };
+  }
+
+  Recent copyWith(
+          {int? id, String? name, double? lat, double? lng, int? counter}) =>
+      Recent(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        lat: lat ?? this.lat,
+        lng: lng ?? this.lng,
+        counter: counter ?? this.counter,
+      );
+  Recent copyWithCompanion(RecentsCompanion data) {
+    return Recent(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      lat: data.lat.present ? data.lat.value : this.lat,
+      lng: data.lng.present ? data.lng.value : this.lng,
+      counter: data.counter.present ? data.counter.value : this.counter,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Recent(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('counter: $counter')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, lat, lng, counter);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Recent &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.lat == this.lat &&
+          other.lng == this.lng &&
+          other.counter == this.counter);
+}
+
+class RecentsCompanion extends UpdateCompanion<Recent> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<double> lat;
+  final Value<double> lng;
+  final Value<int> counter;
+  const RecentsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.lat = const Value.absent(),
+    this.lng = const Value.absent(),
+    this.counter = const Value.absent(),
+  });
+  RecentsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required double lat,
+    required double lng,
+    this.counter = const Value.absent(),
+  })  : name = Value(name),
+        lat = Value(lat),
+        lng = Value(lng);
+  static Insertable<Recent> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<double>? lat,
+    Expression<double>? lng,
+    Expression<int>? counter,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (lat != null) 'lat': lat,
+      if (lng != null) 'lng': lng,
+      if (counter != null) 'counter': counter,
+    });
+  }
+
+  RecentsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? name,
+      Value<double>? lat,
+      Value<double>? lng,
+      Value<int>? counter}) {
+    return RecentsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      counter: counter ?? this.counter,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (lat.present) {
+      map['lat'] = Variable<double>(lat.value);
+    }
+    if (lng.present) {
+      map['lng'] = Variable<double>(lng.value);
+    }
+    if (counter.present) {
+      map['counter'] = Variable<int>(counter.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecentsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('counter: $counter')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $FavoritesTable favorites = $FavoritesTable(this);
   late final $CustomRoutesTable customRoutes = $CustomRoutesTable(this);
+  late final $RecentsTable recents = $RecentsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [favorites, customRoutes];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [favorites, customRoutes, recents];
 }
 
 typedef $$FavoritesTableCreateCompanionBuilder = FavoritesCompanion Function({
@@ -759,6 +1053,126 @@ class $$CustomRoutesTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+typedef $$RecentsTableCreateCompanionBuilder = RecentsCompanion Function({
+  Value<int> id,
+  required String name,
+  required double lat,
+  required double lng,
+  Value<int> counter,
+});
+typedef $$RecentsTableUpdateCompanionBuilder = RecentsCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<double> lat,
+  Value<double> lng,
+  Value<int> counter,
+});
+
+class $$RecentsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $RecentsTable,
+    Recent,
+    $$RecentsTableFilterComposer,
+    $$RecentsTableOrderingComposer,
+    $$RecentsTableCreateCompanionBuilder,
+    $$RecentsTableUpdateCompanionBuilder> {
+  $$RecentsTableTableManager(_$AppDatabase db, $RecentsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$RecentsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$RecentsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<double> lat = const Value.absent(),
+            Value<double> lng = const Value.absent(),
+            Value<int> counter = const Value.absent(),
+          }) =>
+              RecentsCompanion(
+            id: id,
+            name: name,
+            lat: lat,
+            lng: lng,
+            counter: counter,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required double lat,
+            required double lng,
+            Value<int> counter = const Value.absent(),
+          }) =>
+              RecentsCompanion.insert(
+            id: id,
+            name: name,
+            lat: lat,
+            lng: lng,
+            counter: counter,
+          ),
+        ));
+}
+
+class $$RecentsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $RecentsTable> {
+  $$RecentsTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get lat => $state.composableBuilder(
+      column: $state.table.lat,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get lng => $state.composableBuilder(
+      column: $state.table.lng,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get counter => $state.composableBuilder(
+      column: $state.table.counter,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$RecentsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $RecentsTable> {
+  $$RecentsTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get lat => $state.composableBuilder(
+      column: $state.table.lat,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get lng => $state.composableBuilder(
+      column: $state.table.lng,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get counter => $state.composableBuilder(
+      column: $state.table.counter,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
@@ -766,4 +1180,6 @@ class $AppDatabaseManager {
       $$FavoritesTableTableManager(_db, _db.favorites);
   $$CustomRoutesTableTableManager get customRoutes =>
       $$CustomRoutesTableTableManager(_db, _db.customRoutes);
+  $$RecentsTableTableManager get recents =>
+      $$RecentsTableTableManager(_db, _db.recents);
 }

@@ -34,7 +34,7 @@ class CoordinatesEntityMapper extends ClassMapperBase<CoordinatesEntity> {
   };
 
   @override
-  final MappingHook hook = const _E();
+  final MappingHook hook = const _JsonEncoderHook();
   static CoordinatesEntity _instantiate(DecodingData data) {
     return CoordinatesEntity(data.dec(_f$latitude), data.dec(_f$longitude));
   }

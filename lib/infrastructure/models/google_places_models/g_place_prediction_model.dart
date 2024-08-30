@@ -1,4 +1,4 @@
-import '../../../domain/entities/autocomplete_suggestion_entity.dart';
+import '../../../domain/entities/searchable_place.dart';
 
 class GPlacePredictionModel {
   final dynamic place;

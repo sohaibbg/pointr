@@ -53,7 +53,7 @@ class _ListRoutesViewModel extends ViewModel<ListRoutesScreen> {
                     'CoordinatesEntity(${point.latitude}, ${point.longitude})',
               )
               .toList();
-          return 'RouteEntity(mode: ${e.mode}, name: "${e.name}", points: $pointsConstructor)';
+          return 'RouteEntity(mode: ${e.mode}, name: "${e.name}", mode: RouteMode.minibus, points: $pointsConstructor)';
         },
       )
       .toList()

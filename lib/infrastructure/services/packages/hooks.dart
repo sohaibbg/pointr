@@ -77,7 +77,7 @@ T? useLatestWhereAndDelayWhereNot<T>(
       } else {
         final timer = Timer(
           duration,
-          () => state.value = null,
+          () => state.value = source,
         );
         return timer.cancel;
       }

@@ -6,7 +6,7 @@ part of 'routes_use_case.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routesUseCaseHash() => r'c347d9450df98c1393f4d62e7a95f147be212c5c';
+String _$routesUseCaseHash() => r'1cc23ea68677e702aed9035dec12d7127104e8d8';
 
 /// See also [RoutesUseCase].
 @ProviderFor(RoutesUseCase)

@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/coordinates_entity.dart';
-import '../../domain/entities/favorite_entity.dart';
+import '../../domain/entities/searchable_place.dart';
 import '../../domain/repositories/i_favorites_repo.dart';
 import '../services/packages/database.dart';
 

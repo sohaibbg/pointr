@@ -1,12 +1,9 @@
-import 'package:dart_mappable/dart_mappable.dart';
-
-import 'address_entity.dart';
-import 'coordinates_entity.dart';
-
-part 'favorite_entity.mapper.dart';
+part of 'searchable_place.dart';
 
 @MappableClass()
 class FavoriteEntity extends AddressEntity with FavoriteEntityMappable {
+  @override
+  // ignore: overridden_fields
   final String name;
 
   const FavoriteEntity({

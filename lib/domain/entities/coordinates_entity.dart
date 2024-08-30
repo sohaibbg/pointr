@@ -1,10 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:math';
 
 import 'package:dart_mappable/dart_mappable.dart';
 
 part 'coordinates_entity.mapper.dart';
 
-@MappableClass(hook: _E())
+@MappableClass(hook: _JsonEncoderHook())
 class CoordinatesEntity with CoordinatesEntityMappable {
   final double latitude;
   final double longitude;
@@ -48,10 +49,18 @@ class CoordinatesEntity with CoordinatesEntityMappable {
       linePointA.longitude + param * d,
     );
   }
+
+  @override
+  bool operator ==(covariant CoordinatesEntity other) => identical(this, other)
+      ? true
+      : other.latitude == latitude && other.longitude == longitude;
+
+  @override
+  int get hashCode => latitude.hashCode ^ longitude.hashCode;
 }
 
-class _E extends MappingHook {
-  const _E();
+class _JsonEncoderHook extends MappingHook {
+  const _JsonEncoderHook();
 
   @override
   Object? afterEncode(Object? value) => [

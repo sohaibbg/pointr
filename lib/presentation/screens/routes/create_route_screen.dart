@@ -14,9 +14,11 @@ import '../../../domain/use_cases/routes_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/dialogs.dart';
-import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
-import '../../components/map_with_pin_and_banner.dart';
+import '../../components/map/gmap_buttons.dart';
+import '../../components/map/loc_search_bar_with_overlay.dart';
+import '../../components/map/map_with_pin_and_banner.dart';
+import '../../components/slide_transition_helper.dart';
 import '../../components/space.dart';
 
 class CreateRouteScreen extends HookConsumerWidget {
@@ -26,11 +28,13 @@ class CreateRouteScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
     final points = useState(<CoordinatesEntity>[]);
+    final dragPolyline = useState<Polyline?>(null);
     final vm = _CreateRouteViewModel(
       context,
       ref,
       mapCtlCompleter: mapCtlCompleter,
       points: points,
+      dragPolyline: dragPolyline,
     );
     final map = MapWithPinAndBanner(
       initialCameraPosition: CameraPosition(
@@ -40,18 +44,19 @@ class CreateRouteScreen extends HookConsumerWidget {
         ),
         zoom: 15,
       ),
-      markers: points.value
-          .map(
-            (e) => Marker(
-              markerId: MarkerId(
-                [e.latitude, e.longitude].toString(),
-              ),
-              position: LatLng(e.latitude, e.longitude),
-            ),
-          )
-          .toSet(),
-      polylines: vm.polylines,
+      markers: vm.markers,
+      primaryColor: const HSLColor.fromAHSL(
+        1,
+        BitmapDescriptor.hueRed,
+        1,
+        0.5,
+      ).toColor(),
+      polylines: {
+        if (vm.selectionPolyline != null) vm.selectionPolyline!,
+        if (dragPolyline.value != null) dragPolyline.value!,
+      },
       onMapCreated: (controller) => mapCtlCompleter.complete(controller),
+      onCameraMove: vm.onCameraMove,
     );
     final backBtn = ElevatedButton(
       onPressed: context.pop,
@@ -94,24 +99,56 @@ class CreateRouteScreen extends HookConsumerWidget {
             onPressed: vm.onPinDrop,
             style: MyTheme.primaryOutlinedButtonStyle,
             label: const Text("Drop pin"),
-            icon: const Icon(Icons.location_pin),
+            icon: const Icon(
+              Icons.location_pin,
+            ),
           ),
         ),
       ],
     );
-    final footer = HeaderFooter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            pinDropOrReverseRow,
-            18.verticalSpace,
-            backOrFinishSelectionRow,
-            12.verticalSpace,
-            MediaQuery.of(context).padding.bottom.verticalSpace,
-          ],
-        ),
+    final belowSearchBarItems = ListenableBuilder(
+      listenable: LocSearchBarWithOverlay.searchFocusNode,
+      builder: (context, child) => SlideTransitionHelper(
+        doShow: !LocSearchBarWithOverlay.searchFocusNode.hasFocus,
+        axis: Axis.vertical,
+        axisAlignment: -1,
+        child: child!,
+      ),
+      child: Column(
+        children: [
+          18.verticalSpace,
+          backOrFinishSelectionRow,
+          12.verticalSpace,
+          MediaQuery.of(context).padding.bottom.verticalSpace,
+        ],
+      ),
+    );
+    final footer = Footer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: pinDropOrReverseRow,
+          ),
+          18.verticalSpace,
+          LocSearchBarWithOverlay(
+            onPlaceSelected: (locatedPlace) async {
+              final ctl = await mapCtlCompleter.future;
+              final latLng = LatLng(
+                locatedPlace.coordinates.latitude,
+                locatedPlace.coordinates.longitude,
+              );
+              ctl.animateCamera(
+                CameraUpdate.newLatLng(latLng),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: belowSearchBarItems,
+          ),
+        ],
       ),
     );
     return Scaffold(
@@ -142,14 +179,39 @@ class _CreateRouteViewModel extends ViewModel<CreateRouteScreen> {
     super.ref, {
     required this.mapCtlCompleter,
     required this.points,
+    required this.dragPolyline,
   });
 
   final Completer<GoogleMapController> mapCtlCompleter;
   final ValueNotifier<List<CoordinatesEntity>> points;
+  final ValueNotifier<Polyline?> dragPolyline;
+
+  Set<Marker> get markers {
+    if (points.value.isEmpty) return {};
+    final last = points.value.last;
+    return points.value
+        .map(
+          (e) => Marker(
+            markerId: MarkerId(
+              [e.latitude, e.longitude].toString(),
+            ),
+            position: LatLng(e.latitude, e.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              e == last
+                  ? BitmapDescriptor.hueRed
+                  : HSLColor.fromColor(
+                      Colors.purple.shade900,
+                      // MyTheme.primaryColor,
+                    ).hue,
+            ),
+          ),
+        )
+        .toSet();
+  }
 
   void onSelectionFinished() async {
     if (points.value.length < 2) {
-      return context.errorDialog(
+      return context.simpleDialog(
         title: 'Not enough points entered',
         content: 'Drop at least 2 pins in the selection',
       );
@@ -164,35 +226,76 @@ class _CreateRouteViewModel extends ViewModel<CreateRouteScreen> {
     context.pop();
   }
 
+  Future<void> _rebuildDragPolyline({
+    CoordinatesEntity? point1,
+    required CoordinatesEntity point2,
+  }) async {
+    if (point1 == null) {
+      final ctl = await mapCtlCompleter.future;
+      point1 = await ctl.centerLatLng;
+    }
+    final point1ll = LatLng(
+      point1.latitude,
+      point1.longitude,
+    );
+    final point2ll = LatLng(
+      point2.latitude,
+      point2.longitude,
+    );
+    dragPolyline.value = Polyline(
+      polylineId: const PolylineId('dragPolyline'),
+      color: MyTheme.primaryColor.withOpacity(0.5),
+      points: [
+        point1ll,
+        point2ll,
+      ],
+      width: 4,
+    );
+  }
+
   void onReverse() async {
     if (points.value.isEmpty) return;
     points.value = points.value.toList()..removeLast();
+    _rebuildDragPolyline(point2: points.value.last);
+    if (points.value.isEmpty) return;
   }
 
   void onPinDrop() async {
     final mapCtl = await mapCtlCompleter.future;
-    final point = await mapCtl.centerLatLng;
-    points.value = points.value.toList()..add(point);
+    final newPoint = await mapCtl.centerLatLng;
+    final newPointList = points.value.toList()..add(newPoint);
+    points.value = newPointList;
+    dragPolyline.value = null;
   }
 
-  Set<Polyline> get polylines {
-    if (points.value.length < 2) return {};
-    final polyline = Polyline(
-      polylineId: const PolylineId(
-        'routeBeingCreated',
-      ),
-      color: Colors.red,
-      width: 4,
-      points: points.value
-          .map(
-            (point) => LatLng(
-              point.latitude,
-              point.longitude,
-            ),
-          )
-          .toList(),
+  Polyline? get selectionPolyline => points.value.length < 2
+      ? null
+      : Polyline(
+          polylineId: const PolylineId(
+            'routeBeingCreated',
+          ),
+          color: MyTheme.primaryColor,
+          width: 4,
+          points: points.value
+              .map(
+                (point) => LatLng(
+                  point.latitude,
+                  point.longitude,
+                ),
+              )
+              .toList(),
+        );
+
+  Future<void> onCameraMove(CameraPosition position) async {
+    if (points.value.isEmpty) return;
+    final point2 = CoordinatesEntity(
+      position.target.latitude,
+      position.target.longitude,
     );
-    return {polyline};
+    await _rebuildDragPolyline(
+      point1: points.value.last,
+      point2: point2,
+    );
   }
 }
 

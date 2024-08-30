@@ -7,17 +7,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../config/my_theme.dart';
-import '../../../domain/entities/address_entity.dart';
-import '../../../domain/entities/favorite_entity.dart';
+import '../../../domain/entities/searchable_place.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/favorites_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/dialogs.dart';
-import '../../components/gmap_buttons.dart';
 import '../../components/header_footer.dart';
-import '../../components/loc_search_bar_with_overlay.dart';
-import '../../components/map_with_pin_and_banner.dart';
+import '../../components/map/gmap_buttons.dart';
+import '../../components/map/loc_search_bar_with_overlay.dart';
+import '../../components/map/map_with_pin_and_banner.dart';
 import '../../components/space.dart';
 
 class _CreateFavoriteViewModel extends ViewModel<CreateFavorite> {
@@ -141,10 +140,7 @@ class CreateFavorite extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mapCtlCompleter = useMemoized(
-      () => Completer<GoogleMapController>(),
-      [context],
-    );
+    final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
     final vm = _CreateFavoriteViewModel(
       context,
       ref,
@@ -181,7 +177,7 @@ class CreateFavorite extends HookConsumerWidget {
     );
     final bottomPanelBody = Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 24,
+        horizontal: 12,
       ),
       child: Column(
         children: [
@@ -206,7 +202,7 @@ class CreateFavorite extends HookConsumerWidget {
                 : bottomPanelBody,
       ),
     );
-    final footer = HeaderFooter(
+    final footer = Footer(
       child: Column(
         children: [
           LocSearchBarWithOverlay(

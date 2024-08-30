@@ -12,6 +12,8 @@ import '../../../../infrastructure/services/packages/hooks.dart';
 import '../../../../infrastructure/services/packages/iterable.dart';
 import '../../../../infrastructure/services/packages/view_model.dart';
 import '../../../components/aligned_dialog_pusher_box.dart';
+import '../../../components/dialogs.dart';
+import '../../../components/header_footer.dart';
 import '../../../components/slide_transition_helper.dart';
 import '../../../components/space.dart';
 
@@ -83,7 +85,7 @@ class ListRoutesScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              250.verticalSpace,
+              230.verticalSpace,
               title,
               24.verticalSpace,
               Padding(
@@ -109,19 +111,11 @@ class ListRoutesScreen extends HookConsumerWidget {
         ),
       ],
     );
-    final body = Stack(
-      children: [
-        Image.asset(
-          'assets/images/geometric pattern.png',
-          fit: BoxFit.fitWidth,
-          alignment: Alignment.topCenter,
-        ),
-        overlay,
-      ],
-    );
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: body,
+    return ColoredBox(
+      color: Colors.white,
+      child: HeaderBackdrop(
+        child: overlay,
+      ),
     );
   }
 }
@@ -145,19 +139,14 @@ class _RoutesDataView extends HookConsumerWidget {
         final route = filteredRoutes[index];
         final icon = Icon(
           switch (route.mode) {
-            RouteMode.minibus ||
-            RouteMode.redBus ||
-            RouteMode.pinkBus =>
-              Icons.directions_bus,
+            RouteMode.minibus => Icons.directions_bus,
             RouteMode.chinchi => Icons.electric_rickshaw,
-            RouteMode.greenLine => Icons.directions_bus_outlined,
+            RouteMode.acBus => Icons.directions_bus_outlined,
           },
           color: switch (route.mode) {
             RouteMode.minibus => Colors.purple,
             RouteMode.chinchi => Colors.blue.shade600,
-            RouteMode.redBus => Colors.red,
-            RouteMode.pinkBus => Colors.pink,
-            RouteMode.greenLine => Colors.green,
+            RouteMode.acBus => Colors.red,
           },
         );
         final isSelected = ref.watch(
@@ -277,12 +266,24 @@ class _ListRoutesFooterView extends HookConsumerWidget {
         ),
       ),
     );
-    final searchAndFilterRow = Container(
-      color: Color.lerp(
-        MyTheme.primaryColor.shade50,
-        Colors.white,
-        0.8,
+    final searchRowColor = Color.lerp(
+      MyTheme.primaryColor.shade50,
+      Colors.white,
+      0.8,
+    );
+    final drawerBtn = SlideTransitionHelper(
+      axis: Axis.horizontal,
+      axisAlignment: 1,
+      doShow: !isFocused,
+      child: Row(
+        children: [
+          const DrawerButton(),
+          12.horizontalSpace,
+        ],
       ),
+    );
+    final searchRow = Container(
+      color: searchRowColor,
       padding: const EdgeInsets.only(
         left: 24,
         right: 24,
@@ -290,6 +291,7 @@ class _ListRoutesFooterView extends HookConsumerWidget {
       ),
       child: Row(
         children: [
+          drawerBtn,
           Expanded(
             child: searchBar,
           ),
@@ -332,12 +334,74 @@ class _ListRoutesFooterView extends HookConsumerWidget {
       ),
       icon: const Icon(Icons.deselect),
     );
-    final selectionAndViewOnMapRow = Container(
-      color: Color.lerp(
-        MyTheme.primaryColor.shade50,
-        Colors.white,
-        0.65,
+    final deleteBtn = OutlinedButton.icon(
+      onPressed: () => context.loaderWithErrorDialog(
+        () async {
+          final selection = ref.read(
+            _selectedRoutesProvider,
+          );
+          final areAllHardcoded = selection.every((e) => e.isHardcoded);
+          if (areAllHardcoded) {
+            return context.simpleDialog(
+              title: 'Only hardcoded routes selected',
+              content: 'You can\'t delete hardcoded routes',
+            );
+          }
+          final deletableSelection = selection.where(
+            (e) => !e.isHardcoded,
+          );
+          final undeletableSelection = selection.where(
+            (e) => e.isHardcoded,
+          );
+          final deletableClause =
+              'Are you sure you want to delete the following routes?\n${deletableSelection.map(
+                    (e) => ' ・ ${e.name}',
+                  ).join('\n')}\n';
+          final undeletableClause = undeletableSelection.isEmpty
+              ? null
+              : 'The following hardcoded routes cannot and will not be deleted:\n${undeletableSelection.map(
+                    (e) => ' ・ ${e.name}',
+                  ).join('\n')}\n';
+          final confirmationDialogResult = await context.simpleDialog(
+            title: 'Confirm deletion',
+            content: undeletableClause == null
+                ? deletableClause
+                : '$deletableClause\n$undeletableClause',
+            alternativeAction: ElevatedButton(
+              onPressed: () => context.pop(true),
+              child: const Text("Yes I'm sure"),
+            ),
+          );
+          if (confirmationDialogResult != true) return;
+          for (final route in deletableSelection) {
+            await ref
+                .read(routesUseCaseProvider.notifier)
+                .deleteRoute(route.name);
+          }
+          ref.read(_selectedRoutesProvider.notifier).state =
+              undeletableSelection.toSet();
+        },
       ),
+      style: MyTheme.primaryOutlinedButtonStyle.copyWith(
+        foregroundColor: const WidgetStatePropertyAll(
+          Colors.red,
+        ),
+        iconColor: const WidgetStatePropertyAll(
+          Colors.red,
+        ),
+      ),
+      label: const Text(
+        'Delete routes',
+      ),
+      icon: const Icon(Icons.delete),
+    );
+    final selectedRowColor = Color.lerp(
+      MyTheme.primaryColor.shade50,
+      Colors.white,
+      0.65,
+    );
+    final selectedRow = Container(
+      color: selectedRowColor,
       padding: const EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 12,
@@ -363,6 +427,7 @@ class _ListRoutesFooterView extends HookConsumerWidget {
               label: const Text("Copy to Clipboard"),
               icon: const Icon(Icons.copy),
             ),
+            deleteBtn,
           ],
         ),
       ),
@@ -370,8 +435,15 @@ class _ListRoutesFooterView extends HookConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        searchAndFilterRow,
-        selectionAndViewOnMapRow,
+        searchRow,
+        selectedRow,
+        ColoredBox(
+          color: selectedRowColor!,
+          child: SizedBox(
+            height: MediaQuery.of(context).padding.bottom,
+            width: double.infinity,
+          ),
+        ),
       ],
     );
   }

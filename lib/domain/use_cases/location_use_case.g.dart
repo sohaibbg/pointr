@@ -21,7 +21,7 @@ final currentLocProvider =
 );
 
 typedef CurrentLocRef = AutoDisposeFutureProviderRef<CoordinatesEntity>;
-String _$locPermissionHash() => r'2f2e1274d04562b4bc912229b79f0c558f44897f';
+String _$locPermissionHash() => r'632392076d9bbe0ea1c23a417f8f4938bc08b1c0';
 
 /// See also [LocPermission].
 @ProviderFor(LocPermission)

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
-import '../entities/autocomplete_suggestion_entity.dart';
 import '../entities/coordinates_entity.dart';
-import '../entities/named_address_entity.dart';
+import '../entities/searchable_place.dart';
 import 'i_location_repo.dart';
 
 @test
-// TODO
-@dev
 @injectable
 class IPlacesRepo {
   Future<String> getNameFrom(

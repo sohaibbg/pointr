@@ -1,4 +1,4 @@
-part of '../route_advisor_screen.dart';
+part of '../go_screen.dart';
 
 class _RoutesLegendListView extends ConsumerWidget {
   const _RoutesLegendListView();

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 
-enum Position { top, bottom }
-
-class HeaderFooter extends StatelessWidget {
-  const HeaderFooter({
+class Footer extends StatelessWidget {
+  const Footer({
     super.key,
     required this.child,
-    this.position = Position.bottom,
   });
 
   final Widget child;
-  final Position position;
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +15,13 @@ class HeaderFooter extends StatelessWidget {
       fit: BoxFit.fitWidth,
     );
     final gradient = LinearGradient(
-      stops: switch (position) {
-        Position.top => const [1, 0],
-        Position.bottom => const [0, 1],
-      },
+      stops: const [0, 1],
       colors: [
         Colors.white,
         Colors.white.withOpacity(0),
       ],
       begin: Alignment.center,
-      end: switch (position) {
-        Position.top => Alignment.bottomCenter,
-        Position.bottom => Alignment.topCenter,
-      },
+      end: Alignment.topCenter,
     );
     final imgBg = DecoratedBox(
       decoration: BoxDecoration(
@@ -39,17 +29,11 @@ class HeaderFooter extends StatelessWidget {
       ),
       child: FractionallySizedBox(
         heightFactor: 0.78,
-        alignment: switch (position) {
-          Position.top => Alignment.topCenter,
-          Position.bottom => Alignment.bottomCenter,
-        },
+        alignment: Alignment.bottomCenter,
         child: ShaderMask(
           shaderCallback: (bounds) => gradient.createShader(bounds),
           child: RotatedBox(
-            quarterTurns: switch (position) {
-              Position.top => 0,
-              Position.bottom => 2,
-            },
+            quarterTurns: 2,
             child: image,
           ),
         ),
@@ -65,4 +49,25 @@ class HeaderFooter extends StatelessWidget {
     );
     return bodyContent;
   }
+}
+
+class HeaderBackdrop extends StatelessWidget {
+  const HeaderBackdrop({
+    super.key,
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        children: [
+          Image.asset(
+            'assets/images/geometric pattern.png',
+            fit: BoxFit.fitWidth,
+            alignment: Alignment.topCenter,
+          ),
+          child,
+        ],
+      );
 }

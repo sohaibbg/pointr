@@ -9,7 +9,7 @@ void main() {
       // init
       const route = RouteEntity(
         name: 'test',
-        mode: RouteMode.redBus,
+        mode: RouteMode.acBus,
         points: [
           CoordinatesEntity(0, 0),
           CoordinatesEntity(3, 4),
@@ -28,7 +28,7 @@ void main() {
       // init
       const route = RouteEntity(
         name: 'test',
-        mode: RouteMode.redBus,
+        mode: RouteMode.acBus,
         points: [
           CoordinatesEntity(-15, -15),
           CoordinatesEntity(-5, -5),

@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../config/injector.dart';
 import '../../infrastructure/services/packages/iterable.dart';
 import '../entities/coordinates_entity.dart';
-import '../entities/favorite_entity.dart';
+import '../entities/searchable_place.dart';
 import '../repositories/i_favorites_repo.dart';
 
 part 'favorites_use_case.g.dart';

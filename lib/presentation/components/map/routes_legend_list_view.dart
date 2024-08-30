@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
-import '../../config/my_theme.dart';
-import '../../domain/entities/route_entity.dart';
-import 'space.dart';
+import '../../../config/my_theme.dart';
+import '../../../domain/entities/route_entity.dart';
+import '../space.dart';
 
 class RoutesLegendListView extends StatelessWidget {
   const RoutesLegendListView(
@@ -119,8 +119,11 @@ class RoutesLegendListView extends StatelessWidget {
       child: Card(
         clipBehavior: Clip.hardEdge,
         color: Colors.indigo.shade50,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(12),
+            right: Radius.circular(25),
+          ),
         ),
         margin: EdgeInsets.zero,
         child: cardContent,

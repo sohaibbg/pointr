@@ -1,16 +1,15 @@
 import 'package:go_router/go_router.dart';
 
-import '../domain/entities/address_entity.dart';
 import '../domain/entities/route_entity.dart';
+import '../presentation/screens/about_screen.dart';
+import '../presentation/screens/drawer_scaffold.dart';
 import '../presentation/screens/favorites_flow/create_favorite.dart';
 import '../presentation/screens/favorites_flow/list_favorites.dart';
-import '../presentation/screens/home/go/go_screen.dart';
-import '../presentation/screens/home/home.dart';
+import '../presentation/screens/go_screen/go_screen.dart';
 import '../presentation/screens/routes/copy_route_screen.dart';
 import '../presentation/screens/routes/create_route_screen.dart';
 import '../presentation/screens/routes/display_route_screen.dart';
 import '../presentation/screens/routes/list_routes_screen/list_routes_screen.dart';
-import '../presentation/screens/routes/route_advisor_screen/route_advisor_screen.dart';
 
 final router = GoRouter(
   redirect: (context, state) => switch (state.fullPath) {
@@ -20,39 +19,18 @@ final router = GoRouter(
   },
   routes: [
     ShellRoute(
-      builder: (context, state, child) {
-        final isShellPath = [
-          '/go',
-          '/favorite',
-          '/route',
-        ].contains(state.fullPath);
-        if (!isShellPath) return child;
-        return HomeShell(child: child);
-      },
+      builder: (context, state, child) => DrawerScaffold(child: child),
       routes: [
-        ...HomeOptions.values.map(
+        ...DrawerOptions.values.map(
           (option) => switch (option) {
-            HomeOptions.go => GoRoute(
-                path: '/go',
+            DrawerOptions.go => GoRoute(
+                path: option.path,
                 builder: (context, state) => const GoScreen(),
               ),
-            HomeOptions.routes => GoRoute(
+            DrawerOptions.routes => GoRoute(
                 path: '/route',
                 builder: (context, state) => const ListRoutesScreen(),
                 routes: [
-                  GoRoute(
-                    path: 'advisor',
-                    builder: (context, state) {
-                      final extra = state.extra as Map?;
-                      final focusSearch = extra?['focusSearch'] as bool?;
-                      final initialPlace =
-                          extra?['initialPlace'] as AddressEntity?;
-                      return RouteAdvisorScreen(
-                        focusSearch: focusSearch ?? false,
-                        initialPlace: initialPlace,
-                      );
-                    },
-                  ),
                   GoRoute(
                     path: 'copy',
                     builder: (context, state) => CopyRouteScreen(
@@ -70,6 +48,10 @@ final router = GoRouter(
                     ),
                   ),
                 ],
+              ),
+            DrawerOptions.about => GoRoute(
+                path: option.path,
+                builder: (context, state) => const AboutScreen(),
               ),
           },
         ),

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:injectable/injectable.dart';
 
 import '../entities/coordinates_entity.dart';
-import '../entities/favorite_entity.dart';
+import '../entities/searchable_place.dart';
 
 @test
 @injectable

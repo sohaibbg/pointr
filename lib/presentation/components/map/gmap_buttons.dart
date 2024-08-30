@@ -5,10 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../config/my_theme.dart';
-import '../../domain/use_cases/location_use_case.dart';
-import 'dialogs.dart';
-import 'space.dart';
+import '../../../config/my_theme.dart';
+import '../../../domain/use_cases/location_use_case.dart';
+import '../blinking_loader.dart';
+import '../dialogs.dart';
+import '../space.dart';
 
 class GmapButtons extends ConsumerWidget {
   const GmapButtons(
@@ -39,7 +40,7 @@ class GmapButtons extends ConsumerWidget {
         final mustChangeInSettings =
             locPermission == LocationPermission.deniedForever;
         if (mustChangeInSettings) {
-          return context.errorDialog(
+          return context.simpleDialog(
             title: 'Permission disabled',
             content:
                 'To use this feature, you need to enable it in System Settings.',
@@ -49,7 +50,6 @@ class GmapButtons extends ConsumerWidget {
                     locPermissionProvider.notifier,
                   )
                   .openSettings,
-              // style: MyTheme.primaryButtonStyle,
               child: const Text("Open Settings"),
             ),
           );
@@ -80,21 +80,48 @@ class GmapButtons extends ConsumerWidget {
       style: MyTheme.secondaryButtonStyle,
       child: SizedBox.square(
         dimension: 28,
-        child: ref.watch(currentLocProvider).when(
-              data: (data) => const Icon(
-                Icons.my_location,
-              ),
-              error: (error, stackTrace) {
-                context.errorDialog(
-                  title: 'Could not locate user',
-                  content: 'Try moving closer to the open sky',
-                );
-                return const Icon(
-                  Icons.my_location,
-                );
+        child: ref
+            .watch(
+              locPermissionProvider,
+            )
+            .when(
+              data: (permission) => switch (permission) {
+                LocationPermission.denied ||
+                LocationPermission.deniedForever ||
+                LocationPermission.unableToDetermine =>
+                  Icon(
+                    Icons.location_disabled,
+                    color: permission == LocationPermission.deniedForever
+                        ? Colors.red
+                        : null,
+                  ),
+                LocationPermission.whileInUse ||
+                LocationPermission.always =>
+                  ref
+                      .watch(
+                        currentLocProvider,
+                      )
+                      .when(
+                        data: (data) => const Icon(
+                          Icons.my_location,
+                        ),
+                        error: (error, stackTrace) => const Icon(
+                          Icons.location_disabled,
+                          color: Colors.red,
+                        ),
+                        loading: () => const BlinkingLoader(
+                          child: Icon(
+                            Icons.location_searching,
+                          ),
+                        ),
+                      ),
               },
-              loading: () =>
-                  const FittedBox(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => const Icon(
+                Icons.location_disabled,
+              ),
+              loading: () => const BlinkingLoader(
+                child: Icon(Icons.location_searching),
+              ),
             ),
       ),
     );

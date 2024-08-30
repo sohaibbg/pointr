@@ -5,10 +5,11 @@ import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/route_entity.dart';
 import '../tables/custom_routes.dart';
 import '../tables/favorites.dart';
+import '../tables/recents.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [Favorites, CustomRoutes])
+@DriftDatabase(tables: [Favorites, CustomRoutes, Recents])
 class AppDatabase extends _$AppDatabase {
   @override
   final int schemaVersion = 1;

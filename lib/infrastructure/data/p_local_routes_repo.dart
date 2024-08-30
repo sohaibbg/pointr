@@ -1,29 +1,17 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/route_entity.dart';
 import '../../domain/repositories/i_local_routes_repo.dart';
 import '../services/packages/database.dart';
 import '../services/tables/custom_routes.dart';
+import 'hardcoded_routes.dart';
 
 @dev
 @prod
 @Injectable(as: ILocalRoutesRepo)
 class PLocalRoutesRepo implements ILocalRoutesRepo {
   @override
-  Future<List<RouteEntity>> getHardcoded() async {
-    const routesFilePath = 'assets/allRoutes.json';
-    final fileText = await rootBundle.loadString(routesFilePath);
-    final fileObject = jsonDecode(fileText) as List;
-    final routes = fileObject
-        .map<RouteEntity>(
-          (e) => RouteEntityMapper.fromMap(e),
-        )
-        .toList();
-    return routes;
-  }
+  List<RouteEntity> getHardcoded() => hardCodedRoutes;
 
   @override
   Future<List<RouteEntity>> getCustom() async {

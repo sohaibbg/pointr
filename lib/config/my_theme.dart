@@ -147,7 +147,6 @@ abstract class MyTheme {
     ),
     textStyle: const WidgetStatePropertyAll(
       TextStyle(
-        fontWeight: FontWeight.w600,
         fontSize: 18,
       ),
     ),
@@ -214,6 +213,8 @@ abstract class MyTheme {
     ),
   );
   static final secondaryButtonStyle = ButtonStyle(
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    minimumSize: const WidgetStatePropertyAll(Size.zero),
     shape: const WidgetStatePropertyAll(CircleBorder()),
     padding: const WidgetStatePropertyAll(
       EdgeInsets.symmetric(
