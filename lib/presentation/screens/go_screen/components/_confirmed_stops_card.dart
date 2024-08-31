@@ -59,15 +59,15 @@ class _AnimatedChip extends HookConsumerWidget {
   final String label;
   final StateProvider<AddressEntity?> provider;
 
-  Widget chipBuilder({
-    required String label,
-    required AddressEntity address,
-    required VoidCallback onPressed,
-  }) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final address = ref.watch(provider);
     final text = Text(
-      address.address == '' ? BoneMock.address : address.address,
-      overflow: TextOverflow.fade,
-      maxLines: 3,
+      address == null
+          ? "Search"
+          : address.address == ''
+              ? BoneMock.address
+              : address.address,
     );
     final chip = ActionChip(
       padding: const EdgeInsetsDirectional.fromSTEB(8, 12, 8, 12),
@@ -77,7 +77,7 @@ class _AnimatedChip extends HookConsumerWidget {
       label: Align(
         alignment: Alignment.centerLeft,
         child: Skeletonizer(
-          enabled: address.address == '',
+          enabled: address?.address == '',
           child: text,
         ),
       ),
@@ -94,7 +94,14 @@ class _AnimatedChip extends HookConsumerWidget {
           0.5,
         ).toColor(),
       ),
-      onPressed: onPressed,
+      onPressed: () {
+        final stop = ref.read(provider);
+        LocSearchBarWithOverlay.searchFocusNode.requestFocus();
+        if (stop != null) {
+          LocSearchBarWithOverlay.searchController.text = stop.address;
+          ref.read(provider.notifier).state = null;
+        }
+      },
     );
     return Row(
       children: [
@@ -104,26 +111,5 @@ class _AnimatedChip extends HookConsumerWidget {
         ),
       ],
     );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final debouncedAddress = useLatestWhereAndDelayWhereNot(
-      ref.watch(provider),
-      kThemeAnimationDuration,
-      test: (e) => e != null,
-    );
-    if (debouncedAddress == null) return const SizedBox();
-    final chip = chipBuilder(
-      label: label,
-      address: debouncedAddress,
-      onPressed: () {
-        final isValueNull = ref.read(provider) == null;
-        if (isValueNull) return;
-        ref.read(provider.notifier).state = null;
-        LocSearchBarWithOverlay.searchFocusNode.requestFocus();
-      },
-    );
-    return chip;
   }
 }

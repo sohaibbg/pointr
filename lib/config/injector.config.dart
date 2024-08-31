@@ -90,6 +90,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i846.ILocalRoutesRepo(),
       registerFor: {_test},
     );
+    gh.factory<_i511.IInitialDisclaimersShownRepo>(
+      () => _i511.IInitialDisclaimersShownRepo(),
+      registerFor: {_test},
+    );
     gh.factory<_i185.IFavoritesRepo>(
       () => _i185.IFavoritesRepo(),
       registerFor: {_test},
@@ -100,10 +104,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i788.ILocationRepo>(
       () => _i788.ILocationRepo(),
-      registerFor: {_test},
-    );
-    gh.factory<_i511.IInitialDisclaimersShownRepo>(
-      () => _i511.IInitialDisclaimersShownRepo(),
       registerFor: {_test},
     );
     return this;

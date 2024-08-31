@@ -58,6 +58,17 @@ class PPlacesRepo implements IPlacesRepo {
   Future<String> getNameFrom(CoordinatesEntity coordinatesEntity) =>
       GoogleMapsApi.reverseGeocode(coordinatesEntity).then(
         (value) => value.first.toShortAddress(),
+        onError: (a, b) {
+          Future(() => Error.throwWithStackTrace(a, b));
+          return [
+            coordinatesEntity.latitude,
+            coordinatesEntity.longitude,
+          ]
+              .map(
+                (e) => e.toStringAsFixed(4),
+              )
+              .join();
+        },
       );
 
   @override

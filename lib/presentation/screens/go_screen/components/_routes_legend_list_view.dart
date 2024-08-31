@@ -1,8 +1,11 @@
 part of '../go_screen.dart';
 
 class _RoutesLegendListView extends ConsumerWidget {
-  const _RoutesLegendListView();
+  const _RoutesLegendListView(
+    this.selectedRouteName,
+  );
 
+  final ValueNotifier<String?>? selectedRouteName;
   // for animation
   static List<Set<RouteEntity>>? _cachedLastValidState;
 
@@ -34,6 +37,7 @@ class _RoutesLegendListView extends ConsumerWidget {
                   selectedRouteGroupIndexProvider.notifier,
                 )
                 .state = newIndex,
+            selectedRouteName: selectedRouteName,
           );
         },
       );

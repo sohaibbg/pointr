@@ -1,9 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../entities/coordinates_entity.dart';
 import '../../entities/searchable_place.dart';
-import '../places_use_case.dart';
+import '../recents_use_case.dart';
 
 part 'from_to_stops.g.dart';
 
@@ -28,28 +27,21 @@ DirectionType? currentlyPickingDirectionType(
   return null;
 }
 
-Future<void> updateStopProvider(
+DirectionType updateStopProvider(
   WidgetRef ref,
-  CoordinatesEntity mapLatLng,
-) async {
-  final directionType = ref.read(
+  AddressEntity address, {
+  DirectionType? directionType,
+}) {
+  directionType ??= ref.read(
     currentlyPickingDirectionTypeProvider,
   );
-  final stopProvider = switch (directionType!) {
+  final thisStopProvider = switch (directionType!) {
     DirectionType.from => fromStopProvider,
     DirectionType.to => toStopProvider,
   };
-  final temporaryAddress = AddressEntity(
-    coordinates: mapLatLng,
-    address: '',
-  );
-  ref.read(stopProvider.notifier).state = temporaryAddress;
-  final address = await ref.read(
-    NameFromCoordinatesProvider(mapLatLng).future,
-  );
-  final newStop = AddressEntity(
-    address: address,
-    coordinates: mapLatLng,
-  );
-  ref.read(stopProvider.notifier).state = newStop;
+  ref.read(thisStopProvider.notifier).state = address;
+  if (address.name.isNotEmpty) {
+    ref.read(recentsUseCaseProvider.notifier).record(address);
+  }
+  return directionType;
 }

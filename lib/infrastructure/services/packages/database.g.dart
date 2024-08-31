@@ -537,23 +537,11 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $RecentsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
-      check: () => name.isNotValue(''),
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _latMeta = const VerificationMeta('lat');
   @override
   late final GeneratedColumn<double> lat = GeneratedColumn<double>(
@@ -572,8 +560,25 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(1));
+  static const VerificationMeta _createdMeta =
+      const VerificationMeta('created');
   @override
-  List<GeneratedColumn> get $columns => [id, name, lat, lng, counter];
+  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
+      'created', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  static const VerificationMeta _updatedMeta =
+      const VerificationMeta('updated');
+  @override
+  late final GeneratedColumn<DateTime> updated = GeneratedColumn<DateTime>(
+      'updated', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [name, lat, lng, counter, created, updated];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -584,9 +589,6 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
@@ -609,17 +611,23 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
       context.handle(_counterMeta,
           counter.isAcceptableOrUnknown(data['counter']!, _counterMeta));
     }
+    if (data.containsKey('created')) {
+      context.handle(_createdMeta,
+          created.isAcceptableOrUnknown(data['created']!, _createdMeta));
+    }
+    if (data.containsKey('updated')) {
+      context.handle(_updatedMeta,
+          updated.isAcceptableOrUnknown(data['updated']!, _updatedMeta));
+    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {name};
   @override
   Recent map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Recent(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       lat: attachedDatabase.typeMapping
@@ -628,6 +636,10 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
           .read(DriftSqlType.double, data['${effectivePrefix}lng'])!,
       counter: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}counter'])!,
+      created: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created'])!,
+      updated: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated'])!,
     );
   }
 
@@ -638,35 +650,39 @@ class $RecentsTable extends Recents with TableInfo<$RecentsTable, Recent> {
 }
 
 class Recent extends DataClass implements Insertable<Recent> {
-  final int id;
   final String name;
   final double lat;
   final double lng;
   final int counter;
+  final DateTime created;
+  final DateTime updated;
   const Recent(
-      {required this.id,
-      required this.name,
+      {required this.name,
       required this.lat,
       required this.lng,
-      required this.counter});
+      required this.counter,
+      required this.created,
+      required this.updated});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['lat'] = Variable<double>(lat);
     map['lng'] = Variable<double>(lng);
     map['counter'] = Variable<int>(counter);
+    map['created'] = Variable<DateTime>(created);
+    map['updated'] = Variable<DateTime>(updated);
     return map;
   }
 
   RecentsCompanion toCompanion(bool nullToAbsent) {
     return RecentsCompanion(
-      id: Value(id),
       name: Value(name),
       lat: Value(lat),
       lng: Value(lng),
       counter: Value(counter),
+      created: Value(created),
+      updated: Value(updated),
     );
   }
 
@@ -674,128 +690,150 @@ class Recent extends DataClass implements Insertable<Recent> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Recent(
-      id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       lat: serializer.fromJson<double>(json['lat']),
       lng: serializer.fromJson<double>(json['lng']),
       counter: serializer.fromJson<int>(json['counter']),
+      created: serializer.fromJson<DateTime>(json['created']),
+      updated: serializer.fromJson<DateTime>(json['updated']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'lat': serializer.toJson<double>(lat),
       'lng': serializer.toJson<double>(lng),
       'counter': serializer.toJson<int>(counter),
+      'created': serializer.toJson<DateTime>(created),
+      'updated': serializer.toJson<DateTime>(updated),
     };
   }
 
   Recent copyWith(
-          {int? id, String? name, double? lat, double? lng, int? counter}) =>
+          {String? name,
+          double? lat,
+          double? lng,
+          int? counter,
+          DateTime? created,
+          DateTime? updated}) =>
       Recent(
-        id: id ?? this.id,
         name: name ?? this.name,
         lat: lat ?? this.lat,
         lng: lng ?? this.lng,
         counter: counter ?? this.counter,
+        created: created ?? this.created,
+        updated: updated ?? this.updated,
       );
   Recent copyWithCompanion(RecentsCompanion data) {
     return Recent(
-      id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       lat: data.lat.present ? data.lat.value : this.lat,
       lng: data.lng.present ? data.lng.value : this.lng,
       counter: data.counter.present ? data.counter.value : this.counter,
+      created: data.created.present ? data.created.value : this.created,
+      updated: data.updated.present ? data.updated.value : this.updated,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('Recent(')
-          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('lat: $lat, ')
           ..write('lng: $lng, ')
-          ..write('counter: $counter')
+          ..write('counter: $counter, ')
+          ..write('created: $created, ')
+          ..write('updated: $updated')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, lat, lng, counter);
+  int get hashCode => Object.hash(name, lat, lng, counter, created, updated);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Recent &&
-          other.id == this.id &&
           other.name == this.name &&
           other.lat == this.lat &&
           other.lng == this.lng &&
-          other.counter == this.counter);
+          other.counter == this.counter &&
+          other.created == this.created &&
+          other.updated == this.updated);
 }
 
 class RecentsCompanion extends UpdateCompanion<Recent> {
-  final Value<int> id;
   final Value<String> name;
   final Value<double> lat;
   final Value<double> lng;
   final Value<int> counter;
+  final Value<DateTime> created;
+  final Value<DateTime> updated;
+  final Value<int> rowid;
   const RecentsCompanion({
-    this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.lat = const Value.absent(),
     this.lng = const Value.absent(),
     this.counter = const Value.absent(),
+    this.created = const Value.absent(),
+    this.updated = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   RecentsCompanion.insert({
-    this.id = const Value.absent(),
     required String name,
     required double lat,
     required double lng,
     this.counter = const Value.absent(),
+    this.created = const Value.absent(),
+    this.updated = const Value.absent(),
+    this.rowid = const Value.absent(),
   })  : name = Value(name),
         lat = Value(lat),
         lng = Value(lng);
   static Insertable<Recent> custom({
-    Expression<int>? id,
     Expression<String>? name,
     Expression<double>? lat,
     Expression<double>? lng,
     Expression<int>? counter,
+    Expression<DateTime>? created,
+    Expression<DateTime>? updated,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (lat != null) 'lat': lat,
       if (lng != null) 'lng': lng,
       if (counter != null) 'counter': counter,
+      if (created != null) 'created': created,
+      if (updated != null) 'updated': updated,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   RecentsCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? name,
+      {Value<String>? name,
       Value<double>? lat,
       Value<double>? lng,
-      Value<int>? counter}) {
+      Value<int>? counter,
+      Value<DateTime>? created,
+      Value<DateTime>? updated,
+      Value<int>? rowid}) {
     return RecentsCompanion(
-      id: id ?? this.id,
       name: name ?? this.name,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
       counter: counter ?? this.counter,
+      created: created ?? this.created,
+      updated: updated ?? this.updated,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -808,17 +846,28 @@ class RecentsCompanion extends UpdateCompanion<Recent> {
     if (counter.present) {
       map['counter'] = Variable<int>(counter.value);
     }
+    if (created.present) {
+      map['created'] = Variable<DateTime>(created.value);
+    }
+    if (updated.present) {
+      map['updated'] = Variable<DateTime>(updated.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('RecentsCompanion(')
-          ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('lat: $lat, ')
           ..write('lng: $lng, ')
-          ..write('counter: $counter')
+          ..write('counter: $counter, ')
+          ..write('created: $created, ')
+          ..write('updated: $updated, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1054,18 +1103,22 @@ class $$CustomRoutesTableOrderingComposer
 }
 
 typedef $$RecentsTableCreateCompanionBuilder = RecentsCompanion Function({
-  Value<int> id,
   required String name,
   required double lat,
   required double lng,
   Value<int> counter,
+  Value<DateTime> created,
+  Value<DateTime> updated,
+  Value<int> rowid,
 });
 typedef $$RecentsTableUpdateCompanionBuilder = RecentsCompanion Function({
-  Value<int> id,
   Value<String> name,
   Value<double> lat,
   Value<double> lng,
   Value<int> counter,
+  Value<DateTime> created,
+  Value<DateTime> updated,
+  Value<int> rowid,
 });
 
 class $$RecentsTableTableManager extends RootTableManager<
@@ -1085,32 +1138,40 @@ class $$RecentsTableTableManager extends RootTableManager<
           orderingComposer:
               $$RecentsTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<double> lat = const Value.absent(),
             Value<double> lng = const Value.absent(),
             Value<int> counter = const Value.absent(),
+            Value<DateTime> created = const Value.absent(),
+            Value<DateTime> updated = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               RecentsCompanion(
-            id: id,
             name: name,
             lat: lat,
             lng: lng,
             counter: counter,
+            created: created,
+            updated: updated,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
             required String name,
             required double lat,
             required double lng,
             Value<int> counter = const Value.absent(),
+            Value<DateTime> created = const Value.absent(),
+            Value<DateTime> updated = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               RecentsCompanion.insert(
-            id: id,
             name: name,
             lat: lat,
             lng: lng,
             counter: counter,
+            created: created,
+            updated: updated,
+            rowid: rowid,
           ),
         ));
 }
@@ -1118,11 +1179,6 @@ class $$RecentsTableTableManager extends RootTableManager<
 class $$RecentsTableFilterComposer
     extends FilterComposer<_$AppDatabase, $RecentsTable> {
   $$RecentsTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
-
   ColumnFilters<String> get name => $state.composableBuilder(
       column: $state.table.name,
       builder: (column, joinBuilders) =>
@@ -1142,16 +1198,21 @@ class $$RecentsTableFilterComposer
       column: $state.table.counter,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get created => $state.composableBuilder(
+      column: $state.table.created,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get updated => $state.composableBuilder(
+      column: $state.table.updated,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $$RecentsTableOrderingComposer
     extends OrderingComposer<_$AppDatabase, $RecentsTable> {
   $$RecentsTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
-      column: $state.table.id,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
-
   ColumnOrderings<String> get name => $state.composableBuilder(
       column: $state.table.name,
       builder: (column, joinBuilders) =>
@@ -1169,6 +1230,16 @@ class $$RecentsTableOrderingComposer
 
   ColumnOrderings<int> get counter => $state.composableBuilder(
       column: $state.table.counter,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get created => $state.composableBuilder(
+      column: $state.table.created,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get updated => $state.composableBuilder(
+      column: $state.table.updated,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }

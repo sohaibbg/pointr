@@ -19,6 +19,11 @@ enum DrawerOptions {
     iconData: Icons.info,
     name: 'About',
     path: '/about',
+  ),
+  tAndC(
+    iconData: Icons.description,
+    name: 'Terms & Conditions',
+    path: '/terms-and-conditions',
   );
 
   final String name;

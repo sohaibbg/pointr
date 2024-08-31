@@ -10,6 +10,7 @@ import '../presentation/screens/routes/copy_route_screen.dart';
 import '../presentation/screens/routes/create_route_screen.dart';
 import '../presentation/screens/routes/display_route_screen.dart';
 import '../presentation/screens/routes/list_routes_screen/list_routes_screen.dart';
+import '../presentation/screens/t_and_c_screen.dart';
 
 final router = GoRouter(
   redirect: (context, state) => switch (state.fullPath) {
@@ -52,6 +53,10 @@ final router = GoRouter(
             DrawerOptions.about => GoRoute(
                 path: option.path,
                 builder: (context, state) => const AboutScreen(),
+              ),
+            DrawerOptions.tAndC => GoRoute(
+                path: option.path,
+                builder: (context, state) => const TAndCScreen(),
               ),
           },
         ),

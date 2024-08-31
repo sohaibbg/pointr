@@ -31,12 +31,23 @@ class IRecentsRepo {
       _state.keys.toList();
 
   Future<void> record(
-    RecentEntity e,
+    AddressEntity e,
   ) async {
+    e = RecentEntity(
+      coordinates: e.coordinates,
+      name: e.name,
+    );
     if (_state.containsKey(e)) {
-      _state[e] = _state[e]! + 1;
+      _state[e as RecentEntity] = _state[e]! + 1;
       return;
     }
-    _state[e] = 1;
+    _state[e as RecentEntity] = 1;
   }
+
+  Future<void> clearRecord(
+    RecentEntity e,
+  ) async =>
+      _state.remove(e);
+
+  Future<void> deleteAllOlderThan30Days() async {}
 }

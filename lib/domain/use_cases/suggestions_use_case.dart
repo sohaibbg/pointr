@@ -28,12 +28,12 @@ Stream<List<SearchablePlace>> searchSuggestions(
     final nearby = await ref.read(
       NearbyPlacesFromCoordinatesProvider(coordinates).future,
     );
-    results.addAll(nearby);
+    results.insertAll(results.length, nearby);
     if (results.isNotEmpty) yield results;
   }
   final autoComplete = await _googlePlacesAutoComplete(ref, term);
   if (autoComplete == null) return;
-  results.insertAll(0, autoComplete);
+  results.insertAll(results.length, autoComplete);
   yield results;
 }
 

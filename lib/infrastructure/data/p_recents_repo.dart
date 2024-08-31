@@ -40,7 +40,7 @@ class PRecentsRepo implements IRecentsRepo {
 
   @override
   Future<void> record(
-    RecentEntity e,
+    AddressEntity e,
   ) =>
       AppDatabase.instance.into(table).insert(
             RecentsCompanion.insert(
@@ -51,6 +51,7 @@ class PRecentsRepo implements IRecentsRepo {
             onConflict: DoUpdate(
               (old) => RecentsCompanion.custom(
                 counter: old.counter + const Constant(1),
+                updated: Constant(DateTime.now()),
               ),
             ),
           );
@@ -82,5 +83,29 @@ class PRecentsRepo implements IRecentsRepo {
           ),
         )
         .toList();
+  }
+
+  @override
+  Future<void> clearRecord(RecentEntity e) async {
+    final stmt = AppDatabase.instance.delete(table)
+      ..where(
+        (recent) => recent.name.lower().contains(
+              e.name.toLowerCase(),
+            ),
+      );
+    await stmt.go();
+  }
+
+  @override
+  Future<void> deleteAllOlderThan30Days() {
+    final now = DateTime.now();
+    final stmt = AppDatabase.instance.delete(table)
+      ..where(
+        (recent) {
+          final maxCachableDate = recent.updated + const Duration(days: 30);
+          return maxCachableDate.isSmallerThanValue(now);
+        },
+      );
+    return stmt.go();
   }
 }

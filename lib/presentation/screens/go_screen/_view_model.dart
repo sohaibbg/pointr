@@ -64,30 +64,59 @@ class _GoViewModel extends ViewModel<GoScreen> {
     return context.pop();
   }
 
-  Future<void> onSuggestionSelected(AddressEntity place) async {
-    final mapCtl = await gmapCtlCompleter.future;
-    mapCtl.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        LatLng(
-          place.coordinates.latitude,
-          place.coordinates.longitude,
-        ),
-        15,
-      ),
+  void onSuggestionSelected(AddressEntity place) {
+    final isCoordinateAlreadySelected = _isCoordinateAlreadySelected(
+      place.coordinates,
     );
+    if (isCoordinateAlreadySelected) {
+      if (context.mounted) {
+        ref.context.simpleDialog(
+          title: 'Choose another stop',
+          content: '"From" and "To" stops can\'t be the same',
+        );
+      }
+      return;
+    }
+    updateStopProvider(ref, place);
+    _refocusMapOnStops();
   }
 
-  /// only animates if both stops are set
-  Future<void> _animateCameraToBoundsOfStops() async {
-    final from = ref.read(fromStopProvider)?.coordinates;
-    if (from == null) return;
-    final to = ref.read(toStopProvider)?.coordinates;
-    if (to == null) return;
-    final newBounds = _latLngBoundsFromCoordinatesEntities([from, to]);
+  Future<void> _refocusMapOnStops() async {
+    final coordinates = [fromStopProvider, toStopProvider]
+        .map(
+          (prov) => ref.read(prov)?.coordinates,
+        )
+        .whereType<CoordinatesEntity>();
+    if (coordinates.isEmpty) return;
     final mapCtl = await gmapCtlCompleter.future;
-    mapCtl.animateCamera(
-      CameraUpdate.newLatLngBounds(newBounds, 36),
+    late final CameraUpdate cameraUpdate;
+    if (coordinates.length == 1) {
+      cameraUpdate = CameraUpdate.newLatLng(
+        LatLng(
+          coordinates.first.latitude,
+          coordinates.first.longitude,
+        ),
+      );
+    }
+    if (coordinates.length == 2) {
+      final newBounds = _latLngBoundsFromCoordinatesEntities(coordinates);
+      cameraUpdate = CameraUpdate.newLatLngBounds(newBounds, 36);
+    }
+    mapCtl.animateCamera(cameraUpdate);
+  }
+
+  bool _isCoordinateAlreadySelected(CoordinatesEntity c) {
+    final directionType = ref.read(
+      currentlyPickingDirectionTypeProvider,
     );
+    final otherStopProvider = switch (directionType!) {
+      DirectionType.to => fromStopProvider,
+      DirectionType.from => toStopProvider,
+    };
+    final otherStop = ref.read(otherStopProvider);
+    if (otherStop == null) return false;
+    if (otherStop.coordinates != c) return false;
+    return true;
   }
 
   Future<void> _showImperfectAlgorithmDialog() async {
@@ -111,10 +140,30 @@ class _GoViewModel extends ViewModel<GoScreen> {
   Future<void> onStopSet() async {
     final mapCtl = await gmapCtlCompleter.future;
     final mapLatLng = await mapCtl.centerLatLng;
-    await context.loaderWithErrorDialog(
-      () => updateStopProvider(ref, mapLatLng),
+    final isCoordinateAlreadySelected = _isCoordinateAlreadySelected(mapLatLng);
+    if (isCoordinateAlreadySelected) {
+      if (context.mounted) {
+        ref.context.simpleDialog(
+          title: 'Choose another stop',
+          content: '"From" and "To" stops can\'t be the same',
+        );
+      }
+      return;
+    }
+    final temporaryAddress = AddressEntity(
+      coordinates: mapLatLng,
+      address: '',
     );
-    _animateCameraToBoundsOfStops();
+    final directionType = updateStopProvider(ref, temporaryAddress);
+    _refocusMapOnStops();
+    final address = await ref.read(
+      NameFromCoordinatesProvider(mapLatLng).future,
+    );
+    final newStop = AddressEntity(
+      address: address,
+      coordinates: mapLatLng,
+    );
+    updateStopProvider(ref, newStop, directionType: directionType);
     if (areBothStopsSet) _showImperfectAlgorithmDialog();
   }
 

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class GMapResultModel {
   final List<_AddressComponent> _addressComponents;
   final dynamic formattedAddress;
@@ -40,12 +43,11 @@ class GMapResultModel {
     // removes undesired components if they
     // are pushing component length over 3
     final addressComponentsSelection = _addressComponents.toList();
-    while (addressComponentsSelection.length > 3 &&
-        addressComponentsSelection.any(
-          (acs) => acs.types.any(
-            (t) => typesToRemove.contains(t),
-          ),
-        )) {
+    while (addressComponentsSelection.any(
+      (acs) => acs.types.any(
+        (t) => typesToRemove.contains(t),
+      ),
+    )) {
       for (final t in typesToRemove) {
         final lengthBefore = addressComponentsSelection.length;
         addressComponentsSelection.removeWhere(
@@ -82,4 +84,18 @@ class _AddressComponent {
           json['types'],
         ),
       );
+
+  @override
+  String toString() =>
+      '_AddressComponent(longName: $longName, shortName: $shortName, types: $types)';
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'longName': longName,
+      'shortName': shortName,
+      'types': types,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
 }

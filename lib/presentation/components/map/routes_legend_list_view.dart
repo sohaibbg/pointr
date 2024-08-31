@@ -1,21 +1,24 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 import '../../../config/my_theme.dart';
 import '../../../domain/entities/route_entity.dart';
 import '../space.dart';
 
-class RoutesLegendListView extends StatelessWidget {
+class RoutesLegendListView extends HookWidget {
   const RoutesLegendListView(
     this.segments, {
     super.key,
     this.onScrollToNewSegment,
+    this.selectedRouteName,
   });
 
   final List<Set<RouteEntity>> segments;
   final void Function(int index)? onScrollToNewSegment;
+  final ValueNotifier<String?>? selectedRouteName;
 
   static const colorLegend = [
     Colors.red,
@@ -30,6 +33,7 @@ class RoutesLegendListView extends StatelessWidget {
   Widget _tileBuilder(
     int index,
     RouteEntity route,
+    bool isOnCurrentCard,
   ) {
     final coloredBox = ColoredBox(
       color: colorLegend[index],
@@ -58,21 +62,33 @@ class RoutesLegendListView extends StatelessWidget {
         ),
       ],
     );
-    return Row(
-      children: [
-        coloredBox,
-        12.horizontalSpace,
-        Expanded(
-          child: textColumn,
+    final isSelected = route.name == selectedRouteName?.value;
+    return InkWell(
+      onTap: !isOnCurrentCard || selectedRouteName == null
+          ? null
+          : () => selectedRouteName!.value = isSelected ? null : route.name,
+      child: ColoredBox(
+        color: Colors.black.withOpacity(
+          isSelected ? 0.2 : 0,
         ),
-        9.horizontalSpace,
-      ],
+        child: Row(
+          children: [
+            coloredBox,
+            12.horizontalSpace,
+            Expanded(
+              child: textColumn,
+            ),
+            9.horizontalSpace,
+          ],
+        ),
+      ),
     );
   }
 
   Widget _segmentCardBuilder(
     BuildContext context,
     int index,
+    int selectedIndex,
   ) {
     final tiles = <Widget>[];
     final segment = segments[index];
@@ -81,12 +97,14 @@ class RoutesLegendListView extends StatelessWidget {
       final leftTile = _tileBuilder(
         i,
         leftRoute,
+        index == selectedIndex,
       );
       final hasNextElement = i + 1 < segment.length;
       final rightTile = hasNextElement
           ? _tileBuilder(
               i + 1,
               segment.elementAt(i + 1),
+              index == selectedIndex,
             )
           : null;
       tiles.add(
@@ -132,24 +150,35 @@ class RoutesLegendListView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: _height,
-        child: ScrollSnapList(
-          focusOnItemTap: true,
-          scrollPhysics: const BouncingScrollPhysics(
-            decelerationRate: ScrollDecelerationRate.fast,
-          ),
-          margin: EdgeInsets.zero,
-          itemCount: segments.length,
-          onItemFocus: onScrollToNewSegment ?? (_) {},
-          clipBehavior: Clip.none,
-          padding: EdgeInsets.zero,
-          itemSize: _tileWidth,
-          scrollDirection: Axis.horizontal,
-          duration: kThemeAnimationDuration.inMilliseconds,
-          dynamicItemSize: true,
-          dynamicSizeEquation: (distance) => 1 - min(distance.abs() / 500, 0.2),
-          itemBuilder: _segmentCardBuilder,
+  Widget build(BuildContext context) {
+    final currentIndex = useState(0);
+    return SizedBox(
+      height: _height,
+      child: ScrollSnapList(
+        focusOnItemTap: true,
+        scrollPhysics: const BouncingScrollPhysics(
+          decelerationRate: ScrollDecelerationRate.fast,
         ),
-      );
+        margin: EdgeInsets.zero,
+        itemCount: segments.length,
+        onItemFocus: (index) {
+          currentIndex.value = index;
+          if (onScrollToNewSegment != null) onScrollToNewSegment!(index);
+          if (selectedRouteName != null) selectedRouteName!.value = '';
+        },
+        clipBehavior: Clip.none,
+        padding: EdgeInsets.zero,
+        itemSize: _tileWidth,
+        scrollDirection: Axis.horizontal,
+        duration: kThemeAnimationDuration.inMilliseconds,
+        dynamicItemSize: true,
+        dynamicSizeEquation: (distance) => 1 - min(distance.abs() / 500, 0.2),
+        itemBuilder: (context, index) => _segmentCardBuilder(
+          context,
+          index,
+          currentIndex.value,
+        ),
+      ),
+    );
+  }
 }

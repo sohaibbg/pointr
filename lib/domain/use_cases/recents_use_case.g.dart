@@ -6,7 +6,7 @@ part of 'recents_use_case.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$recentsUseCaseHash() => r'f9f6268775f1152f0f2c88298963983f780602be';
+String _$recentsUseCaseHash() => r'49d35f3585a59cced6dfa4c59f06596bf4269300';
 
 /// See also [RecentsUseCase].
 @ProviderFor(RecentsUseCase)

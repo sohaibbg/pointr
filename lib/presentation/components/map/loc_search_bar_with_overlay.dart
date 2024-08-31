@@ -7,10 +7,9 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../../config/injector.dart';
 import '../../../config/my_theme.dart';
 import '../../../domain/entities/searchable_place.dart';
-import '../../../domain/repositories/i_places_repo.dart';
+import '../../../domain/use_cases/recents_use_case.dart';
 import '../../../domain/use_cases/suggestions_use_case.dart';
 import '../space.dart';
 import 'search_suggestions.dart';
@@ -58,6 +57,10 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
         final hasFocus = searchFocusNode.hasFocus;
         final value = animCtl.value;
         final modalBarrier = ModalBarrier(
+          onDismiss: () {
+            searchFocusNode.unfocus();
+            searchController.clear();
+          },
           color: Color.lerp(
             Colors.transparent,
             Theme.of(context).dialogTheme.barrierColor ?? Colors.black54,
@@ -155,11 +158,7 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
             ),
           ],
         );
-        final chipsList = ref
-            .watch(
-              SearchSuggestionsProvider(''),
-            )
-            .when(
+        final chipsList = ref.watch(recentsUseCaseProvider).when(
               data: (data) => ListView.separated(
                 hitTestBehavior: HitTestBehavior.deferToChild,
                 padding: const EdgeInsetsDirectional.only(
@@ -192,20 +191,7 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
                     labelStyle: TextStyle(
                       color: MyTheme.primaryColor.shade700,
                     ),
-                    onPressed: () async {
-                      final coordinates = switch (e) {
-                        AddressEntity() => e.coordinates,
-                        AutocompleteSuggestionEntity() => await getIt
-                            .call<IPlacesRepo>()
-                            .getCoordinatesFor(e.id),
-                      };
-                      onPlaceSelected(
-                        AddressEntity(
-                          coordinates: coordinates,
-                          address: e.name,
-                        ),
-                      );
-                    },
+                    onPressed: () => onPlaceSelected(e),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 0,
                       // vertical: 3,

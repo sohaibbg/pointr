@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'searchable_place.dart';
 
 class AddressEntity extends SearchablePlace {
@@ -13,4 +14,8 @@ class AddressEntity extends SearchablePlace {
         coordinates: coordinates,
         address: address,
       );
+
+  @override
+  String toString() =>
+      'AddressEntity(coordinates: $coordinates, address: $address)';
 }

@@ -8,6 +8,7 @@ import '../../../config/my_theme.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/searchable_place.dart';
 import '../../../domain/repositories/i_places_repo.dart';
+import '../../../domain/use_cases/recents_use_case.dart';
 import '../../../domain/use_cases/suggestions_use_case.dart';
 
 class SearchSuggestions extends ConsumerWidget {
@@ -193,6 +194,16 @@ class _SuggestionTile extends HookConsumerWidget {
               _ => Icons.location_on,
             },
           ),
+          trailing: place is RecentEntity
+              ? IconButton(
+                  onPressed: () => ref
+                      .read(
+                        recentsUseCaseProvider.notifier,
+                      )
+                      .clearRecord(place as RecentEntity),
+                  icon: const Icon(Icons.clear),
+                )
+              : null,
           onTap: () => onSelected(place as AddressEntity),
         );
       case AutocompleteSuggestionEntity():

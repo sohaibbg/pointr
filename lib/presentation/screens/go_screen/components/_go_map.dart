@@ -3,9 +3,11 @@ part of '../go_screen.dart';
 class _GoMap extends ConsumerWidget {
   const _GoMap({
     required this.mapCtlCompleter,
+    required this.selectedPolylineState,
   });
 
   final Completer<GoogleMapController> mapCtlCompleter;
+  final ValueNotifier<String?>? selectedPolylineState;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,14 +20,30 @@ class _GoMap extends ConsumerWidget {
       hidePin: vm.areBothStopsConfirmed,
       markers: vm.markers,
       polylines: vm.polylines.when(
-        loading: () => null,
-        error: (error, stackTrace) => null,
+        loading: () => {},
+        error: (error, stackTrace) => {},
         data: (data) => data,
       ),
+      selectedPolylineState: selectedPolylineState,
       onMapCreated: mapCtlCompleter.complete,
       padding: const EdgeInsets.symmetric(
         vertical: 350,
       ),
+      primaryColor: switch (ref.read(currentlyPickingDirectionTypeProvider)) {
+        DirectionType.from => const HSLColor.fromAHSL(
+            1,
+            BitmapDescriptor.hueBlue,
+            1,
+            0.5,
+          ).toColor(),
+        DirectionType.to => const HSLColor.fromAHSL(
+            1,
+            BitmapDescriptor.hueRed,
+            1,
+            0.5,
+          ).toColor(),
+        null => null,
+      },
     );
   }
 }

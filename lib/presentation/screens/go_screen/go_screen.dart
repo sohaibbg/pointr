@@ -18,11 +18,11 @@ import '../../../domain/entities/searchable_place.dart';
 import '../../../domain/repositories/i_initial_disclaimers_shown_repo.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/location_use_case.dart';
+import '../../../domain/use_cases/places_use_case.dart';
 import '../../../domain/use_cases/route_calculator/filter.dart';
 import '../../../domain/use_cases/route_calculator/from_to_stops.dart';
 import '../../../domain/use_cases/route_calculator/scored_route_groups.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
-import '../../../infrastructure/services/packages/hooks.dart';
 import '../../../infrastructure/services/packages/iterable.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/aligned_dialog_pusher_box.dart';
@@ -87,6 +87,7 @@ class GoScreen extends HookConsumerWidget {
       onPressed: Scaffold.of(context).openDrawer,
       child: const Icon(Icons.menu),
     );
+    final selectedRouteName = useState<String?>(null);
     final locSearchBarOrRouteLegend = Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
@@ -95,9 +96,9 @@ class GoScreen extends HookConsumerWidget {
           doShow: vm.areBothStopsSet,
           axis: Axis.vertical,
           axisAlignment: -1,
-          child: const Padding(
-            padding: EdgeInsets.only(bottom: 4),
-            child: _RoutesLegendListView(),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _RoutesLegendListView(selectedRouteName),
           ),
         ),
         SlideTransitionHelper(
@@ -181,6 +182,7 @@ class GoScreen extends HookConsumerWidget {
         children: [
           _GoMap(
             mapCtlCompleter: mapCtlCompleter,
+            selectedPolylineState: selectedRouteName,
           ),
           overlay,
         ],
