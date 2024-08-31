@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/my_theme.dart';
+import '../components/space.dart';
 
 enum DrawerOptions {
   go(
@@ -57,52 +58,63 @@ class DrawerScaffold extends HookWidget {
       fit: StackFit.expand,
       children: [backdrop, child],
     );
-    return Scaffold(
-      drawer: Drawer(
-        backgroundColor: Color.lerp(
-          MyTheme.primaryColor.shade50,
-          Colors.white,
-          0.5,
-        ),
-        child: ListView(
-          reverse: true,
-          children: [
-            DrawerHeader(
-              padding: const EdgeInsetsDirectional.fromSTEB(32, 20, 28, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "pointr",
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                  const Text("Public Transport routes for Karachi"),
-                ],
-              ),
-            ),
-            ...DrawerOptions.values.map(
-              (o) => Column(
-                children: [
-                  Builder(
-                    builder: (context) => ListTile(
-                      contentPadding:
-                          const EdgeInsetsDirectional.fromSTEB(32, 0, 28, 0),
-                      title: Text(o.name),
-                      leading: Icon(o.iconData),
-                      onTap: () {
-                        context.go(o.path);
-                        Scaffold.of(context).closeDrawer();
-                      },
-                    ),
-                  ),
-                  const Divider(),
-                ],
-              ),
-            ),
-          ],
-        ),
+    final drawerHeader = DrawerHeader(
+      padding: const EdgeInsetsDirectional.fromSTEB(32, 20, 28, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "pointr",
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          12.verticalSpace,
+          const Text("Public Transport routes for Karachi"),
+        ],
       ),
+    );
+    final drawer = Drawer(
+      backgroundColor: Color.lerp(
+        MyTheme.primaryColor.shade50,
+        Colors.white,
+        0.6,
+      ),
+      child: ListView(
+        reverse: true,
+        children: [
+          drawerHeader,
+          ...DrawerOptions.values.map(_buildDrawerTile),
+        ],
+      ),
+    );
+    return Scaffold(
+      drawer: drawer,
       body: body,
     );
   }
+
+  Widget _buildDrawerTile(
+    DrawerOptions o,
+  ) =>
+      Column(
+        children: [
+          Builder(
+            builder: (context) {
+              final fullPath = GoRouterState.of(context).fullPath;
+              final selected = o.path == fullPath;
+              return ListTile(
+                selected: selected,
+                contentPadding:
+                    const EdgeInsetsDirectional.fromSTEB(32, 0, 28, 0),
+                title: Text(o.name),
+                leading: Icon(o.iconData),
+                onTap: () {
+                  context.go(o.path);
+                  Scaffold.of(context).closeDrawer();
+                },
+              );
+            },
+          ),
+          const Divider(),
+        ],
+      );
 }

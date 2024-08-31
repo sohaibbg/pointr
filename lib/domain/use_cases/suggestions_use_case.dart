@@ -1,5 +1,3 @@
-// ignore: depend_on_referenced_packages, implementation_imports
-import 'package:geolocator_platform_interface/src/enums/location_permission.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -7,8 +5,6 @@ import '../../config/injector.dart';
 import '../entities/searchable_place.dart';
 import '../repositories/i_places_repo.dart';
 import '../repositories/i_recents_repo.dart';
-import 'location_use_case.dart';
-import 'places_use_case.dart';
 
 part 'suggestions_use_case.g.dart';
 
@@ -21,19 +17,19 @@ Stream<List<SearchablePlace>> searchSuggestions(
   final recents = await getIt.call<IRecentsRepo>().search(term);
   results.addAll(recents);
   if (results.isNotEmpty) yield results;
-  final permission = await ref.read(locPermissionProvider.future);
-  if (permission == LocationPermission.always ||
-      permission == LocationPermission.whileInUse) {
-    final coordinates = await ref.read(currentLocProvider.future);
-    final nearby = await ref.read(
-      NearbyPlacesFromCoordinatesProvider(coordinates).future,
-    );
-    results.insertAll(results.length, nearby);
-    if (results.isNotEmpty) yield results;
-  }
+  // final permission = await ref.read(locPermissionProvider.future);
+  // if (permission == LocationPermission.always ||
+  //     permission == LocationPermission.whileInUse) {
+  //   final coordinates = await ref.read(currentLocProvider.future);
+  //   final nearby = await ref.read(
+  //     NearbyPlacesFromCoordinatesProvider(coordinates).future,
+  //   );
+  //   results.addAll(nearby);
+  //   if (results.isNotEmpty) yield results;
+  // }
   final autoComplete = await _googlePlacesAutoComplete(ref, term);
   if (autoComplete == null) return;
-  results.insertAll(results.length, autoComplete);
+  results.addAll(autoComplete);
   yield results;
 }
 
