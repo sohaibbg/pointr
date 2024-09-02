@@ -154,9 +154,6 @@ class RoutesLegendListView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = useState(0);
-    useEffect(
-      () => () => selectedRouteName?.value = null,
-    );
     return SizedBox(
       height: _height,
       key: globalKey,
