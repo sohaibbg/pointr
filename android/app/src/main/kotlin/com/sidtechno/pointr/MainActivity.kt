@@ -1,4 +1,4 @@
-package com.example.pointr
+package com.sohaibcreates.pointr
 
 import io.flutter.embedding.android.FlutterActivity
 
