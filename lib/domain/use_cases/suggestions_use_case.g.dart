@@ -6,7 +6,7 @@ part of 'suggestions_use_case.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchSuggestionsHash() => r'a015c727567928cbce116c09d8686a9cb536eac8';
+String _$searchSuggestionsHash() => r'4a6efd2b8446e4cd3d3e92ed9c2d17a328524f3a';
 
 /// Copied from Dart SDK
 class _SystemHash {

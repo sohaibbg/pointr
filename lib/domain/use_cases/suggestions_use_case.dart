@@ -5,6 +5,7 @@ import '../../config/injector.dart';
 import '../entities/searchable_place.dart';
 import '../repositories/i_places_repo.dart';
 import '../repositories/i_recents_repo.dart';
+import 'recents_use_case.dart';
 
 part 'suggestions_use_case.g.dart';
 
@@ -14,7 +15,7 @@ Stream<List<SearchablePlace>> searchSuggestions(
   String term,
 ) async* {
   final results = <SearchablePlace>[];
-  final recents = await getIt.call<IRecentsRepo>().search(term);
+  final recents = await ref.watch(SearchRecentsProvider(term).future);
   results.addAll(recents);
   if (results.isNotEmpty) yield results;
   // final permission = await ref.read(locPermissionProvider.future);

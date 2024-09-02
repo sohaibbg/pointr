@@ -13,16 +13,25 @@ class RecentsUseCase extends _$RecentsUseCase {
   @override
   Future<List<RecentEntity>> build() {
     repo.deleteAllOlderThan30Days();
-    return repo.get(length: 5);
+    return repo.get();
   }
 
   Future<void> record(AddressEntity e) async {
     await repo.record(e);
     ref.invalidateSelf();
+    ref.invalidate(searchRecentsProvider);
   }
 
-  Future<void> clearRecord(RecentEntity e) async {
-    await repo.clearRecord(e);
+  Future<void> clearRecord(String name) async {
+    await repo.clearRecord(name);
     ref.invalidateSelf();
+    ref.invalidate(searchRecentsProvider);
   }
 }
+
+@riverpod
+Future<List<RecentEntity>> searchRecents(
+  SearchRecentsRef ref,
+  String term,
+) =>
+    getIt.call<IRecentsRepo>().search(term);

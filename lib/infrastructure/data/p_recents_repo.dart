@@ -16,7 +16,7 @@ class PRecentsRepo implements IRecentsRepo {
 
   /// may get less than [length]
   @override
-  Future<List<RecentEntity>> get({int length = 5}) async {
+  Future<List<RecentEntity>> get() async {
     final simpleSelectStatement = AppDatabase.instance.select(table)
       ..orderBy(
         [
@@ -25,8 +25,7 @@ class PRecentsRepo implements IRecentsRepo {
                 mode: OrderingMode.desc,
               ),
         ],
-      )
-      ..limit(length);
+      );
     final topNRecents = await simpleSelectStatement.get();
     return topNRecents
         .map(
@@ -86,11 +85,11 @@ class PRecentsRepo implements IRecentsRepo {
   }
 
   @override
-  Future<void> clearRecord(RecentEntity e) async {
+  Future<void> clearRecord(String name) async {
     final stmt = AppDatabase.instance.delete(table)
       ..where(
         (recent) => recent.name.lower().contains(
-              e.name.toLowerCase(),
+              name.toLowerCase(),
             ),
       );
     await stmt.go();

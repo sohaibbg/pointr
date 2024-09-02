@@ -19,7 +19,9 @@ class RoutesLegendListView extends HookWidget {
   final List<Set<RouteEntity>> segments;
   final void Function(int index)? onScrollToNewSegment;
   final ValueNotifier<String?>? selectedRouteName;
-
+  static final globalKey = GlobalKey(
+    debugLabel: 'routeLegendKey',
+  );
   static const colorLegend = [
     Colors.red,
     Colors.blue,
@@ -152,8 +154,12 @@ class RoutesLegendListView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = useState(0);
+    useEffect(
+      () => () => selectedRouteName?.value = null,
+    );
     return SizedBox(
       height: _height,
+      key: globalKey,
       child: ScrollSnapList(
         focusOnItemTap: true,
         scrollPhysics: const BouncingScrollPhysics(

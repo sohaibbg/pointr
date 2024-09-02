@@ -29,7 +29,7 @@ class SearchSuggestions extends ConsumerWidget {
         padding: const EdgeInsets.all(48),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Icon(
               Icons.question_mark,
@@ -41,6 +41,7 @@ class SearchSuggestions extends ConsumerWidget {
                     ? "No results found for '$searchTerm'."
                     : "Start typing",
                 style: const TextStyle(fontSize: 24),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -200,7 +201,7 @@ class _SuggestionTile extends HookConsumerWidget {
                       .read(
                         recentsUseCaseProvider.notifier,
                       )
-                      .clearRecord(place as RecentEntity),
+                      .clearRecord(place.name),
                   icon: const Icon(Icons.clear),
                 )
               : null,

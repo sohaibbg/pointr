@@ -1,27 +1,41 @@
 import 'package:injectable/injectable.dart';
 
+enum InitialDisclaimer {
+  notResponsibleForRouteAccuracy(
+    'notResponsibleForRouteAccuracy',
+  ),
+  algorithmImperfect(
+    'algorithmImperfect',
+  ),
+  routeLegendIsTappable(
+    'routeLegendIsTappable',
+  );
+
+  const InitialDisclaimer(this.name);
+
+  final String name;
+}
+
 @test
 @injectable
 class IInitialDisclaimersShownRepo {
-  static final Map<String, bool> _flags = {};
+  static final Map<InitialDisclaimer, bool> _flags = {};
 
-  Future<bool> _fetch(String key) async {
-    final value = _flags[key];
+  Future<bool> fetch(
+    InitialDisclaimer id,
+  ) async {
+    final value = _flags[id];
     switch (value) {
       case null:
-        _flags[key] = false;
+        _flags[id] = false;
         return false;
       case _:
         return value;
     }
   }
 
-  Future<bool> fetchDidShowNotResponsibleForRouteAccuracyDialog() =>
-      _fetch('didShowNotResponsibleForRouteAccuracyDialog');
-  Future<void> setNotResponsibleForRouteAccuracyDialogShown() async =>
-      _flags['didShowNotResponsibleForRouteAccuracyDialog'] = true;
-  Future<bool> fetchDidShowAlgorithmImperfectDialog() =>
-      _fetch('didShowAlgorithmImperfectDialog');
-  Future<void> setAlgorithmImperfectDialogShown() async =>
-      _flags['didShowAlgorithmImperfectDialog'] = true;
+  Future<void> setTrue(
+    InitialDisclaimer id,
+  ) async =>
+      _flags[id] = true;
 }

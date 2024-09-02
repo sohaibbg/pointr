@@ -8,31 +8,17 @@ import '../../domain/repositories/i_initial_disclaimers_shown_repo.dart';
 @Injectable(as: IInitialDisclaimersShownRepo)
 class PInitialDisclaimersShownRepo implements IInitialDisclaimersShownRepo {
   SharedPreferences? _prefs;
-  Future<bool> _fetch(String key) async {
+  @override
+  Future<bool> fetch(InitialDisclaimer id) async {
     _prefs ??= await SharedPreferences.getInstance();
-    final value = _prefs!.getBool(key);
-    if (value == null) await _prefs!.setBool(key, false);
+    final value = _prefs!.getBool(id.name);
+    if (value == null) await _prefs!.setBool(id.name, false);
     return value ?? false;
   }
 
-  Future<void> _setTrue(String key) async {
+  @override
+  Future<void> setTrue(InitialDisclaimer id) async {
     _prefs ??= await SharedPreferences.getInstance();
-    await _prefs!.setBool(key, true);
+    await _prefs!.setBool(id.name, true);
   }
-
-  @override
-  Future<bool> fetchDidShowAlgorithmImperfectDialog() =>
-      _fetch('didShowAlgorithmImperfectDialog');
-
-  @override
-  Future<void> setAlgorithmImperfectDialogShown() =>
-      _setTrue('didShowAlgorithmImperfectDialog');
-
-  @override
-  Future<bool> fetchDidShowNotResponsibleForRouteAccuracyDialog() =>
-      _fetch('didShowNotResponsibleForRouteAccuracyDialog');
-
-  @override
-  Future<void> setNotResponsibleForRouteAccuracyDialogShown() =>
-      _setTrue('didShowNotResponsibleForRouteAccuracyDialog');
 }

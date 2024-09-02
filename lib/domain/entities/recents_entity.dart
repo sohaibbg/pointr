@@ -10,4 +10,14 @@ class RecentEntity extends AddressEntity with RecentEntityMappable {
     required super.coordinates,
     required this.name,
   }) : super(address: name);
+
+  @override
+  bool operator ==(covariant RecentEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.name == name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 }
