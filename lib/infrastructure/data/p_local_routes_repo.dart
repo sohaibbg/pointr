@@ -11,7 +11,10 @@ import 'hardcoded_routes.dart';
 @Injectable(as: ILocalRoutesRepo)
 class PLocalRoutesRepo implements ILocalRoutesRepo {
   @override
-  List<RouteEntity> getHardcoded() => hardCodedRoutes;
+  List<RouteEntity> getHardcoded() => [
+        ...hardCodedAcBusRoutes,
+        ...hardCodedMinibusRoutes,
+      ];
 
   @override
   Future<List<RouteEntity>> getCustom() async {

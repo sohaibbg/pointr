@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,6 +12,7 @@ import '../../../../infrastructure/services/packages/hooks.dart';
 import '../../../../infrastructure/services/packages/iterable.dart';
 import '../../../../infrastructure/services/packages/view_model.dart';
 import '../../../components/aligned_dialog_pusher_box.dart';
+import '../../../components/dialogs.dart';
 import '../../../components/header_footer.dart';
 import '../../../components/slide_transition_helper.dart';
 import '../../../components/space.dart';
@@ -332,67 +334,67 @@ class _ListRoutesFooterView extends HookConsumerWidget {
       ),
       icon: const Icon(Icons.deselect),
     );
-    // final deleteBtn = OutlinedButton.icon(
-    //   onPressed: () => context.loaderWithErrorDialog(
-    //     () async {
-    //       final selection = ref.read(
-    //         _selectedRoutesProvider,
-    //       );
-    //       final areAllHardcoded = selection.every((e) => e.isHardcoded);
-    //       if (areAllHardcoded) {
-    //         return context.simpleDialog(
-    //           title: 'Only hardcoded routes selected',
-    //           content: 'You can\'t delete hardcoded routes',
-    //         );
-    //       }
-    //       final deletableSelection = selection.where(
-    //         (e) => !e.isHardcoded,
-    //       );
-    //       final undeletableSelection = selection.where(
-    //         (e) => e.isHardcoded,
-    //       );
-    //       final deletableClause =
-    //           'Are you sure you want to delete the following routes?\n${deletableSelection.map(
-    //                 (e) => ' ・ ${e.name}',
-    //               ).join('\n')}\n';
-    //       final undeletableClause = undeletableSelection.isEmpty
-    //           ? null
-    //           : 'The following hardcoded routes cannot and will not be deleted:\n${undeletableSelection.map(
-    //                 (e) => ' ・ ${e.name}',
-    //               ).join('\n')}\n';
-    //       final confirmationDialogResult = await context.simpleDialog(
-    //         title: 'Confirm deletion',
-    //         content: undeletableClause == null
-    //             ? deletableClause
-    //             : '$deletableClause\n$undeletableClause',
-    //         alternativeAction: ElevatedButton(
-    //           onPressed: () => context.pop(true),
-    //           child: const Text("Yes I'm sure"),
-    //         ),
-    //       );
-    //       if (confirmationDialogResult != true) return;
-    //       for (final route in deletableSelection) {
-    //         await ref
-    //             .read(routesUseCaseProvider.notifier)
-    //             .deleteRoute(route.name);
-    //       }
-    //       ref.read(_selectedRoutesProvider.notifier).state =
-    //           undeletableSelection.toSet();
-    //     },
-    //   ),
-    //   style: MyTheme.primaryOutlinedButtonStyle.copyWith(
-    //     foregroundColor: const WidgetStatePropertyAll(
-    //       Colors.red,
-    //     ),
-    //     iconColor: const WidgetStatePropertyAll(
-    //       Colors.red,
-    //     ),
-    //   ),
-    //   label: const Text(
-    //     'Delete routes',
-    //   ),
-    //   icon: const Icon(Icons.delete),
-    // );
+    final deleteBtn = OutlinedButton.icon(
+      onPressed: () => context.loaderWithErrorDialog(
+        () async {
+          final selection = ref.read(
+            _selectedRoutesProvider,
+          );
+          final areAllHardcoded = selection.every((e) => e.isHardcoded);
+          if (areAllHardcoded) {
+            return context.simpleDialog(
+              title: 'Only hardcoded routes selected',
+              content: 'You can\'t delete hardcoded routes',
+            );
+          }
+          final deletableSelection = selection.where(
+            (e) => !e.isHardcoded,
+          );
+          final undeletableSelection = selection.where(
+            (e) => e.isHardcoded,
+          );
+          final deletableClause =
+              'Are you sure you want to delete the following routes?\n${deletableSelection.map(
+                    (e) => ' ・ ${e.name}',
+                  ).join('\n')}\n';
+          final undeletableClause = undeletableSelection.isEmpty
+              ? null
+              : 'The following hardcoded routes cannot and will not be deleted:\n${undeletableSelection.map(
+                    (e) => ' ・ ${e.name}',
+                  ).join('\n')}\n';
+          final confirmationDialogResult = await context.simpleDialog(
+            title: 'Confirm deletion',
+            content: undeletableClause == null
+                ? deletableClause
+                : '$deletableClause\n$undeletableClause',
+            alternativeAction: ElevatedButton(
+              onPressed: () => context.pop(true),
+              child: const Text("Yes I'm sure"),
+            ),
+          );
+          if (confirmationDialogResult != true) return;
+          for (final route in deletableSelection) {
+            await ref
+                .read(routesUseCaseProvider.notifier)
+                .deleteRoute(route.name);
+          }
+          ref.read(_selectedRoutesProvider.notifier).state =
+              undeletableSelection.toSet();
+        },
+      ),
+      style: MyTheme.primaryOutlinedButtonStyle.copyWith(
+        foregroundColor: const WidgetStatePropertyAll(
+          Colors.red,
+        ),
+        iconColor: const WidgetStatePropertyAll(
+          Colors.red,
+        ),
+      ),
+      label: const Text(
+        'Delete routes',
+      ),
+      icon: const Icon(Icons.delete),
+    );
     final selectedRowColor = Color.lerp(
       MyTheme.primaryColor.shade50,
       Colors.white,
@@ -414,18 +416,18 @@ class _ListRoutesFooterView extends HookConsumerWidget {
           children: [
             viewOnMapBtn,
             clearSelectionBtn,
-            // ElevatedButton.icon(
-            //   onPressed: () async {
-            //     await Clipboard.setData(
-            //       ClipboardData(
-            //         text: vm.selectedRoutesConstructor(),
-            //       ),
-            //     );
-            //   },
-            //   label: const Text("Copy to Clipboard"),
-            //   icon: const Icon(Icons.copy),
-            // ),
-            // deleteBtn,
+            ElevatedButton.icon(
+              onPressed: () async {
+                await Clipboard.setData(
+                  ClipboardData(
+                    text: vm.selectedRoutesConstructor(),
+                  ),
+                );
+              },
+              label: const Text("Copy to Clipboard"),
+              icon: const Icon(Icons.copy),
+            ),
+            deleteBtn,
           ],
         ),
       ),
