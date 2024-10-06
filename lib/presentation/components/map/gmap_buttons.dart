@@ -11,16 +11,42 @@ import '../blinking_loader.dart';
 import '../dialogs.dart';
 import '../space.dart';
 
-class GmapButtons extends ConsumerWidget {
+class GmapButtons extends HookConsumerWidget {
   const GmapButtons(
     this.mapCtlCompleter, {
     super.key,
+    this.arePedBridgesVisible,
   });
 
   final Completer<GoogleMapController> mapCtlCompleter;
+  final ValueNotifier<bool>? arePedBridgesVisible;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final pedBridgeBtn = arePedBridgesVisible == null
+        ? null
+        : ElevatedButton(
+            onPressed: () =>
+                arePedBridgesVisible!.value = !arePedBridgesVisible!.value,
+            style: MyTheme.secondaryButtonStyle,
+            child: Stack(
+              children: [
+                Icon(
+                  Icons.directions_walk,
+                  size: 28,
+                  color: arePedBridgesVisible!.value
+                      ? MyTheme.primaryColor.withOpacity(0.55)
+                      : null,
+                ),
+                if (arePedBridgesVisible!.value == true)
+                  Icon(
+                    Icons.close,
+                    size: 28,
+                    color: arePedBridgesVisible!.value ? Colors.red : null,
+                  ),
+              ],
+            ),
+          );
     final zoomOutBtn = ElevatedButton(
       onPressed: () async {
         final ctl = await mapCtlCompleter.future;
@@ -127,6 +153,10 @@ class GmapButtons extends ConsumerWidget {
     );
     return Column(
       children: [
+        if (pedBridgeBtn != null) ...[
+          pedBridgeBtn,
+          12.verticalSpace,
+        ],
         locateMeBtn,
         12.verticalSpace,
         zoomOutBtn,

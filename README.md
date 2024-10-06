@@ -25,6 +25,12 @@ Pointr is an open-source app for navigating public transport based on a communit
 - Create your own routes
 - Contribute to filling out your city's transport data
 
+## Contribution
+
+Thanks to Zaineb Makati of Habib University for sharing the minibus routes and pedestrian stops.
+
+Create a pull request with hardcoded routes to contribute.
+
 ## For Devs
 
 add a file named "api_keys.json" to the root of the project containing the following

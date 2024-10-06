@@ -163,6 +163,7 @@ class GoScreen extends HookConsumerWidget {
         ],
       ),
     );
+    final arePedBridgesVisible = useState(false);
     final overlay = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -170,7 +171,10 @@ class GoScreen extends HookConsumerWidget {
           padding: const EdgeInsetsDirectional.only(end: 12),
           child: Align(
             alignment: AlignmentDirectional.bottomEnd,
-            child: GmapButtons(vm.gmapCtlCompleter),
+            child: GmapButtons(
+              vm.gmapCtlCompleter,
+              arePedBridgesVisible: arePedBridgesVisible,
+            ),
           ),
         ),
         24.verticalSpace,
@@ -183,6 +187,7 @@ class GoScreen extends HookConsumerWidget {
         children: [
           _GoMap(
             mapCtlCompleter: mapCtlCompleter,
+            arePedBridgesVisible: arePedBridgesVisible,
             selectedPolylineState: selectedRouteName,
           ),
           overlay,

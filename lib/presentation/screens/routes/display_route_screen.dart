@@ -13,6 +13,7 @@ import '../../../infrastructure/services/packages/iterable.dart';
 import '../../components/dialogs.dart';
 import '../../components/header_footer.dart';
 import '../../components/map/gmap_buttons.dart';
+import '../../components/map/map_with_pin_and_banner.dart';
 import '../../components/map/routes_legend_list_view.dart';
 import '../../components/space.dart';
 
@@ -92,7 +93,8 @@ class DisplayRouteScreen extends HookWidget {
         );
       },
     );
-    final googleMap = GoogleMap(
+    final arePedBridgesVisible = useState(false);
+    final googleMap = MapWithPinAndBanner(
       polylines: polylines,
       onMapCreated: (controller) => mapCtlCompleter.complete(controller),
       initialCameraPosition: CameraPosition(
@@ -101,9 +103,10 @@ class DisplayRouteScreen extends HookWidget {
           karachiLatLng.longitude,
         ),
       ),
-      zoomControlsEnabled: false,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
+      arePedBridgesVisible: arePedBridgesVisible,
+      // zoomControlsEnabled: false,
+      // myLocationEnabled: true,
+      // myLocationButtonEnabled: false,
       padding: const EdgeInsets.symmetric(
         vertical: 148,
         horizontal: 36,
@@ -159,7 +162,10 @@ class DisplayRouteScreen extends HookWidget {
               bottom: 48,
               end: 12,
             ),
-            child: GmapButtons(mapCtlCompleter),
+            child: GmapButtons(
+              mapCtlCompleter,
+              arePedBridgesVisible: arePedBridgesVisible,
+            ),
           ),
         ),
         footer,

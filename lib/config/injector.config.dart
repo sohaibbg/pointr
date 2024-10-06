@@ -15,6 +15,8 @@ import 'package:pointr/domain/repositories/i_initial_disclaimers_shown_repo.dart
     as _i511;
 import 'package:pointr/domain/repositories/i_local_routes_repo.dart' as _i846;
 import 'package:pointr/domain/repositories/i_location_repo.dart' as _i788;
+import 'package:pointr/domain/repositories/i_pedestrian_bridge_repo.dart'
+    as _i607;
 import 'package:pointr/domain/repositories/i_places_repo.dart' as _i482;
 import 'package:pointr/domain/repositories/i_recents_repo.dart' as _i124;
 import 'package:pointr/infrastructure/data/p_favorites_repo.dart' as _i406;
@@ -22,11 +24,13 @@ import 'package:pointr/infrastructure/data/p_initial_disclaimers_shown_repo.dart
     as _i574;
 import 'package:pointr/infrastructure/data/p_local_routes_repo.dart' as _i621;
 import 'package:pointr/infrastructure/data/p_location_repo.dart' as _i489;
+import 'package:pointr/infrastructure/data/p_pedestrian_bridge_repo.dart'
+    as _i389;
 import 'package:pointr/infrastructure/data/p_places_repo.dart' as _i776;
 import 'package:pointr/infrastructure/data/p_recents_repo.dart' as _i97;
 
-const String _prod = 'prod';
 const String _dev = 'dev';
+const String _prod = 'prod';
 const String _test = 'test';
 
 extension GetItInjectableX on _i174.GetIt {
@@ -39,6 +43,13 @@ extension GetItInjectableX on _i174.GetIt {
       this,
       environment,
       environmentFilter,
+    );
+    gh.factory<_i607.IPedestrianBridgeRepo>(
+      () => _i389.PPedestrianBridgeRepo(),
+      registerFor: {
+        _dev,
+        _prod,
+      },
     );
     gh.factory<_i788.ILocationRepo>(
       () => _i489.PLocationRepo(),
@@ -104,6 +115,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i788.ILocationRepo>(
       () => _i788.ILocationRepo(),
+      registerFor: {_test},
+    );
+    gh.factory<_i607.IPedestrianBridgeRepo>(
+      () => _i607.IPedestrianBridgeRepo(),
       registerFor: {_test},
     );
     return this;

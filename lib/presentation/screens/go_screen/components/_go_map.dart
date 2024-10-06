@@ -4,10 +4,12 @@ class _GoMap extends ConsumerWidget {
   const _GoMap({
     required this.mapCtlCompleter,
     required this.selectedPolylineState,
+    required this.arePedBridgesVisible,
   });
 
   final Completer<GoogleMapController> mapCtlCompleter;
   final ValueNotifier<String?>? selectedPolylineState;
+  final ValueNotifier<bool>? arePedBridgesVisible;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,6 +19,7 @@ class _GoMap extends ConsumerWidget {
         target: vm.initialLatLng,
         zoom: 15,
       ),
+      arePedBridgesVisible: arePedBridgesVisible,
       hidePin: vm.areBothStopsConfirmed,
       markers: vm.markers,
       polylines: vm.polylines.when(

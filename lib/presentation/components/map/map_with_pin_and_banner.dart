@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../config/injector.dart';
 import '../../../config/my_theme.dart';
+import '../../../domain/repositories/i_pedestrian_bridge_repo.dart';
 import '../../../infrastructure/services/packages/hooks.dart';
 import '../space.dart';
 
@@ -20,6 +23,7 @@ class MapWithPinAndBanner extends HookConsumerWidget {
   final IconData topIconData;
   final CameraPositionCallback? onCameraMove;
   final ValueNotifier<String?>? selectedPolylineState;
+  final ValueNotifier<bool>? arePedBridgesVisible;
 
   const MapWithPinAndBanner({
     super.key,
@@ -33,6 +37,7 @@ class MapWithPinAndBanner extends HookConsumerWidget {
     this.topIconData = Icons.location_pin,
     this.onCameraMove,
     this.selectedPolylineState,
+    this.arePedBridgesVisible,
   });
 
   Set<Polyline> getTappablePolylines(
@@ -61,10 +66,35 @@ class MapWithPinAndBanner extends HookConsumerWidget {
     return result;
   }
 
+  static Future<Iterable<Marker>> _pedestrianBridgeMarkers() async {
+    final markerImage = await rootBundle.load(
+      'assets/images/walk.png',
+    );
+    final bytes = markerImage.buffer.asUint8List();
+    final markerIcon = BitmapDescriptor.bytes(
+      bytes,
+      height: 24,
+    );
+    final repo = getIt.call<IPedestrianBridgeRepo>();
+    final pedestrianBridgeMarkers = repo.getPedestrianBridgeCoordinates().map(
+          (e) => Marker(
+            markerId: MarkerId(e.toString()),
+            position: LatLng(e.latitude, e.longitude),
+            icon: markerIcon,
+          ),
+        );
+    return pedestrianBridgeMarkers;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isMoving = useState<bool>(false);
     final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
+    final pedestrianBridgeFuture = useMemoized(_pedestrianBridgeMarkers);
+    final pedestrianBridgeMarkers = useFuture(
+      pedestrianBridgeFuture,
+      initialData: <Marker>{},
+    );
     final googleMap = GestureDetector(
       onDoubleTap: () async {
         final mapCtl = await mapCtlCompleter.future;
@@ -83,7 +113,12 @@ class MapWithPinAndBanner extends HookConsumerWidget {
         myLocationButtonEnabled: false,
         zoomControlsEnabled: false,
         padding: padding ?? EdgeInsets.zero,
-        markers: markers ?? {},
+        markers: {
+          if (markers != null) ...markers!,
+          if (arePedBridgesVisible != null)
+            if (arePedBridgesVisible!.value == true)
+              ...pedestrianBridgeMarkers.requireData,
+        },
         polylines: getTappablePolylines(polylines),
         onCameraMoveStarted: () => isMoving.value = true,
         onCameraIdle: () => isMoving.value = false,
