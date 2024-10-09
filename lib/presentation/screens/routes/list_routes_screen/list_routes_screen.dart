@@ -4,9 +4,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../../config/injector.dart';
 import '../../../../config/my_theme.dart';
 import '../../../../domain/entities/route_entity.dart';
+import '../../../../domain/repositories/i_initial_disclaimers_shown_repo.dart';
 import '../../../../domain/use_cases/routes_use_case.dart';
 import '../../../../infrastructure/services/packages/hooks.dart';
 import '../../../../infrastructure/services/packages/iterable.dart';
@@ -22,8 +25,17 @@ part '_view_model.dart';
 class ListRoutesScreen extends HookConsumerWidget {
   const ListRoutesScreen({super.key});
 
+  static final createRouteKey = GlobalKey(debugLabel: 'createRoutebtn');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final vm = _ListRoutesViewModel(context, ref);
+    useEffect(
+      () {
+        vm.initState();
+        return null;
+      },
+    );
     final title = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: RichText(
@@ -49,6 +61,7 @@ class ListRoutesScreen extends HookConsumerWidget {
       ),
     );
     final createRoutebtn = ElevatedButton.icon(
+      key: createRouteKey,
       onPressed: () => context.go('/route/create'),
       label: const Text("Create new Route"),
       icon: const Icon(Icons.add),

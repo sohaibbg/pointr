@@ -58,6 +58,10 @@ class GoScreen extends HookConsumerWidget {
     super.key,
   });
 
+  static final setLocationButtonGlobalKey = GlobalKey(
+    debugLabel: 'setLocationButtonGlobalKey',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
@@ -66,7 +70,10 @@ class GoScreen extends HookConsumerWidget {
       ref,
       gmapCtlCompleter: mapCtlCompleter,
     );
-    useEffect(vm.useEffectHook);
+    useEffect(() {
+      vm.initState();
+      return null;
+    });
     final backBtn = SlideTransitionHelper(
       axis: Axis.horizontal,
       axisAlignment: 1,
@@ -113,6 +120,7 @@ class GoScreen extends HookConsumerWidget {
       ],
     );
     final confirmLocBtn = ElevatedButton.icon(
+      key: setLocationButtonGlobalKey,
       icon: const Icon(Icons.navigate_next_sharp),
       label: Text(vm.selectLocBtnLabel),
       onPressed: () => context.loaderWithErrorDialog(

@@ -4,11 +4,23 @@ enum InitialDisclaimer {
   notResponsibleForRouteAccuracy(
     'notResponsibleForRouteAccuracy',
   ),
-  algorithmImperfect(
-    'algorithmImperfect',
+  setFromToToViewRoutes(
+    'setFromToToViewRoutes',
+  ),
+  goScreenTutorial(
+    'goScreenTutorial',
   ),
   routeLegendIsTappable(
     'routeLegendIsTappable',
+  ),
+  algorithmImperfect(
+    'algorithmImperfect',
+  ),
+  addNewRoutes(
+    'addNewRoutes',
+  ),
+  dropPinsToDrawRoute(
+    'dropPinsToDrawRoute',
   );
 
   const InitialDisclaimer(this.name);

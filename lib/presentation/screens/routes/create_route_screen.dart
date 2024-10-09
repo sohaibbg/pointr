@@ -5,10 +5,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../../config/injector.dart';
 import '../../../config/my_theme.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 import '../../../domain/entities/route_entity.dart';
+import '../../../domain/repositories/i_initial_disclaimers_shown_repo.dart';
 import '../../../domain/repositories/i_location_repo.dart';
 import '../../../domain/use_cases/routes_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
@@ -24,6 +27,11 @@ import '../../components/space.dart';
 class CreateRouteScreen extends HookConsumerWidget {
   const CreateRouteScreen({super.key});
 
+  static final dropPinKey =
+      GlobalKey(debugLabel: 'CreateRouteScreen.dropPinBtn');
+  static final reversePinDropKey =
+      GlobalKey(debugLabel: 'CreateRouteScreen.reversePinDropBtn');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mapCtlCompleter = useRef(Completer<GoogleMapController>()).value;
@@ -35,6 +43,12 @@ class CreateRouteScreen extends HookConsumerWidget {
       mapCtlCompleter: mapCtlCompleter,
       points: points,
       dragPolyline: dragPolyline,
+    );
+    useEffect(
+      () {
+        vm.initState();
+        return null;
+      },
     );
     final map = MapWithPinAndBanner(
       initialCameraPosition: CameraPosition(
@@ -87,6 +101,7 @@ class CreateRouteScreen extends HookConsumerWidget {
           height: 60,
           width: 100,
           child: IconButton.filled(
+            key: reversePinDropKey,
             onPressed: points.value.isEmpty ? null : vm.onReverse,
             icon: const Icon(Icons.undo),
           ),
@@ -96,6 +111,7 @@ class CreateRouteScreen extends HookConsumerWidget {
           height: 60,
           width: 200,
           child: ElevatedButton.icon(
+            key: dropPinKey,
             onPressed: vm.onPinDrop,
             style: MyTheme.primaryOutlinedButtonStyle,
             label: const Text("Drop pin"),
@@ -185,6 +201,73 @@ class _CreateRouteViewModel extends ViewModel<CreateRouteScreen> {
   final Completer<GoogleMapController> mapCtlCompleter;
   final ValueNotifier<List<CoordinatesEntity>> points;
   final ValueNotifier<Polyline?> dragPolyline;
+
+  Future<void> initState() async {
+    const flag = InitialDisclaimer.dropPinsToDrawRoute;
+    final repo = getIt.call<IInitialDisclaimersShownRepo>();
+    final hasAlreadyShown = await repo.fetch(flag);
+    if (hasAlreadyShown) return;
+    final dropPinFocus = TargetFocus(
+      identify: 'CreateRouteScreen.dropPinKey',
+      keyTarget: CreateRouteScreen.dropPinKey,
+      enableOverlayTab: true,
+      paddingFocus: 0,
+      enableTargetTab: true,
+      shape: ShapeLightFocus.RRect,
+      contents: [
+        TargetContent(
+          padding: EdgeInsets.zero,
+          customPosition: CustomTargetContentPosition(
+            top: -200,
+          ),
+          align: ContentAlign.top,
+          child: const Text(
+            '''Drop pins using this button.
+	
+Each pin connects to the next to draw a contiguous route.''',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+    final reversePinDropContent = TargetFocus(
+      identify: 'CreateRouteScreen.reversePinDropKey',
+      keyTarget: CreateRouteScreen.reversePinDropKey,
+      enableOverlayTab: true,
+      paddingFocus: 0,
+      enableTargetTab: true,
+      shape: ShapeLightFocus.RRect,
+      contents: [
+        TargetContent(
+          padding: EdgeInsets.zero,
+          customPosition: CustomTargetContentPosition(
+            top: -200,
+          ),
+          align: ContentAlign.top,
+          child: const Text(
+            '''Use the 'undo' button to remove the latest pin dropped on the map.''',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+    final tutorialCoachMark = TutorialCoachMark(
+      targets: [dropPinFocus, reversePinDropContent],
+      hideSkip: true,
+    );
+    tutorialCoachMark.show(context: context);
+    repo.setTrue(flag);
+  }
 
   Set<Marker> get markers {
     if (points.value.isEmpty) return {};

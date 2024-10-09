@@ -29,28 +29,180 @@ class _GoViewModel extends ViewModel<GoScreen> {
 
   final _tutorialCompleter = Completer<void>();
 
-  VoidCallback? useEffectHook() {
-    final flagRepo = getIt.call<IInitialDisclaimersShownRepo>();
-    flagRepo
-        .fetch(
+  Future<void> _showOneTimeDisclaimerAndTutorial() async {
+    Future<bool> shouldFlagBeShown(InitialDisclaimer flag) async {
+      final flagRepo = getIt.call<IInitialDisclaimersShownRepo>();
+      final hasAlreadyShown = await flagRepo.fetch(flag);
+      if (hasAlreadyShown) return false;
+      if (!context.mounted) return false;
+      return true;
+    }
+
+    if (await shouldFlagBeShown(
       InitialDisclaimer.notResponsibleForRouteAccuracy,
-    )
-        .then(
-      (didShow) {
-        if (didShow) return;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!context.mounted) return;
-          context.simpleDialog(
-            title: 'Disclaimer',
-            content:
-                'pointr is not affiliated with People\'s Bus Service, the Government of Sindh or other relevant agencies.\n\nGiven routes may be subject to change and inaccuracy. Please confirm from other sources before planning your route.\n\nPlease download the official People\'s Bus Service App for official information and for using the digital ticketing system.',
-          );
-          flagRepo.setTrue(
-            InitialDisclaimer.notResponsibleForRouteAccuracy,
-          );
-        });
-      },
+    )) {
+      await context.simpleDialog(
+        title: 'Disclaimer',
+        content:
+            'pointr is not affiliated with People\'s Bus Service, the Government of Sindh or other relevant agencies.\n\nGiven routes may be subject to change and inaccuracy. Please confirm from other sources before planning your route.\n\nPlease download the official People\'s Bus Service App for official information and for using the digital ticketing system.',
+      );
+    }
+    final flagRepo = getIt.call<IInitialDisclaimersShownRepo>();
+    flagRepo.setTrue(InitialDisclaimer.notResponsibleForRouteAccuracy);
+    const tutorialFlag = InitialDisclaimer.goScreenTutorial;
+    if (await shouldFlagBeShown(tutorialFlag)) {
+      final tutorialContent = [
+        TargetFocus(
+          identify: 'zoomInAndOutButtonGlobalKey',
+          keyTarget: GmapButtons.zoomInAndOutButtonGlobalKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: const Text(
+                '''Tap this button to zoom out.
+                
+Double tap on the map to zoom in.''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        TargetFocus(
+          identify: 'findMyLocationButtonGlobalKey',
+          keyTarget: GmapButtons.findMyLocationButtonGlobalKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: const Text(
+                '''Press this button to take the map to you current location.
+                
+You will have to enable permissions.''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        TargetFocus(
+          identify: 'usePlacesSearchGlobalKey',
+          keyTarget: LocSearchBarWithOverlay.usePlacesSearchGlobalKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: const Text(
+                '''Search for popular spaces to direct the map here.''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        TargetFocus(
+          identify: 'setLocationButtonGlobalKey',
+          keyTarget: GoScreen.setLocationButtonGlobalKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: const Text(
+                '''Bus routes will be displayed, based on your FROM and TO locations.
+              
+Use this button to set your stops''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+        TargetFocus(
+          identify: 'showPedestrianBridgeButtonGlobalKey',
+          keyTarget: GmapButtons.showPedestrianBridgeButtonGlobalKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: const Text(
+                '''Pedestrian bridges can be toggled on and off on the map by clicking this button.''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ];
+      final tutorialCoachMark = TutorialCoachMark(
+        targets: tutorialContent,
+        hideSkip: true,
+      );
+      tutorialCoachMark.show(context: context);
+      flagRepo.setTrue(tutorialFlag);
+    }
+  }
+
+  void initState() async {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _showOneTimeDisclaimerAndTutorial(),
     );
+
     return null;
   }
 

@@ -41,6 +41,47 @@ class _ListRoutesViewModel extends ViewModel<ListRoutesScreen> {
         .state = filter.toggle(mode).toSet();
   }
 
+  Future<void> initState() async {
+    const flag = InitialDisclaimer.addNewRoutes;
+    final repo = getIt.call<IInitialDisclaimersShownRepo>();
+    final hasAlreadyShown = await repo.fetch(flag);
+    if (hasAlreadyShown) return;
+    if (!context.mounted) return;
+    final tutorialCoachMark = TutorialCoachMark(
+      targets: [
+        TargetFocus(
+          identify: 'ListRoutesScreen.createRouteKey',
+          keyTarget: ListRoutesScreen.createRouteKey,
+          enableOverlayTab: true,
+          paddingFocus: 0,
+          enableTargetTab: true,
+          shape: ShapeLightFocus.RRect,
+          contents: [
+            TargetContent(
+              padding: EdgeInsets.zero,
+              customPosition: CustomTargetContentPosition(
+                top: -200,
+              ),
+              align: ContentAlign.top,
+              child: Text(
+                '''You can create your own ${RouteMode.values.map((e) => e.name)} routes by tapping here.''',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ],
+      hideSkip: true,
+    );
+    tutorialCoachMark.show(context: context);
+    repo.setTrue(flag);
+  }
+
   String selectedRoutesConstructor() => ref
       .read(
         _selectedRoutesProvider,

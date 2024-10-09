@@ -21,11 +21,24 @@ class GmapButtons extends HookConsumerWidget {
   final Completer<GoogleMapController> mapCtlCompleter;
   final ValueNotifier<bool>? arePedBridgesVisible;
 
+  static final showPedestrianBridgeButtonGlobalKey = GlobalKey(
+    debugLabel: 'usePedestrianBridgeButtonGlobalKey',
+  );
+
+  static final findMyLocationButtonGlobalKey = GlobalKey(
+    debugLabel: 'findMyLocationButtonGlobalKey',
+  );
+
+  static final zoomInAndOutButtonGlobalKey = GlobalKey(
+    debugLabel: 'zoomInAndOutButtonGlobalKey',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pedBridgeBtn = arePedBridgesVisible == null
         ? null
         : ElevatedButton(
+            key: showPedestrianBridgeButtonGlobalKey,
             onPressed: () =>
                 arePedBridgesVisible!.value = !arePedBridgesVisible!.value,
             style: MyTheme.secondaryButtonStyle,
@@ -48,6 +61,7 @@ class GmapButtons extends HookConsumerWidget {
             ),
           );
     final zoomOutBtn = ElevatedButton(
+      key: zoomInAndOutButtonGlobalKey,
       onPressed: () async {
         final ctl = await mapCtlCompleter.future;
         ctl.animateCamera(
@@ -61,6 +75,7 @@ class GmapButtons extends HookConsumerWidget {
       ),
     );
     final locateMeBtn = ElevatedButton(
+      key: findMyLocationButtonGlobalKey,
       onPressed: () async {
         final locPermission = await ref.read(locPermissionProvider.future);
         final mustChangeInSettings =

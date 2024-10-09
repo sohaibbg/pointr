@@ -29,6 +29,10 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
   static final searchFocusNode = FocusNode();
   static final searchController = TextEditingController();
 
+  static final usePlacesSearchGlobalKey = GlobalKey(
+    debugLabel: 'usePlacesSearchGlobalKey',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final animCtl = useAnimationController(
@@ -106,6 +110,7 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
           ),
         );
         final textField = TextField(
+          key: usePlacesSearchGlobalKey,
           focusNode: searchFocusNode,
           controller: searchController,
           textAlignVertical: TextAlignVertical.center,
