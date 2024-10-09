@@ -337,8 +337,11 @@ Each pin connects to the next to draw a contiguous route.''',
   }
 
   void onReverse() async {
-    if (points.value.isEmpty) return;
     points.value = points.value.toList()..removeLast();
+    if (points.value.isEmpty) {
+      dragPolyline.value = null;
+      return;
+    }
     _rebuildDragPolyline(point2: points.value.last);
     if (points.value.isEmpty) return;
   }
