@@ -28,7 +28,6 @@ import '../../../infrastructure/services/packages/iterable.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/aligned_dialog_pusher_box.dart';
 import '../../components/dialogs.dart';
-import '../../components/header_footer.dart';
 import '../../components/map/gmap_buttons.dart';
 import '../../components/map/loc_search_bar_with_overlay.dart';
 import '../../components/map/map_with_pin_and_banner.dart';
@@ -160,9 +159,18 @@ class GoScreen extends HookConsumerWidget {
         child: child!,
       ),
     );
-    final inFooterContent = Footer(
+    final footer = Card(
+      margin: EdgeInsets.zero,
+      color: MyTheme.primaryColor.shade50,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.zero,
+          top: Radius.circular(24),
+        ),
+      ),
       child: Column(
         children: [
+          12.verticalSpace,
           locSearchBarOrRouteLegend,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -175,10 +183,10 @@ class GoScreen extends HookConsumerWidget {
     final overlay = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsetsDirectional.only(end: 12),
-          child: Align(
-            alignment: AlignmentDirectional.bottomEnd,
+        Align(
+          alignment: AlignmentDirectional.bottomEnd,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(end: 12),
             child: GmapButtons(
               vm.gmapCtlCompleter,
               arePedBridgesVisible: arePedBridgesVisible,
@@ -186,7 +194,7 @@ class GoScreen extends HookConsumerWidget {
           ),
         ),
         24.verticalSpace,
-        inFooterContent,
+        footer,
       ],
     );
     final scaffold = Scaffold(

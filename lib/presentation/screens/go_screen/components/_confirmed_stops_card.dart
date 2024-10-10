@@ -29,16 +29,9 @@ class _ConfirmedStopsCard extends HookConsumerWidget {
         ],
       ),
     );
-    final card = Card(
-      color: MyTheme.primaryColor.shade50,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      margin: const EdgeInsets.only(top: 12),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 4, 5, 4),
-        child: animatingContent,
-      ),
+    final card = Padding(
+      padding: const EdgeInsets.fromLTRB(10, 16, 5, 4),
+      child: animatingContent,
     );
     final animatedCard = SlideTransitionHelper(
       doShow: nStops == 2,

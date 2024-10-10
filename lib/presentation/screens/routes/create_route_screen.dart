@@ -17,7 +17,6 @@ import '../../../domain/use_cases/routes_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
 import '../../components/dialogs.dart';
-import '../../components/header_footer.dart';
 import '../../components/map/gmap_buttons.dart';
 import '../../components/map/loc_search_bar_with_overlay.dart';
 import '../../components/map/map_with_pin_and_banner.dart';
@@ -139,15 +138,18 @@ class CreateRouteScreen extends HookConsumerWidget {
         ],
       ),
     );
-    final footer = Footer(
+    final footer = Card(
+      margin: EdgeInsets.zero,
+      color: MyTheme.primaryColor.shade50,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.zero,
+          top: Radius.circular(24),
+        ),
+      ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: pinDropOrReverseRow,
-          ),
-          18.verticalSpace,
+          12.verticalSpace,
           LocSearchBarWithOverlay(
             onPlaceSelected: (locatedPlace) async {
               final ctl = await mapCtlCompleter.future;
@@ -167,22 +169,28 @@ class CreateRouteScreen extends HookConsumerWidget {
         ],
       ),
     );
+    final foreground = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+          alignment: AlignmentDirectional.bottomEnd,
+          child: GmapButtons(mapCtlCompleter),
+        ),
+        92.verticalSpace,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: pinDropOrReverseRow,
+        ),
+        8.verticalSpace,
+        footer,
+      ],
+    );
     return Scaffold(
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           map,
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.bottomEnd,
-                child: GmapButtons(mapCtlCompleter),
-              ),
-              128.verticalSpace,
-              footer,
-            ],
-          ),
+          foreground,
         ],
       ),
     );

@@ -29,7 +29,7 @@ Pointr is an open-source app for navigating public transport based on a communit
 
 Thanks to Zaineb Makati of Habib University for sharing the minibus routes and pedestrian stops.
 
-Create a pull request with hardcoded routes to contribute.
+Create a pull request with hardcoded routes to contribute. Hardcoded routes are contained in lib/infrastructure/data/hardcoded_routes.dart
 
 ## For Devs
 
