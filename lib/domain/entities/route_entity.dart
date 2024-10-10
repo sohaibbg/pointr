@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dart_mappable/dart_mappable.dart';
 
 import 'coordinates_entity.dart';
@@ -28,6 +30,43 @@ class RouteEntity with RouteEntityMappable {
     required this.points,
     this.isHardcoded = false,
   });
+
+  String toBase64() {
+    final list = {
+      'name': name,
+      'mode': mode.name,
+      'points': points
+          .map(
+            (e) => [e.latitude, e.longitude],
+          )
+          .toList(),
+    };
+    final str = jsonEncode(list);
+    final bytes = utf8.encode(str);
+    return base64.encode(bytes);
+  }
+
+  factory RouteEntity.fromBase64(String bytes) {
+    final decoded = base64.decode(bytes);
+    final str = utf8.decode(decoded);
+    final obj = jsonDecode(str);
+    final list = (obj['points'] as List)
+        .map(
+          (e) => CoordinatesEntity(
+            e.first,
+            e.last,
+          ),
+        )
+        .toList();
+    final mode = RouteMode.values.firstWhere(
+      (e) => e.name == obj['mode'],
+    );
+    return RouteEntity(
+      name: obj['name'],
+      mode: mode,
+      points: list,
+    );
+  }
 
   /// [point1] and [point2] are considered to
   /// be located on this route

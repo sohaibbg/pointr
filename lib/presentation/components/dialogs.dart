@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 extension Dialogs on BuildContext {
@@ -92,15 +93,16 @@ extension Dialogs on BuildContext {
       );
 
   Future<String?> textFieldDialog({
-    required String title,
+    String? title,
     required String hintText,
     required String confirmText,
+    bool showPasteFromClipboardBtn = false,
   }) async {
     final textCtl = TextEditingController();
     final text = await showDialog(
       context: this,
       builder: (context) => AlertDialog(
-        title: Text(title),
+        title: title != null ? Text(title) : null,
         content: TextField(
           controller: textCtl,
           autofocus: true,
@@ -114,6 +116,19 @@ extension Dialogs on BuildContext {
             onPressed: context.pop,
             child: const Text("Return"),
           ),
+          if (showPasteFromClipboardBtn)
+            TextButton.icon(
+              onPressed: () async {
+                final pasted = await Clipboard.getData(
+                  Clipboard.kTextPlain,
+                );
+                if (pasted == null) return;
+                if (pasted.text == null) return;
+                textCtl.text = pasted.text!;
+              },
+              label: const Text("Paste from Clipboard"),
+              icon: const Icon(Icons.paste),
+            ),
           ElevatedButton(
             autofocus: true,
             onPressed: () => context.pop(

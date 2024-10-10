@@ -14,7 +14,7 @@ class RoutesUseCase extends _$RoutesUseCase {
   Future<List<RouteEntity>> build() async {
     final hc = repo.getHardcoded();
     final custom = await repo.getCustom();
-    return [...hc, ...custom];
+    return {...hc, ...custom}.toList();
   }
 
   Future<void> addRoute(RouteEntity route) async {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -26,6 +28,7 @@ class ListRoutesScreen extends HookConsumerWidget {
   const ListRoutesScreen({super.key});
 
   static final createRouteKey = GlobalKey(debugLabel: 'createRoutebtn');
+  static final insertFromCodeKey = GlobalKey(debugLabel: 'insertFromCodeBtn');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,11 +63,18 @@ class ListRoutesScreen extends HookConsumerWidget {
         ),
       ),
     );
+    final insertRouteFromCodeBtn = ElevatedButton.icon(
+      key: insertFromCodeKey,
+      onPressed: vm.onRouteInsertAsCode,
+      label: const Text("Insert Route from Code"),
+      icon: const Icon(Icons.password),
+      style: MyTheme.secondaryOutlinedButtonStyle,
+    );
     final createRoutebtn = ElevatedButton.icon(
       key: createRouteKey,
       onPressed: () => context.go('/route/create'),
-      label: const Text("Create new Route"),
-      icon: const Icon(Icons.add),
+      label: const Text("Draw new Route"),
+      icon: const Icon(Icons.route),
       style: MyTheme.secondaryOutlinedButtonStyle,
     );
     final watchRoutes = ref.watch(routesUseCaseProvider);
@@ -113,7 +123,15 @@ class ListRoutesScreen extends HookConsumerWidget {
               24.verticalSpace,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: createRoutebtn,
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    insertRouteFromCodeBtn,
+                    createRoutebtn,
+                  ],
+                ),
               ),
               12.verticalSpace,
             ],
@@ -126,10 +144,10 @@ class ListRoutesScreen extends HookConsumerWidget {
       children: [
         Expanded(child: customScrollView),
         watchRoutes.when(
-          data: (data) => const _ListRoutesFooterView(),
+          data: (data) => const ListRoutesFooterView(),
           error: (error, stackTrace) => const SizedBox.shrink(),
           loading: () => const Skeletonizer(
-            child: _ListRoutesFooterView(),
+            child: ListRoutesFooterView(),
           ),
         ),
       ],
@@ -207,8 +225,8 @@ class _RoutesDataView extends HookConsumerWidget {
   }
 }
 
-class _ListRoutesFooterView extends HookConsumerWidget {
-  const _ListRoutesFooterView();
+class ListRoutesFooterView extends HookConsumerWidget {
+  const ListRoutesFooterView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -251,44 +269,44 @@ class _ListRoutesFooterView extends HookConsumerWidget {
     );
     final searchNode = useFocusNode();
     final isFocused = useIsFocused(searchNode);
-    final searchCtl = useTextEditingController();
-    final searchBar = SizedBox(
-      height: 48,
-      child: TextField(
-        focusNode: searchNode,
-        controller: searchCtl,
-        onChanged: (searchTerm) => ref
-            .read(
-              _searchTermProvider.notifier,
-            )
-            .state = searchTerm,
-        maxLines: 1,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          prefixIcon: const Icon(
-            Icons.search,
-          ),
-          hintText: 'Search...',
-          suffixIcon: isFocused
-              ? IconButton(
-                  onPressed: () {
-                    searchCtl.clear();
-                    ref.read(_searchTermProvider.notifier).state = '';
-                    searchNode.unfocus();
-                  },
-                  icon: ValueListenableBuilder(
-                    valueListenable: searchCtl,
-                    builder: (context, value, child) => Icon(
-                      value.text.isEmpty
-                          ? Icons.keyboard_arrow_down
-                          : Icons.clear,
-                    ),
-                  ),
-                )
-              : null,
-        ),
-      ),
-    );
+    // final searchCtl = useTextEditingController();
+    // final searchBar = SizedBox(
+    //   height: 48,
+    //   child: TextField(
+    //     focusNode: searchNode,
+    //     controller: searchCtl,
+    //     onChanged: (searchTerm) => ref
+    //         .read(
+    //           _searchTermProvider.notifier,
+    //         )
+    //         .state = searchTerm,
+    //     maxLines: 1,
+    //     textAlignVertical: TextAlignVertical.center,
+    //     decoration: InputDecoration(
+    //       prefixIcon: const Icon(
+    //         Icons.search,
+    //       ),
+    //       hintText: 'Search...',
+    //       suffixIcon: isFocused
+    //           ? IconButton(
+    //               onPressed: () {
+    //                 searchCtl.clear();
+    //                 ref.read(_searchTermProvider.notifier).state = '';
+    //                 searchNode.unfocus();
+    //               },
+    //               icon: ValueListenableBuilder(
+    //                 valueListenable: searchCtl,
+    //                 builder: (context, value, child) => Icon(
+    //                   value.text.isEmpty
+    //                       ? Icons.keyboard_arrow_down
+    //                       : Icons.clear,
+    //                 ),
+    //               ),
+    //             )
+    //           : null,
+    //     ),
+    //   ),
+    // );
     final searchRowColor = Color.lerp(
       MyTheme.primaryColor.shade50,
       Colors.white,
@@ -315,8 +333,19 @@ class _ListRoutesFooterView extends HookConsumerWidget {
       child: Row(
         children: [
           drawerBtn,
-          Expanded(
-            child: searchBar,
+          ElevatedButton.icon(
+            onPressed: () async {
+              final allRoutes = ref.read(routesUseCaseProvider).requireValue;
+              final filter = ref.read(_filterProvider);
+              final filteredRoutes = allRoutes.where(
+                (e) => filter.contains(e.mode),
+              );
+              ref.read(_selectedRoutesProvider.notifier).state =
+                  filteredRoutes.toSet();
+            },
+            label: const Text("Select all"),
+            icon: const Icon(Icons.select_all),
+            style: MyTheme.primaryOutlinedButtonStyle,
           ),
           SlideTransitionHelper(
             doShow: !isFocused,
@@ -413,8 +442,12 @@ class _ListRoutesFooterView extends HookConsumerWidget {
           Colors.red,
         ),
       ),
-      label: const Text(
-        'Delete routes',
+      label: Text(
+        'Delete route${ref.watch(
+          _selectedRoutesProvider.select(
+            (list) => list.length < 2,
+          ),
+        ) ? '' : 's'}',
       ),
       icon: const Icon(Icons.delete),
     );
@@ -422,6 +455,11 @@ class _ListRoutesFooterView extends HookConsumerWidget {
       MyTheme.primaryColor.shade50,
       Colors.white,
       0.65,
+    );
+    final copyBtn = ElevatedButton.icon(
+      onPressed: vm.onCopy,
+      label: const Text("Copy as Code"),
+      icon: const Icon(Icons.copy),
     );
     final selectedRow = Container(
       color: selectedRowColor,
@@ -439,17 +477,7 @@ class _ListRoutesFooterView extends HookConsumerWidget {
           children: [
             viewOnMapBtn,
             clearSelectionBtn,
-            ElevatedButton.icon(
-              onPressed: () async {
-                await Clipboard.setData(
-                  ClipboardData(
-                    text: vm.selectedRoutesConstructor(),
-                  ),
-                );
-              },
-              label: const Text("Copy to Clipboard"),
-              icon: const Icon(Icons.copy),
-            ),
+            copyBtn,
             deleteBtn,
           ],
         ),
