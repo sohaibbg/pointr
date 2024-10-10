@@ -19,11 +19,10 @@ Pointr is an open-source app for navigating public transport based on a communit
   <img src="./readme_assets/list_routes.png" width="150" /> 
 </p>
 
-- Set FROM and TO locations using Google Maps and Places Search
-- View routes relevant for your journey
-- Filter across A/C buses, chinchis and minibuses
-- Create your own routes
-- Contribute to filling out your city's transport data
+- View A/C Bus, Minibus and Chinchi routes
+- Create custom routes and share them
+- Use Google Maps and Places Search to set the stops of your journey
+- View routes ranked by their suitability for your journey
 
 ## Contribution
 
