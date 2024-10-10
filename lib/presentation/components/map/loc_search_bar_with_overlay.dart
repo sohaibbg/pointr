@@ -188,7 +188,6 @@ class LocSearchBarWithOverlay extends HookConsumerWidget {
                       child: Text(
                         e.name,
                         maxLines: 2,
-                        style: const TextStyle(fontSize: 11),
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                       ),

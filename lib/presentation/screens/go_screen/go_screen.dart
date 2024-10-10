@@ -139,7 +139,6 @@ class GoScreen extends HookConsumerWidget {
                 backBtn,
                 menuBtn,
                 6.horizontalSpace,
-                // 12.horizontalSpace,
                 Expanded(
                   child: vm.areBothStopsSet
                       ? const _RouteModeFilterBtn()
@@ -149,7 +148,7 @@ class GoScreen extends HookConsumerWidget {
             ),
           ),
           const _ConfirmedStopsCard(),
-          kBottomNavigationBarHeight.verticalSpace,
+          (12 + MediaQuery.paddingOf(context).bottom).verticalSpace,
         ],
       ),
       builder: (context, child) => SlideTransitionHelper(
@@ -159,24 +158,30 @@ class GoScreen extends HookConsumerWidget {
         child: child!,
       ),
     );
-    final footer = Card(
-      margin: EdgeInsets.zero,
-      color: MyTheme.primaryColor.shade50,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.zero,
-          top: Radius.circular(24),
-        ),
-      ),
-      child: Column(
-        children: [
-          12.verticalSpace,
-          locSearchBarOrRouteLegend,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: actionsPanel,
+    final footer = Align(
+      alignment: AlignmentDirectional.bottomEnd,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: Card(
+          margin: EdgeInsets.zero,
+          color: MyTheme.primaryColor.shade50,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.zero,
+              top: Radius.circular(24),
+            ),
           ),
-        ],
+          child: Column(
+            children: [
+              12.verticalSpace,
+              locSearchBarOrRouteLegend,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: actionsPanel,
+              ),
+            ],
+          ),
+        ),
       ),
     );
     final arePedBridgesVisible = useState(false);

@@ -14,7 +14,17 @@ class AboutScreen extends StatelessWidget {
     final aboutPointr = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        200.verticalSpace,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final height = MediaQuery.sizeOf(context).height;
+            final topPadding = height < 732
+                ? 96
+                : height < 800
+                    ? 172
+                    : 320;
+            return topPadding.verticalSpace;
+          },
+        ),
         Text(
           "About pointr",
           style: Theme.of(context)
