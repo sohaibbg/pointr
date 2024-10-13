@@ -48,6 +48,7 @@ class CreateRouteScreen extends HookConsumerWidget {
         vm.initState();
         return null;
       },
+      const [],
     );
     final map = MapWithPinAndBanner(
       initialCameraPosition: CameraPosition(

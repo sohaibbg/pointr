@@ -23,6 +23,7 @@ import '../../../domain/use_cases/places_use_case.dart';
 import '../../../domain/use_cases/route_calculator/filter.dart';
 import '../../../domain/use_cases/route_calculator/from_to_stops.dart';
 import '../../../domain/use_cases/route_calculator/scored_route_groups.dart';
+import '../../../domain/use_cases/tutorial_use_case.dart';
 import '../../../infrastructure/services/packages/google_map_controller.dart';
 import '../../../infrastructure/services/packages/iterable.dart';
 import '../../../infrastructure/services/packages/view_model.dart';
@@ -69,10 +70,13 @@ class GoScreen extends HookConsumerWidget {
       ref,
       gmapCtlCompleter: mapCtlCompleter,
     );
-    useEffect(() {
-      vm.initState();
-      return null;
-    });
+    useEffect(
+      () {
+        vm.initState();
+        return null;
+      },
+      const [],
+    );
     final backBtn = SlideTransitionHelper(
       axis: Axis.horizontal,
       axisAlignment: 1,

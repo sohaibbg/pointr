@@ -5,7 +5,7 @@
   "version": "0.3.0",
   "configurations": [
     // flutter build apk --release --dart-define-from-file api_keys_prod.json;adb install build/app/outputs/flutter-apk/app-release.apk
-    // flutter build appbundle --release --dart-define-from-file api_keys_prod.json
+    // flutter build appbundle --release --obfuscate --split-debug-info=./ --dart-define-from-file api_keys_prod.json
     {
       "name": "pointr",
       "request": "launch",

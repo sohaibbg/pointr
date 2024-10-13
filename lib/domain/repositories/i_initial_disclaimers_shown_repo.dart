@@ -1,9 +1,6 @@
 import 'package:injectable/injectable.dart';
 
 enum InitialDisclaimer {
-  notResponsibleForRouteAccuracy(
-    'notResponsibleForRouteAccuracy',
-  ),
   setFromToToViewRoutes(
     'setFromToToViewRoutes',
   ),

@@ -38,6 +38,7 @@ class ListRoutesScreen extends HookConsumerWidget {
         vm.initState();
         return null;
       },
+      const [],
     );
     final title = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
