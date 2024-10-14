@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../config/my_theme.dart';
@@ -11,6 +12,33 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final actionChips = Row(
+      children: [
+        ActionChip(
+          label: const Text("Share app"),
+          avatar: const Icon(
+            Icons.share,
+            // color: Color(0xff0077B5),
+          ),
+          onPressed: () => Share.share(
+            'https://play.google.com/store/apps/details?id=com.sohaibcreates.pointr',
+          ),
+        ),
+        12.horizontalSpace,
+        ActionChip(
+          label: const Text("GitHub"),
+          avatar: const Icon(
+            Bootstrap.github,
+            color: Color(0xff0077B5),
+          ),
+          onPressed: () => launchUrl(
+            Uri.parse(
+              'https://www.github.com/sohaibbg/pointr',
+            ),
+          ),
+        ),
+      ],
+    );
     final aboutPointr = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,18 +62,7 @@ class AboutScreen extends StatelessWidget {
           textAlign: TextAlign.start,
         ),
         12.verticalSpace,
-        ActionChip(
-          label: const Text("GitHub"),
-          avatar: const Icon(
-            Bootstrap.github,
-            color: Color(0xff0077B5),
-          ),
-          onPressed: () => launchUrl(
-            Uri.parse(
-              'https://www.github.com/sohaibbg/pointr',
-            ),
-          ),
-        ),
+        actionChips,
         12.verticalSpace,
         const Text(
           '''Pointr was started out of a desire to make it easier to navigate bus systems in Karachi.

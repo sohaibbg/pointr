@@ -26,6 +26,9 @@ class RoutesUseCase extends _$RoutesUseCase {
   }
 
   Future<void> deleteRoute(String routeName) async {
+    final hc = repo.getHardcoded();
+    final isRouteHc = hc.where((hcr) => hcr.name == routeName).isNotEmpty;
+    if (isRouteHc) throw '$routeName cannot be deleted. It is hardcoded';
     await repo.deleteRoute(routeName);
     state = AsyncData(
       state.value!

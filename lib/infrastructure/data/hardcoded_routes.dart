@@ -4,6 +4,7 @@ import '../../domain/entities/route_entity.dart';
 const hardCodedAcBusRoutes = [
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R1",
     points: [
       CoordinatesEntity(24.90148102635328, 67.19384176656604),
@@ -84,6 +85,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-2",
     points: [
       CoordinatesEntity(24.983986407733646, 67.06611396744847),
@@ -131,6 +133,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-3",
     points: [
       CoordinatesEntity(24.984026896442835, 67.06612939015031),
@@ -169,6 +172,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-4",
     points: [
       CoordinatesEntity(24.984026896442835, 67.06612939015031),
@@ -203,6 +207,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-9",
     points: [
       CoordinatesEntity(24.87094959145314, 67.37208830192685),
@@ -277,6 +282,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-10",
     points: [
       CoordinatesEntity(24.797450462841216, 67.13561436161399),
@@ -340,6 +346,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-11",
     points: [
       CoordinatesEntity(24.81724558132543, 67.00713889673352),
@@ -411,6 +418,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "R-12",
     points: [
       CoordinatesEntity(24.91040562279271, 67.22479781135917),
@@ -492,6 +500,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "EV-1",
     points: [
       CoordinatesEntity(24.950348636714875, 67.21551703289151),
@@ -585,6 +594,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "EV-2",
     points: [
       CoordinatesEntity(24.992463557632277, 67.31764951720834),
@@ -621,6 +631,7 @@ const hardCodedAcBusRoutes = [
   ),
   RouteEntity(
     mode: RouteMode.acBus,
+    isHardcoded: true,
     name: "EV-3",
     points: [
       CoordinatesEntity(24.946627112314594, 67.18131786212325),

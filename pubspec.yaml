@@ -67,6 +67,7 @@ dependencies:
   url_launcher: ^6.3.0
   tutorial_coach_mark: ^1.2.11
   device_preview: ^1.2.0
+  share_plus: ^10.0.3
 
 dev_dependencies:
   flutter_test:

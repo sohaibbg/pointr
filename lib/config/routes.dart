@@ -6,7 +6,6 @@ import '../presentation/screens/drawer_scaffold.dart';
 import '../presentation/screens/favorites_flow/create_favorite.dart';
 import '../presentation/screens/favorites_flow/list_favorites.dart';
 import '../presentation/screens/go_screen/go_screen.dart';
-import '../presentation/screens/routes/copy_route_screen.dart';
 import '../presentation/screens/routes/create_route_screen.dart';
 import '../presentation/screens/routes/display_route_screen.dart';
 import '../presentation/screens/routes/list_routes_screen/list_routes_screen.dart';
@@ -30,14 +29,16 @@ final router = GoRouter(
               ),
             DrawerOptions.routes => GoRoute(
                 path: '/route',
-                builder: (context, state) => const ListRoutesScreen(),
+                builder: (context, state) {
+                  final hasQuery = state.uri.hasQuery;
+                  if (!hasQuery) return const ListRoutesScreen();
+                  final routesCode = state.uri.queryParameters['routesCode'];
+                  if (routesCode == null) return const ListRoutesScreen();
+                  return ListRoutesScreen(
+                    routesAsCode: routesCode,
+                  );
+                },
                 routes: [
-                  GoRoute(
-                    path: 'copy',
-                    builder: (context, state) => CopyRouteScreen(
-                      state.extra as RouteEntity,
-                    ),
-                  ),
                   GoRoute(
                     path: 'create',
                     builder: (context, state) => const CreateRouteScreen(),

@@ -900,49 +900,6 @@ typedef $$FavoritesTableUpdateCompanionBuilder = FavoritesCompanion Function({
   Value<double> lng,
 });
 
-class $$FavoritesTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $FavoritesTable,
-    Favorite,
-    $$FavoritesTableFilterComposer,
-    $$FavoritesTableOrderingComposer,
-    $$FavoritesTableCreateCompanionBuilder,
-    $$FavoritesTableUpdateCompanionBuilder> {
-  $$FavoritesTableTableManager(_$AppDatabase db, $FavoritesTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$FavoritesTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$FavoritesTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<double> lat = const Value.absent(),
-            Value<double> lng = const Value.absent(),
-          }) =>
-              FavoritesCompanion(
-            id: id,
-            name: name,
-            lat: lat,
-            lng: lng,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String name,
-            required double lat,
-            required double lng,
-          }) =>
-              FavoritesCompanion.insert(
-            id: id,
-            name: name,
-            lat: lat,
-            lng: lng,
-          ),
-        ));
-}
-
 class $$FavoritesTableFilterComposer
     extends FilterComposer<_$AppDatabase, $FavoritesTable> {
   $$FavoritesTableFilterComposer(super.$state);
@@ -991,6 +948,67 @@ class $$FavoritesTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+class $$FavoritesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $FavoritesTable,
+    Favorite,
+    $$FavoritesTableFilterComposer,
+    $$FavoritesTableOrderingComposer,
+    $$FavoritesTableCreateCompanionBuilder,
+    $$FavoritesTableUpdateCompanionBuilder,
+    (Favorite, BaseReferences<_$AppDatabase, $FavoritesTable, Favorite>),
+    Favorite,
+    PrefetchHooks Function()> {
+  $$FavoritesTableTableManager(_$AppDatabase db, $FavoritesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$FavoritesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$FavoritesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<double> lat = const Value.absent(),
+            Value<double> lng = const Value.absent(),
+          }) =>
+              FavoritesCompanion(
+            id: id,
+            name: name,
+            lat: lat,
+            lng: lng,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required double lat,
+            required double lng,
+          }) =>
+              FavoritesCompanion.insert(
+            id: id,
+            name: name,
+            lat: lat,
+            lng: lng,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$FavoritesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $FavoritesTable,
+    Favorite,
+    $$FavoritesTableFilterComposer,
+    $$FavoritesTableOrderingComposer,
+    $$FavoritesTableCreateCompanionBuilder,
+    $$FavoritesTableUpdateCompanionBuilder,
+    (Favorite, BaseReferences<_$AppDatabase, $FavoritesTable, Favorite>),
+    Favorite,
+    PrefetchHooks Function()>;
 typedef $$CustomRoutesTableCreateCompanionBuilder = CustomRoutesCompanion
     Function({
   Value<int> id,
@@ -1005,49 +1023,6 @@ typedef $$CustomRoutesTableUpdateCompanionBuilder = CustomRoutesCompanion
   Value<RouteMode> routeMode,
   Value<List<CoordinatesEntity>> points,
 });
-
-class $$CustomRoutesTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $CustomRoutesTable,
-    CustomRoute,
-    $$CustomRoutesTableFilterComposer,
-    $$CustomRoutesTableOrderingComposer,
-    $$CustomRoutesTableCreateCompanionBuilder,
-    $$CustomRoutesTableUpdateCompanionBuilder> {
-  $$CustomRoutesTableTableManager(_$AppDatabase db, $CustomRoutesTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$CustomRoutesTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$CustomRoutesTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<RouteMode> routeMode = const Value.absent(),
-            Value<List<CoordinatesEntity>> points = const Value.absent(),
-          }) =>
-              CustomRoutesCompanion(
-            id: id,
-            name: name,
-            routeMode: routeMode,
-            points: points,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String name,
-            required RouteMode routeMode,
-            required List<CoordinatesEntity> points,
-          }) =>
-              CustomRoutesCompanion.insert(
-            id: id,
-            name: name,
-            routeMode: routeMode,
-            points: points,
-          ),
-        ));
-}
 
 class $$CustomRoutesTableFilterComposer
     extends FilterComposer<_$AppDatabase, $CustomRoutesTable> {
@@ -1102,6 +1077,73 @@ class $$CustomRoutesTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+class $$CustomRoutesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CustomRoutesTable,
+    CustomRoute,
+    $$CustomRoutesTableFilterComposer,
+    $$CustomRoutesTableOrderingComposer,
+    $$CustomRoutesTableCreateCompanionBuilder,
+    $$CustomRoutesTableUpdateCompanionBuilder,
+    (
+      CustomRoute,
+      BaseReferences<_$AppDatabase, $CustomRoutesTable, CustomRoute>
+    ),
+    CustomRoute,
+    PrefetchHooks Function()> {
+  $$CustomRoutesTableTableManager(_$AppDatabase db, $CustomRoutesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$CustomRoutesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CustomRoutesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<RouteMode> routeMode = const Value.absent(),
+            Value<List<CoordinatesEntity>> points = const Value.absent(),
+          }) =>
+              CustomRoutesCompanion(
+            id: id,
+            name: name,
+            routeMode: routeMode,
+            points: points,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required RouteMode routeMode,
+            required List<CoordinatesEntity> points,
+          }) =>
+              CustomRoutesCompanion.insert(
+            id: id,
+            name: name,
+            routeMode: routeMode,
+            points: points,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CustomRoutesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $CustomRoutesTable,
+    CustomRoute,
+    $$CustomRoutesTableFilterComposer,
+    $$CustomRoutesTableOrderingComposer,
+    $$CustomRoutesTableCreateCompanionBuilder,
+    $$CustomRoutesTableUpdateCompanionBuilder,
+    (
+      CustomRoute,
+      BaseReferences<_$AppDatabase, $CustomRoutesTable, CustomRoute>
+    ),
+    CustomRoute,
+    PrefetchHooks Function()>;
 typedef $$RecentsTableCreateCompanionBuilder = RecentsCompanion Function({
   required String name,
   required double lat,
@@ -1120,61 +1162,6 @@ typedef $$RecentsTableUpdateCompanionBuilder = RecentsCompanion Function({
   Value<DateTime> updated,
   Value<int> rowid,
 });
-
-class $$RecentsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $RecentsTable,
-    Recent,
-    $$RecentsTableFilterComposer,
-    $$RecentsTableOrderingComposer,
-    $$RecentsTableCreateCompanionBuilder,
-    $$RecentsTableUpdateCompanionBuilder> {
-  $$RecentsTableTableManager(_$AppDatabase db, $RecentsTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$RecentsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$RecentsTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<String> name = const Value.absent(),
-            Value<double> lat = const Value.absent(),
-            Value<double> lng = const Value.absent(),
-            Value<int> counter = const Value.absent(),
-            Value<DateTime> created = const Value.absent(),
-            Value<DateTime> updated = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              RecentsCompanion(
-            name: name,
-            lat: lat,
-            lng: lng,
-            counter: counter,
-            created: created,
-            updated: updated,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String name,
-            required double lat,
-            required double lng,
-            Value<int> counter = const Value.absent(),
-            Value<DateTime> created = const Value.absent(),
-            Value<DateTime> updated = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              RecentsCompanion.insert(
-            name: name,
-            lat: lat,
-            lng: lng,
-            counter: counter,
-            created: created,
-            updated: updated,
-            rowid: rowid,
-          ),
-        ));
-}
 
 class $$RecentsTableFilterComposer
     extends FilterComposer<_$AppDatabase, $RecentsTable> {
@@ -1243,6 +1230,80 @@ class $$RecentsTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
+
+class $$RecentsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $RecentsTable,
+    Recent,
+    $$RecentsTableFilterComposer,
+    $$RecentsTableOrderingComposer,
+    $$RecentsTableCreateCompanionBuilder,
+    $$RecentsTableUpdateCompanionBuilder,
+    (Recent, BaseReferences<_$AppDatabase, $RecentsTable, Recent>),
+    Recent,
+    PrefetchHooks Function()> {
+  $$RecentsTableTableManager(_$AppDatabase db, $RecentsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$RecentsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$RecentsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<String> name = const Value.absent(),
+            Value<double> lat = const Value.absent(),
+            Value<double> lng = const Value.absent(),
+            Value<int> counter = const Value.absent(),
+            Value<DateTime> created = const Value.absent(),
+            Value<DateTime> updated = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              RecentsCompanion(
+            name: name,
+            lat: lat,
+            lng: lng,
+            counter: counter,
+            created: created,
+            updated: updated,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String name,
+            required double lat,
+            required double lng,
+            Value<int> counter = const Value.absent(),
+            Value<DateTime> created = const Value.absent(),
+            Value<DateTime> updated = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              RecentsCompanion.insert(
+            name: name,
+            lat: lat,
+            lng: lng,
+            counter: counter,
+            created: created,
+            updated: updated,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$RecentsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $RecentsTable,
+    Recent,
+    $$RecentsTableFilterComposer,
+    $$RecentsTableOrderingComposer,
+    $$RecentsTableCreateCompanionBuilder,
+    $$RecentsTableUpdateCompanionBuilder,
+    (Recent, BaseReferences<_$AppDatabase, $RecentsTable, Recent>),
+    Recent,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;

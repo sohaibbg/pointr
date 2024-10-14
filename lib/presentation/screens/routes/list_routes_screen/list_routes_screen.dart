@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-import '../../../../config/injector.dart';
 import '../../../../config/my_theme.dart';
 import '../../../../domain/entities/route_entity.dart';
 import '../../../../domain/repositories/i_initial_disclaimers_shown_repo.dart';
 import '../../../../domain/use_cases/routes_use_case.dart';
+import '../../../../domain/use_cases/tutorial_use_case.dart';
 import '../../../../infrastructure/services/packages/hooks.dart';
 import '../../../../infrastructure/services/packages/iterable.dart';
 import '../../../../infrastructure/services/packages/view_model.dart';
@@ -25,20 +25,33 @@ import '../../../components/space.dart';
 part '_view_model.dart';
 
 class ListRoutesScreen extends HookConsumerWidget {
-  const ListRoutesScreen({super.key});
+  const ListRoutesScreen({
+    super.key,
+    this.routesAsCode,
+  });
 
   static final createRouteKey = GlobalKey(debugLabel: 'createRoutebtn');
-  static final insertFromCodeKey = GlobalKey(debugLabel: 'insertFromCodeBtn');
+  // static final insertFromCodeKey = GlobalKey(debugLabel: 'insertFromCodeBtn');
+  final String? routesAsCode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = _ListRoutesViewModel(context, ref);
     useEffect(
       () {
-        vm.initState();
+        vm.showTutorial();
         return null;
       },
       const [],
+    );
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => vm.evaluateRouteSharedAsCode(),
+        );
+        return null;
+      },
+      [routesAsCode],
     );
     final title = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -64,13 +77,13 @@ class ListRoutesScreen extends HookConsumerWidget {
         ),
       ),
     );
-    final insertRouteFromCodeBtn = ElevatedButton.icon(
-      key: insertFromCodeKey,
-      onPressed: vm.onRouteInsertAsCode,
-      label: const Text("Insert Route from Code"),
-      icon: const Icon(Icons.password),
-      style: MyTheme.secondaryOutlinedButtonStyle,
-    );
+    // final insertRouteFromCodeBtn = ElevatedButton.icon(
+    //   key: insertFromCodeKey,
+    //   onPressed: vm.onRouteInsertAsCode,
+    //   label: const Text("Insert Route from Code"),
+    //   icon: const Icon(Icons.password),
+    //   style: MyTheme.secondaryOutlinedButtonStyle,
+    // );
     final createRoutebtn = ElevatedButton.icon(
       key: createRouteKey,
       onPressed: () => context.go('/route/create'),
@@ -129,7 +142,7 @@ class ListRoutesScreen extends HookConsumerWidget {
                   spacing: 4,
                   runSpacing: 4,
                   children: [
-                    insertRouteFromCodeBtn,
+                    // insertRouteFromCodeBtn,
                     createRoutebtn,
                   ],
                 ),
@@ -145,10 +158,10 @@ class ListRoutesScreen extends HookConsumerWidget {
       children: [
         Expanded(child: customScrollView),
         watchRoutes.when(
-          data: (data) => const ListRoutesFooterView(),
+          data: (data) => const _ListRoutesFooterView(),
           error: (error, stackTrace) => const SizedBox.shrink(),
           loading: () => const Skeletonizer(
-            child: ListRoutesFooterView(),
+            child: _ListRoutesFooterView(),
           ),
         ),
       ],
@@ -226,8 +239,8 @@ class _RoutesDataView extends HookConsumerWidget {
   }
 }
 
-class ListRoutesFooterView extends HookConsumerWidget {
-  const ListRoutesFooterView({super.key});
+class _ListRoutesFooterView extends HookConsumerWidget {
+  const _ListRoutesFooterView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -324,47 +337,66 @@ class ListRoutesFooterView extends HookConsumerWidget {
         ],
       ),
     );
-    final searchRow = Container(
+    final selectAllBtn = ElevatedButton.icon(
+      onPressed: () async {
+        final allRoutes = ref.read(routesUseCaseProvider).requireValue;
+        final filter = ref.read(_filterProvider);
+        final filteredRoutes = allRoutes.where(
+          (e) => filter.contains(e.mode),
+        );
+        ref.read(_selectedRoutesProvider.notifier).state =
+            filteredRoutes.toSet();
+      },
+      label: const Text("Select all"),
+      icon: const Icon(Icons.select_all),
+      style: MyTheme.primaryOutlinedButtonStyle,
+    );
+    final isSelectionPopulated = ref.watch(
+      _selectedRoutesProvider.select(
+        (selection) => selection.isNotEmpty,
+      ),
+    );
+    final clearSelectionBtn = OutlinedButton.icon(
+      onPressed: () => ref.read(_selectedRoutesProvider.notifier).state = {},
+      style: MyTheme.primaryOutlinedButtonStyle,
+      label: const Text(
+        'Clear selection',
+      ),
+      icon: const Icon(Icons.deselect),
+    );
+    final drawerAndMoreRow = Container(
       color: searchRowColor,
       padding: const EdgeInsets.only(
-        left: 24,
+        left: 12,
         right: 24,
+        bottom: 12,
         top: 12,
       ),
       child: Row(
         children: [
           drawerBtn,
-          ElevatedButton.icon(
-            onPressed: () async {
-              final allRoutes = ref.read(routesUseCaseProvider).requireValue;
-              final filter = ref.read(_filterProvider);
-              final filteredRoutes = allRoutes.where(
-                (e) => filter.contains(e.mode),
-              );
-              ref.read(_selectedRoutesProvider.notifier).state =
-                  filteredRoutes.toSet();
-            },
-            label: const Text("Select all"),
-            icon: const Icon(Icons.select_all),
-            style: MyTheme.primaryOutlinedButtonStyle,
-          ),
-          SlideTransitionHelper(
-            doShow: !isFocused,
-            axis: Axis.horizontal,
-            axisAlignment: -1,
-            child: Row(
-              children: [
-                12.horizontalSpace,
-                filterBtn,
-              ],
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: ListView(
+                clipBehavior: Clip.none,
+                scrollDirection: Axis.horizontal,
+                reverse: true,
+                children: [
+                  filterBtn,
+                  if (isSelectionPopulated) ...[
+                    12.horizontalSpace,
+                    clearSelectionBtn,
+                  ],
+                  if (vm.showSelectAllRoutesBtn) ...[
+                    12.horizontalSpace,
+                    selectAllBtn,
+                  ],
+                ],
+              ),
             ),
           ),
         ],
-      ),
-    );
-    final isSelectionPopulated = ref.watch(
-      _selectedRoutesProvider.select(
-        (selection) => selection.isNotEmpty,
       ),
     );
     final viewOnMapBtn = ElevatedButton.icon(
@@ -379,15 +411,7 @@ class ListRoutesFooterView extends HookConsumerWidget {
       label: const Text('View On Map'),
       icon: const Icon(Icons.map),
     );
-    final clearSelectionBtn = OutlinedButton.icon(
-      onPressed: () => ref.read(_selectedRoutesProvider.notifier).state = {},
-      style: MyTheme.primaryOutlinedButtonStyle,
-      label: const Text(
-        'Clear selection',
-      ),
-      icon: const Icon(Icons.deselect),
-    );
-    final deleteBtn = OutlinedButton.icon(
+    final deleteBtn = IconButton(
       onPressed: () => context.loaderWithErrorDialog(
         () async {
           final selection = ref.read(
@@ -443,42 +467,41 @@ class ListRoutesFooterView extends HookConsumerWidget {
           Colors.red,
         ),
       ),
-      label: Text(
-        'Delete route${ref.watch(
-          _selectedRoutesProvider.select(
-            (list) => list.length < 2,
-          ),
-        ) ? '' : 's'}',
-      ),
+      // label: Text(
+      //   'Delete route${ref.watch(
+      //     _selectedRoutesProvider.select(
+      //       (list) => list.length < 2,
+      //     ),
+      //   ) ? '' : 's'}',
+      // ),
       icon: const Icon(Icons.delete),
     );
     final selectedRowColor = Color.lerp(
       MyTheme.primaryColor.shade50,
       Colors.white,
       0.65,
+    )!;
+    final shareBtn = IconButton(
+      onPressed: vm.onShare,
+      // label: const Text("Share Link"),
+      icon: const Icon(Icons.share),
     );
-    final copyBtn = ElevatedButton.icon(
-      onPressed: vm.onCopy,
-      label: const Text("Copy as Code"),
-      icon: const Icon(Icons.copy),
-    );
-    final selectedRow = Container(
-      color: selectedRowColor,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 12,
-      ),
-      child: SlideTransitionHelper(
-        doShow: isSelectionPopulated && !isFocused,
-        axis: Axis.vertical,
-        axisAlignment: -1,
-        child: Wrap(
-          spacing: 12,
-          runSpacing: 12,
+    final selectionOptionsRow = SlideTransitionHelper(
+      doShow: isSelectionPopulated && !isFocused,
+      axis: Axis.vertical,
+      axisAlignment: -1,
+      child: Container(
+        color: selectedRowColor,
+        alignment: AlignmentDirectional.bottomEnd,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            shareBtn,
             viewOnMapBtn,
-            clearSelectionBtn,
-            copyBtn,
             deleteBtn,
           ],
         ),
@@ -486,13 +509,14 @@ class ListRoutesFooterView extends HookConsumerWidget {
     );
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        searchRow,
-        selectedRow,
+        selectionOptionsRow,
+        drawerAndMoreRow,
         ColoredBox(
-          color: selectedRowColor!,
+          color: selectedRowColor,
           child: SizedBox(
-            height: MediaQuery.of(context).padding.bottom,
+            height: MediaQuery.paddingOf(context).bottom,
             width: double.infinity,
           ),
         ),

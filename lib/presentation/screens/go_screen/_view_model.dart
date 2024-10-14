@@ -187,18 +187,9 @@ Use this button to set your stops''',
     tutorialCoachMark.show(context: context);
   }
 
-  void initState() async {
-    print(
-        'sohaib init ${context.hashCode} ${context.mounted} ${context.owner}');
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        print("sohaib init postframcallback");
-        _showTutorial();
-      },
-    );
-
-    return null;
-  }
+  void initState() => WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _showTutorial(),
+      );
 
   bool get areBothStopsSet => ref.watch(
         bothStopsProvider.select(

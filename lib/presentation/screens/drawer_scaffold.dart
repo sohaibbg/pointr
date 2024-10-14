@@ -81,7 +81,7 @@ class DrawerScaffold extends HookWidget {
       child: ListView(
         reverse: true,
         children: [
-          drawerHeader,
+          // drawerHeader,
           ...DrawerOptions.values.map(_buildDrawerTile),
         ],
       ),
@@ -101,10 +101,16 @@ class DrawerScaffold extends HookWidget {
             builder: (context) {
               final fullPath = GoRouterState.of(context).fullPath;
               final selected = o.path == fullPath;
+              final verticalPadding =
+                  (Theme.of(context).dividerTheme.space ?? 16) / 2;
               return ListTile(
                 selected: selected,
-                contentPadding:
-                    const EdgeInsetsDirectional.fromSTEB(32, 0, 28, 0),
+                contentPadding: EdgeInsetsDirectional.fromSTEB(
+                  32,
+                  verticalPadding,
+                  28,
+                  verticalPadding,
+                ),
                 title: Text(o.name),
                 leading: Icon(o.iconData),
                 onTap: () {
@@ -114,7 +120,9 @@ class DrawerScaffold extends HookWidget {
               );
             },
           ),
-          const Divider(),
+          const Divider(
+            height: 0,
+          ),
         ],
       );
 }
