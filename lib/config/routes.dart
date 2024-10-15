@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/entities/route_entity.dart';
@@ -12,11 +13,22 @@ import '../presentation/screens/routes/list_routes_screen/list_routes_screen.dar
 import '../presentation/screens/t_and_c_screen.dart';
 
 final router = GoRouter(
-  redirect: (context, state) => switch (state.fullPath) {
-    // default
-    "/" || "" => '/go',
-    _ => null,
-  },
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(
+      title: const Text("Error"),
+    ),
+    body: SingleChildScrollView(
+      child: Text(
+        state.error.toString(),
+      ),
+    ),
+  ),
+  // redirect: (context, state) => switch (state.uri.path) {
+  //   // default
+  //   "/" || "" => '/go',
+  //   '/routes' => '/routes',
+  //   _ => null,
+  // },
   routes: [
     ShellRoute(
       builder: (context, state, child) => DrawerScaffold(child: child),
@@ -30,6 +42,7 @@ final router = GoRouter(
             DrawerOptions.routes => GoRoute(
                 path: '/route',
                 builder: (context, state) {
+                  print('sohaib');
                   final hasQuery = state.uri.hasQuery;
                   if (!hasQuery) return const ListRoutesScreen();
                   final routesCode = state.uri.queryParameters['routesCode'];

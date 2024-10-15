@@ -42,7 +42,7 @@ class _ListRoutesViewModel extends ViewModel<ListRoutesScreen> {
     final message =
         '''View routes for ${routes.map((e) => e.name).join(', ')} on Pointr.
 
-https://www.sharepointr.sohaibcreates.com/routes?routesCode=$code''';
+https://sharepointr.sohaibcreates.com/route?routesCode=$code''';
     return Share.share(message);
   }
 

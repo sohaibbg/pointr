@@ -9,7 +9,7 @@ enum DrawerOptions {
   go(
     iconData: Icons.directions_walk_rounded,
     name: 'Go',
-    path: '/go',
+    path: '/',
   ),
   routes(
     iconData: Icons.route,
