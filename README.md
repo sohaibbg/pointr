@@ -30,6 +30,10 @@ Thanks to Zaineb Makati of Habib University for sharing the minibus routes and p
 
 Create a pull request with hardcoded routes to contribute. Hardcoded routes are contained in lib/infrastructure/data/hardcoded_routes.dart
 
+## Thanks
+
+Thanks to Zaineb Makati of Habib University for sharing the minibus routes and pedestrian stops. Thanks to Hassan bin Mashaam for assistance on UI/UX. Thanks to IBA Batch of 2024 for assisting with pre-release testing.
+
 ## For Devs
 
 add a file named "api_keys.json" to the root of the project containing the following
